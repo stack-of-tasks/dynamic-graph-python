@@ -5,21 +5,12 @@
 
 #include <Python.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 
-static PyObject*
-loadPlugin(PyObject* self, PyObject* args)
-{
-  char* plugin = NULL;
-  char* path = NULL;
+#include <dynamic-graph/interpreter.h>
 
-  if (!PyArg_ParseTuple(args,"ss", &plugin, &path))
-    return NULL;
-
-  std::cout << "loadPlugin " << std::string(plugin) << " "
-	    << std::string(path) << std::endl;
-  return Py_BuildValue("");
-}
+static dynamicgraph::Interpreter interpreter;
 
 static PyObject*
 plug(PyObject* self, PyObject* args)
@@ -29,8 +20,12 @@ plug(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args,"ss", &out, &in))
     return NULL;
 
-  std::cout << "plug " << std::string(out) << " "
-	    << std::string(in) << std::endl;
+  std::stringstream ss;
+  std::ostringstream os;
+  ss << std::string(out) << " " << std::string(in);
+  std::istringstream cmdArg(ss.str());
+  interpreter.cmdPlug(std::string("plug"), cmdArg, os);
+
   return Py_BuildValue("");
 }
 
@@ -38,8 +33,6 @@ plug(PyObject* self, PyObject* args)
    \brief List of python functions
 */
 static PyMethodDef sotTutorialMethods[] = {
-  {"loadPlugin",  loadPlugin, METH_VARARGS,
-     "load a plugin into the dynamic-graph"},
   {"plug",  plug, METH_VARARGS,
      "plug an output signal into an input signal"},
   {NULL, NULL, 0, NULL}        /* Sentinel */
