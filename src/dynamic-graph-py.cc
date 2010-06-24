@@ -10,6 +10,8 @@
 
 #include <dynamic-graph/interpreter.h>
 
+static PyObject* error;
+
 static dynamicgraph::Interpreter interpreter;
 
 static PyObject*
@@ -24,7 +26,12 @@ plug(PyObject* self, PyObject* args)
   std::ostringstream os;
   ss << std::string(out) << " " << std::string(in);
   std::istringstream cmdArg(ss.str());
-  interpreter.cmdPlug(std::string("plug"), cmdArg, os);
+  try {
+    interpreter.cmdPlug(std::string("plug"), cmdArg, os);
+  } catch (dynamicgraph::ExceptionFactory& exc) {
+    PyErr_SetString(error, exc.getStringMessage().c_str());
+    return NULL;
+  }
 
   return Py_BuildValue("");
 }
@@ -46,4 +53,8 @@ initwrap(void)
     m = Py_InitModule("wrap", sotTutorialMethods);
     if (m == NULL)
         return;
+
+    error = PyErr_NewException("dynamic_graph.wrap.error", NULL, NULL);
+    Py_INCREF(error);
+    PyModule_AddObject(m, "error", error);
 }
