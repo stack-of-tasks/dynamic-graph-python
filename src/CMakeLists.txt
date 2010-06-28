@@ -31,7 +31,10 @@ SET(PYTHON_MODULE wrap)
 
 ADD_LIBRARY(${PYTHON_MODULE}
 	MODULE
-	dynamic-graph-py.cc)
+	dynamic-graph-py.cc
+	signal-base-py.cc
+	entity-py.cc
+)
 
 # Remove prefix lib
 SET_TARGET_PROPERTIES(${PYTHON_MODULE}
@@ -58,6 +61,8 @@ INSTALL(TARGETS ${PYTHON_MODULE}
 
 SET (PYTHON_SOURCES
     dynamic_graph/__init__.py
+    dynamic_graph/entity.py
+    dynamic_graph/signal_base.py
 )
 
 SET (PYTHON_SOURCES_FULLPATH "")

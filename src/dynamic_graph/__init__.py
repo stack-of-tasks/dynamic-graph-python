@@ -4,3 +4,4 @@ Author: Florent Lamiraux
 """
 
 import wrap
+import entity, signal_base

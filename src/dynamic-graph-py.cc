@@ -8,40 +8,107 @@
 #include <sstream>
 #include <string>
 
+#include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/interpreter.h>
+#include <dynamic-graph/shell-functions.h>
 
-static PyObject* error;
+namespace dynamicgraph {
+  namespace python {
 
-static dynamicgraph::Interpreter interpreter;
+    // Declare functions defined in other source files
+    namespace signalBase {
+      extern PyObject* create(PyObject* self, PyObject* args);
+      extern PyObject* getTime(PyObject* self, PyObject* args);
+    }
+    namespace entity {
+      extern PyObject* create(PyObject* self, PyObject* args);
+      extern PyObject* getName(PyObject* self, PyObject* args);
+      extern PyObject* getSignal(PyObject* self, PyObject* args);
+      extern PyObject* displaySignals(PyObject* self, PyObject* args);
 
-static PyObject*
-plug(PyObject* self, PyObject* args)
-{
-  char* out = NULL;
-  char* in = NULL;
-  if (!PyArg_ParseTuple(args,"ss", &out, &in))
-    return NULL;
+    }
 
-  std::stringstream ss;
-  std::ostringstream os;
-  ss << std::string(out) << " " << std::string(in);
-  std::istringstream cmdArg(ss.str());
-  try {
-    interpreter.cmdPlug(std::string("plug"), cmdArg, os);
-  } catch (dynamicgraph::ExceptionFactory& exc) {
-    PyErr_SetString(error, exc.getStringMessage().c_str());
-    return NULL;
+    PyObject* error;
+
+    static dynamicgraph::Interpreter interpreter;
+
+    /**
+       \brief plug a signal into another one.
+    */
+    PyObject*
+    plug(PyObject* self, PyObject* args)
+    {
+      char* out = NULL;
+      char* in = NULL;
+      if (!PyArg_ParseTuple(args,"ss", &out, &in))
+	return NULL;
+
+      std::stringstream ss;
+      std::ostringstream os;
+      ss << std::string(out) << " " << std::string(in);
+      std::istringstream cmdArg(ss.str());
+      try {
+	interpreter.cmdPlug(std::string("plug"), cmdArg, os);
+      } catch (dynamicgraph::ExceptionFactory& exc) {
+	PyErr_SetString(error, exc.getStringMessage().c_str());
+	return NULL;
+      }
+
+      return Py_BuildValue("");
+    }
+
+    PyObject*
+    enableTrace(PyObject* self, PyObject* args)
+    {
+      char* trueFalse = NULL;
+      char* filename = NULL;
+      std::stringstream ss;
+      std::ostringstream os;
+
+      if (PyArg_ParseTuple(args,"ss", &trueFalse, &filename)) {
+	ss << std::string(trueFalse) << " " << std::string(filename);
+      } else if (PyArg_ParseTuple(args,"s", &trueFalse)) {
+	ss << std::string(trueFalse);
+      } else {
+	return NULL;
+      }
+
+      std::istringstream cmdArg(ss.str());
+      try {
+	ShellFunctions::cmdEnableTrace(std::string("debugtrace"), cmdArg, os);
+      } catch (dynamicgraph::ExceptionFactory& exc) {
+	PyErr_SetString(error, exc.getStringMessage().c_str());
+	return NULL;
+      }
+
+      return Py_BuildValue("");
+    }
   }
-
-  return Py_BuildValue("");
 }
 
 /**
    \brief List of python functions
 */
-static PyMethodDef sotTutorialMethods[] = {
-  {"plug",  plug, METH_VARARGS,
-     "plug an output signal into an input signal"},
+static PyMethodDef dynamicGraphMethods[] = {
+  {"plug",  dynamicgraph::python::plug, METH_VARARGS,
+   "plug an output signal into an input signal"},
+  {"debugtrace",  dynamicgraph::python::enableTrace, METH_VARARGS,
+   "Enable or disable tracing debug info in a file"},
+  // Signals
+  {"create_signal_base", dynamicgraph::python::signalBase::create, METH_VARARGS,
+   "create a SignalBase C++ object"},
+  {"signalbase_get_time", dynamicgraph::python::signalBase::getTime,
+   METH_VARARGS, "Get time of  a SignalBase"},
+  // Entity
+  {"create_entity", dynamicgraph::python::entity::create, METH_VARARGS,
+   "create an Entity C++ object"},
+  {"entity_get_name", dynamicgraph::python::entity::getName, METH_VARARGS,
+   "get the name of an Entity"},
+  {"entity_get_signal", dynamicgraph::python::entity::getSignal, METH_VARARGS,
+   "get signal by name from an Entity"},
+  {"entity_display_signals", dynamicgraph::python::entity::displaySignals,
+   METH_VARARGS,
+   "Display the list of signals of an entity in standard output"},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -50,11 +117,12 @@ initwrap(void)
 {
     PyObject *m;
 
-    m = Py_InitModule("wrap", sotTutorialMethods);
+    m = Py_InitModule("wrap", dynamicGraphMethods);
     if (m == NULL)
         return;
 
-    error = PyErr_NewException("dynamic_graph.wrap.error", NULL, NULL);
-    Py_INCREF(error);
-    PyModule_AddObject(m, "error", error);
+    dynamicgraph::python::error =
+      PyErr_NewException("dynamic_graph.wrap.error", NULL, NULL);
+    Py_INCREF(dynamicgraph::python::error);
+    PyModule_AddObject(m, "error", dynamicgraph::python::error);
 }
