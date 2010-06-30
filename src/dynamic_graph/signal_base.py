@@ -9,19 +9,18 @@ class SignalBase:
     """
     This class binds dynamicgraph::SignalBase<int> C++ class
     """
+
+    object = None
+
     def __init__(self, name, object = None) :
         """
-        Constructor: create and store a pointer to a C++ Entity object if
-          - the constructor is not called by a child class and
-          - object parameter is not provided.
-        If object parameter is provided, the class wraps an already existing
-        C++ object.
+        Constructor: if not called by a child class, create and store a pointer
+        to a C++ SignalBase<int> object.
         """
-        if object is None :
-            if not hasattr(self, "object") :
-                self.object = wrap.create_signal_base(name)
-        else :
+        if object :
             self.object = object
+        if not self.object :
+            self.object = wrap.create_signal_base(self, name)
 
     @property
     def time(self) :
