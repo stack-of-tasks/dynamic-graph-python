@@ -29,17 +29,15 @@ class SignalBase:
         """
         return wrap.signalBaseGetTime(self.object)
 
-    @property
-    def value(self) :
+    def get_value(self) :
         """
         Read the value of a signal
         """
         return wrap.signal_base_get_value(self.object)
 
-    @value.setter
-    def value(self) :
+    def set_value(self, val) :
         """
         Set the signal as a constant signal with given value.
         If the signal is plugged, it will be unplugged
         """
-        return wrap.signal_base_set_value(self.object, value)
+        return wrap.signal_base_set_value(self.object, val)
