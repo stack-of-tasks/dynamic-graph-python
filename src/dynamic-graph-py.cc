@@ -10,7 +10,7 @@
 
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/interpreter.h>
-#include <dynamic-graph/shell-functions.h>
+#include <dynamic-graph/functions.h>
 
 namespace dynamicgraph {
   namespace python {
