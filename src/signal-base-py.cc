@@ -75,8 +75,19 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
 	std::ostringstream value;
-	signal->get(value);
-	return Py_BuildValue("s", value.str());
+	try {
+	  signal->get(value);
+	} catch (const dynamicgraph::ExceptionAbstract& exc) {
+	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  return NULL;
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	} catch (...) {
+	  PyErr_SetString(error, "Unknown exception");
+	  return NULL;
+	}
+	std::string valueString = value.str();
+	return Py_BuildValue("s", valueString.c_str());
       }
 
       PyObject* setValue(PyObject* self, PyObject* args)
@@ -92,9 +103,23 @@ namespace dynamicgraph {
 
 	pointer = PyCObject_AsVoidPtr(object);
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
-	std::istringstream value(valueString);
+	std::ostringstream os;
+	os << valueString;
+	std::istringstream value(os.str());
 
-	signal->set(value);
+	try {
+	  signal->set(value);
+	} catch (const dynamicgraph::ExceptionAbstract& exc) {
+	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  return NULL;
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	  return NULL;
+	} catch (...) {
+	  PyErr_SetString(error, "Unknown exception");
+	  return NULL;
+	}
+
 	return Py_BuildValue("");
       }
     }
