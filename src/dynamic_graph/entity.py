@@ -24,7 +24,7 @@ class Entity:
     def name(self) :
         return wrap.entity_get_name(self.object)
 
-    def get_signal (self, name) :
+    def signal (self, name) :
         """
         Get a signal of the entity from signal name
         """
