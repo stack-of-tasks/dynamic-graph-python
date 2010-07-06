@@ -8,14 +8,9 @@
 #include <sstream>
 
 #include <dynamic-graph/signal-base.h>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/io.hpp>
 #include <dynamic-graph/signal-caster.h>
 
-typedef boost::numeric::ublas::vector<double> Vector;
-
 using dynamicgraph::SignalBase;
-dynamicgraph::DefaultCastRegisterer<Vector> vectorCast;
 
 namespace dynamicgraph {
   namespace python {
