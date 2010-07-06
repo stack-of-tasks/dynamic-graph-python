@@ -44,12 +44,12 @@ namespace dynamicgraph {
       char* objIn = NULL;
       char* sigOut = NULL;
       char* sigIn = NULL;
-      if (!PyArg_ParseTuple(args,"ssss", &objOut, &sigOut, &objIn, &sigIn))
+      if (!PyArg_ParseTuple(args,"ssss", &objIn, &sigIn, &objOut, &sigOut))
 	return NULL;
 
       std::ostringstream os;
       try {
-	interpreter.cmdPlug(objOut, sigOut, objIn, sigIn, os);
+	interpreter.cmdPlug(objIn, sigIn, objOut, sigOut, os);
       } catch (dynamicgraph::ExceptionFactory& exc) {
 	PyErr_SetString(error, exc.getStringMessage().c_str());
 	return NULL;
