@@ -9,7 +9,7 @@
 #include <string>
 
 #include <dynamic-graph/exception-factory.h>
-#include <dynamic-graph/interpreter.h>
+#include <dynamic-graph/interpreter-helper.h>
 #include <dynamic-graph/functions.h>
 
 namespace dynamicgraph {
@@ -32,7 +32,7 @@ namespace dynamicgraph {
 
     PyObject* error;
 
-    static dynamicgraph::Interpreter interpreter;
+    static dynamicgraph::InterpreterHelper interpreter;
 
     /**
        \brief plug a signal into another one.
@@ -40,17 +40,16 @@ namespace dynamicgraph {
     PyObject*
     plug(PyObject* self, PyObject* args)
     {
-      char* out = NULL;
-      char* in = NULL;
-      if (!PyArg_ParseTuple(args,"ss", &out, &in))
+      char* objOut = NULL;
+      char* objIn = NULL;
+      char* sigOut = NULL;
+      char* sigIn = NULL;
+      if (!PyArg_ParseTuple(args,"ssss", &objOut, &sigOut, &objIn, &sigIn))
 	return NULL;
 
-      std::stringstream ss;
       std::ostringstream os;
-      ss << std::string(out) << " " << std::string(in);
-      std::istringstream cmdArg(ss.str());
       try {
-	interpreter.cmdPlug(std::string("plug"), cmdArg, os);
+	interpreter.cmdPlug(objOut, sigOut, objIn, sigIn, os);
       } catch (dynamicgraph::ExceptionFactory& exc) {
 	PyErr_SetString(error, exc.getStringMessage().c_str());
 	return NULL;
