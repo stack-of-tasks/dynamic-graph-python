@@ -91,9 +91,9 @@ namespace dynamicgraph {
    \brief List of python functions
 */
 static PyMethodDef dynamicGraphMethods[] = {
-  {"plug",  dynamicgraph::python::plug, METH_VARARGS,
+  {"w_plug",  dynamicgraph::python::plug, METH_VARARGS,
    "plug an output signal into an input signal"},
-  {"debugtrace",  dynamicgraph::python::enableTrace, METH_VARARGS,
+  {"w_debugtrace",  dynamicgraph::python::enableTrace, METH_VARARGS,
    "Enable or disable tracing debug info in a file"},
   // Signals
   {"create_signal_base", dynamicgraph::python::signalBase::create, METH_VARARGS,
