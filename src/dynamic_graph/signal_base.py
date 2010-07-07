@@ -5,7 +5,7 @@
 """
 import wrap
 
-class SignalBase:
+class SignalBase (object) :
     """
     This class binds dynamicgraph::SignalBase<int> C++ class
     """
@@ -29,13 +29,15 @@ class SignalBase:
         """
         return wrap.signalBaseGetTime(self.object)
 
-    def get_value(self) :
+    @property
+    def value(self) :
         """
         Read the value of a signal
         """
         return wrap.signal_base_get_value(self.object)
 
-    def set_value(self, val) :
+    @value.setter
+    def value(self, val) :
         """
         Set the signal as a constant signal with given value.
         If the signal is plugged, it will be unplugged

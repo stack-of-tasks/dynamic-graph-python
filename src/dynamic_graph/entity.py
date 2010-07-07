@@ -5,7 +5,7 @@
 """
 import wrap, signal_base
 
-class Entity:
+class Entity (object) :
     """
     This class binds dynamicgraph::Entity C++ class
     """
