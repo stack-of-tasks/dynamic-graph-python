@@ -30,6 +30,9 @@ namespace dynamicgraph {
 
     }
 
+    namespace factory {
+      PyObject* getEntityClassList(PyObject* self, PyObject* args);
+    }
     PyObject* error;
 
     static dynamicgraph::InterpreterHelper interpreter;
@@ -114,6 +117,10 @@ static PyMethodDef dynamicGraphMethods[] = {
   {"entity_display_signals", dynamicgraph::python::entity::displaySignals,
    METH_VARARGS,
    "Display the list of signals of an entity in standard output"},
+  {"factory_get_entity_class_list",
+   dynamicgraph::python::factory::getEntityClassList,
+   METH_VARARGS,
+   "return the list of entity classes"},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

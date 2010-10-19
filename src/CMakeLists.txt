@@ -34,6 +34,7 @@ ADD_LIBRARY(${PYTHON_MODULE}
 	dynamic-graph-py.cc
 	signal-base-py.cc
 	entity-py.cc
+	factory-py.cc
 )
 
 # Remove prefix lib
