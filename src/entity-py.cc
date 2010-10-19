@@ -40,7 +40,7 @@ namespace dynamicgraph {
 	  return NULL;
 	}
 	
-	// Return the pointer as an integer
+	// Return the pointer as a PyCObject
 	return PyCObject_FromVoidPtr((void*)obj, destroy);
       }
       
