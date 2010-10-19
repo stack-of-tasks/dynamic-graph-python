@@ -12,13 +12,12 @@ class Entity (object) :
     
     object = None
 
-    def __init__(self, name):
+    def __init__(self, className, instanceName):
         """
         Constructor: if not called by a child class, create and store a pointer
         to a C++ Entity object.
         """
-        if not self.object :
-            self.object = wrap.create_entity(self, name)
+        self.object = wrap.create_entity(className, instanceName)
 
     @property
     def name(self) :

@@ -9,6 +9,7 @@
 //#include <string>
 
 #include <dynamic-graph/entity.h>
+#include <dynamic-graph/factory.h>
 
 using dynamicgraph::Entity;
 using dynamicgraph::SignalBase;
@@ -27,14 +28,16 @@ namespace dynamicgraph {
       */
       PyObject* create(PyObject* self, PyObject* args)
       {
-	char *name = NULL;
+	char *className = NULL;
+	char *instanceName = NULL;
 	
-	if (!PyArg_ParseTuple(args, "s", &name))
+	if (!PyArg_ParseTuple(args, "ss", &className, &instanceName))
 	  return NULL;
 	
 	Entity* obj = NULL;
 	try {
-	  obj = new Entity(name);
+	  obj = dynamicgraph::g_factory.newEntity(std::string(className),
+						  std::string(instanceName));
 	} catch (dynamicgraph::ExceptionFactory& exc) {
 	  PyErr_SetString(error, exc.getStringMessage().c_str());
 	  return NULL;
