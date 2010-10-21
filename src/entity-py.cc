@@ -142,7 +142,7 @@ namespace dynamicgraph {
       }
 
       Value pythonToValue(PyObject* pyObject,
-			     const Value::Type& valueType)
+			  const Value::Type& valueType)
       {
 	double dvalue;
 	std::string svalue;
@@ -155,7 +155,7 @@ namespace dynamicgraph {
 				   "float");
 	  }
 	  ivalue = (int)PyLong_AsLong(pyObject);
-	  std::cout << "int value = " << ivalue << std::endl;
+	  std::cout << "int param = " << ivalue << std::endl;
 	  return Value(ivalue);
 	  break;
 	case (Value::DOUBLE) :
@@ -164,11 +164,12 @@ namespace dynamicgraph {
 				   "float");
 	  }
 	  dvalue = PyFloat_AsDouble(pyObject);
-	  std::cout << "double value = " << dvalue << std::endl;
+	  std::cout << "double param = " << dvalue << std::endl;
 	  return Value(dvalue);
 	  break;
 	case (Value::STRING) :
 	  svalue = PyString_AsString(pyObject);
+	  std::cout << "string param = \"" << dvalue << "\"" << std::endl;
 	  return Value(svalue);
 	  break;
 	default:
@@ -238,6 +239,11 @@ namespace dynamicgraph {
 	    PyErr_SetString(error, ss.str().c_str()) ;
 	    return NULL;
 	  }
+	}
+	std::cout << "executeCommand:"<< std::endl;
+	for (unsigned int i=0; i<valueVector.size(); i++) {
+	  std::cout << "  value[" << i << "]=(" 
+		    << valueVector[i] << ")" << std::endl;
 	}
 	command->setParameterValues(valueVector);
 	try {
