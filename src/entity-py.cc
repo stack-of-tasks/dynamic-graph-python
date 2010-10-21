@@ -11,18 +11,25 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/factory.h>
 
+#include "dynamic-graph/command.h"
+#include "dynamic-graph/value.h"
+
 using dynamicgraph::Entity;
 using dynamicgraph::SignalBase;
 using dynamicgraph::ExceptionAbstract;
+using dynamicgraph::command::Command;
+using dynamicgraph::command::Value;
 
 namespace dynamicgraph {
   namespace python {
-    
+
     extern PyObject* error;
 
     namespace entity {
-      
+
       static void destroy (void* self);
+      static Value pythonToValue(PyObject* pyObject,
+					const Value::Type& valueType);
       /**
 	 \brief Create an instance of Entity
       */
@@ -30,10 +37,10 @@ namespace dynamicgraph {
       {
 	char *className = NULL;
 	char *instanceName = NULL;
-	
+
 	if (!PyArg_ParseTuple(args, "ss", &className, &instanceName))
 	  return NULL;
-	
+
 	Entity* obj = NULL;
 	try {
 	  obj = dynamicgraph::g_factory.newEntity(std::string(className),
@@ -42,11 +49,11 @@ namespace dynamicgraph {
 	  PyErr_SetString(error, exc.getStringMessage().c_str());
 	  return NULL;
 	}
-	
+
 	// Return the pointer as a PyCObject
 	return PyCObject_FromVoidPtr((void*)obj, destroy);
       }
-      
+
       /**
 	 \brief Destroy an instance of Entity
       */
@@ -55,7 +62,7 @@ namespace dynamicgraph {
 	Entity* obj = (Entity*)self;
 	delete obj;
       }
-      
+
       /**
 	 \brief Get name of entity
       */
@@ -93,7 +100,7 @@ namespace dynamicgraph {
 
 	if (!PyArg_ParseTuple(args, "Os", &object, &name))
 	  return NULL;
-	
+
 	if (!PyCObject_Check(object))
 	  return NULL;
 
@@ -116,10 +123,10 @@ namespace dynamicgraph {
       {
 	void* pointer = NULL;
 	PyObject* object = NULL;
-	
+
 	if (!PyArg_ParseTuple(args, "O", &object))
 	  return NULL;
-	
+
 	if (!PyCObject_Check(object))
 	  return NULL;
 
@@ -129,6 +136,114 @@ namespace dynamicgraph {
 	  entity->displaySignalList(std::cout);
 	} catch(ExceptionAbstract& exc) {
 	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  return NULL;
+	}
+	return Py_BuildValue("");
+      }
+
+      Value pythonToValue(PyObject* pyObject,
+			     const Value::Type& valueType)
+      {
+	double dvalue;
+	std::string svalue;
+	int ivalue;
+
+	switch (valueType) {
+	case (Value::INT) :
+	  if (!PyLong_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "float");
+	  }
+	  ivalue = (int)PyLong_AsLong(pyObject);
+	  std::cout << "int value = " << ivalue << std::endl;
+	  return Value(ivalue);
+	  break;
+	case (Value::DOUBLE) :
+	  if (!PyFloat_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "float");
+	  }
+	  dvalue = PyFloat_AsDouble(pyObject);
+	  std::cout << "double value = " << dvalue << std::endl;
+	  return Value(dvalue);
+	  break;
+	case (Value::STRING) :
+	  svalue = PyString_AsString(pyObject);
+	  return Value(svalue);
+	  break;
+	default:
+	  std::cerr << "Only int, double and string are supported."
+		    << std::endl;
+	}
+	return Value();
+      }
+
+      PyObject* executeCommand(PyObject* self, PyObject* args)
+      {
+	PyObject* object = NULL;
+	PyObject* argTuple = NULL;
+	std::string commandName;
+	void* pointer = NULL;
+
+	if (!PyArg_ParseTuple(args, "OsO", &object, &commandName, &argTuple)) {
+	  return NULL;
+	}
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(error, "first argument is not an object");
+	  return NULL;
+	}
+	pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	// Retrieve the argument tuple
+	if (!PyTuple_Check(argTuple)) {
+	  PyErr_SetString(error, "third argument is not a tuple");
+	  return NULL;
+	}
+	unsigned int size = PyTuple_Size(argTuple);
+
+	std::map<const std::string, Command*> commandMap =
+	  entity->getNewStyleCommandMap();
+
+	if (commandMap.count(commandName) != 1) {
+	  std::string msg = "command " + commandName +
+	    " is not referenced in Entity " + entity->getName();
+	  PyErr_SetString(error, msg.c_str());
+	  return NULL;
+	}
+	Command* command = commandMap[commandName];
+	// Check that tuple size is equal to command number of arguments
+	const std::vector<Value::Type> typeVector = command->valueTypes();
+	if (size != typeVector.size()) {
+	  std::stringstream ss;
+	  ss << "command takes " <<  typeVector.size()
+	     << " parameters, " << size << " given.";
+	  PyErr_SetString(error, ss.str().c_str());
+	  return NULL;
+	}
+
+	std::vector<Value> valueVector;
+	for (unsigned int iParam=0; iParam<size; iParam++) {
+	  PyObject* PyValue = PyTuple_GetItem(argTuple, iParam);
+	  Value::Type valueType = typeVector[iParam];
+	  try {
+	    Value value = pythonToValue(PyValue, valueType);
+	    valueVector.push_back(value);
+	  } catch (ExceptionAbstract& exc) {
+	    std::stringstream ss;
+	    ss << "argument " << iParam+1 << " should be a "
+	       << exc.what() << ".";
+	    PyErr_SetString(error, ss.str().c_str()) ;
+	    return NULL;
+	  }
+	}
+	command->setParameterValues(valueVector);
+	try {
+	  command->execute();
+	} catch (const ExceptionAbstract& exc) {
+	  PyErr_SetString(error, exc.what()) ;
 	  return NULL;
 	}
 	return Py_BuildValue("");

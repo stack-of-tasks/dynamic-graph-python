@@ -27,7 +27,7 @@ namespace dynamicgraph {
       extern PyObject* getName(PyObject* self, PyObject* args);
       extern PyObject* getSignal(PyObject* self, PyObject* args);
       extern PyObject* displaySignals(PyObject* self, PyObject* args);
-
+      extern PyObject* executeCommand(PyObject* self, PyObject* args);
     }
 
     namespace factory {
@@ -117,6 +117,10 @@ static PyMethodDef dynamicGraphMethods[] = {
   {"entity_display_signals", dynamicgraph::python::entity::displaySignals,
    METH_VARARGS,
    "Display the list of signals of an entity in standard output"},
+  {"entity_execute_command",
+   dynamicgraph::python::entity::executeCommand,
+   METH_VARARGS,
+   "execute a command"},
   {"factory_get_entity_class_list",
    dynamicgraph::python::factory::getEntityClassList,
    METH_VARARGS,
