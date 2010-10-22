@@ -183,7 +183,7 @@ namespace dynamicgraph {
       {
 	PyObject* object = NULL;
 	PyObject* argTuple = NULL;
-	std::string commandName;
+	char* commandName = NULL;
 	void* pointer = NULL;
 
 	if (!PyArg_ParseTuple(args, "OsO", &object, &commandName, &argTuple)) {
@@ -208,13 +208,13 @@ namespace dynamicgraph {
 	std::map<const std::string, Command*> commandMap =
 	  entity->getNewStyleCommandMap();
 
-	if (commandMap.count(commandName) != 1) {
-	  std::string msg = "command " + commandName +
+	if (commandMap.count(std::string(commandName)) != 1) {
+	  std::string msg = "command " + std::string(commandName) +
 	    " is not referenced in Entity " + entity->getName();
 	  PyErr_SetString(error, msg.c_str());
 	  return NULL;
 	}
-	Command* command = commandMap[commandName];
+	Command* command = commandMap[std::string(commandName)];
 	// Check that tuple size is equal to command number of arguments
 	const std::vector<Value::Type> typeVector = command->valueTypes();
 	if (size != typeVector.size()) {
