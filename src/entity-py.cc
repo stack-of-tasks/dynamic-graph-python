@@ -19,6 +19,7 @@ using dynamicgraph::SignalBase;
 using dynamicgraph::ExceptionAbstract;
 using dynamicgraph::command::Command;
 using dynamicgraph::command::Value;
+using dynamicgraph::command::AnyType;
 
 namespace dynamicgraph {
   namespace python {
@@ -30,6 +31,7 @@ namespace dynamicgraph {
       static void destroy (void* self);
       static Value pythonToValue(PyObject* pyObject,
 					const Value::Type& valueType);
+      static PyObject* valueToPython(Value value);
       /**
 	 \brief Create an instance of Entity
       */
@@ -179,6 +181,26 @@ namespace dynamicgraph {
 	return Value();
       }
 
+      PyObject* valueToPython(Value value)
+      {
+	int intValue;
+	double doubleValue;
+	std::string stringValue;
+
+	switch(value.type()) {
+	case (Value::INT) :
+	  intValue = value.value();
+	  return Py_BuildValue("i", intValue);
+	case (Value::DOUBLE) :
+	  doubleValue = value.value();
+	  return Py_BuildValue("d", doubleValue);
+	case (Value::STRING) :
+	  stringValue = (std::string) value.value();
+	  return Py_BuildValue("s", stringValue.c_str());
+	}
+	return Py_BuildValue("");
+      }
+
       PyObject* executeCommand(PyObject* self, PyObject* args)
       {
 	PyObject* object = NULL;
@@ -247,12 +269,13 @@ namespace dynamicgraph {
 	}
 	command->setParameterValues(valueVector);
 	try {
-	  command->execute();
+	  Value result = command->execute();
+	  return valueToPython(result);
 	} catch (const ExceptionAbstract& exc) {
 	  PyErr_SetString(error, exc.what()) ;
 	  return NULL;
 	}
-	return Py_BuildValue("");
+	return NULL;
       }
     }
   }
