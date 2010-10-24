@@ -26,6 +26,8 @@ def updateEntityClasses(dictionary):
         a.class_name = e
         # set class constructor
         setattr(a, '__init__', initEntity)
+        # set class attribute to store whether command methods have been created
+        setattr(a, 'commandCreated', False)
         # Store new class in dictionary with class name
         dictionary[e] = a
         # Store class name in local list
