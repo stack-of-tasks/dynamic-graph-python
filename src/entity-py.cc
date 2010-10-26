@@ -19,7 +19,6 @@ using dynamicgraph::SignalBase;
 using dynamicgraph::ExceptionAbstract;
 using dynamicgraph::command::Command;
 using dynamicgraph::command::Value;
-using dynamicgraph::command::AnyType;
 
 namespace dynamicgraph {
   namespace python {
@@ -31,7 +30,7 @@ namespace dynamicgraph {
       static void destroy (void* self);
       static Value pythonToValue(PyObject* pyObject,
 					const Value::Type& valueType);
-      static PyObject* valueToPython(Value value);
+      static PyObject* valueToPython(const Value& value);
       /**
 	 \brief Create an instance of Entity
       */
@@ -174,14 +173,13 @@ namespace dynamicgraph {
 	  std::cout << "string param = \"" << dvalue << "\"" << std::endl;
 	  return Value(svalue);
 	  break;
-	default:
-	  std::cerr << "Only int, double and string are supported."
-		    << std::endl;
 	}
+	std::cerr << "Only int, double and string are supported."
+		  << std::endl;
 	return Value();
       }
 
-      PyObject* valueToPython(Value value)
+      PyObject* valueToPython(const Value& value)
       {
 	int intValue;
 	double doubleValue;
