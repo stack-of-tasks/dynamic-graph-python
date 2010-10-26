@@ -53,7 +53,7 @@ class Entity (object) :
     """
     This class binds dynamicgraph::Entity C++ class
     """
-    
+
     object = None
 
     def __init__(self, className, instanceName):
@@ -73,7 +73,7 @@ class Entity (object) :
         """
         signalPt = wrap.entity_get_signal(self.object, name)
         return signal_base.SignalBase("", signalPt)
-        
+
     def display_signals(self) :
         """
         Write the list of signals into standard output: temporary.

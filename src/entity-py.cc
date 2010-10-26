@@ -264,7 +264,7 @@ namespace dynamicgraph {
 	}
 	std::cout << "executeCommand:"<< std::endl;
 	for (unsigned int i=0; i<valueVector.size(); i++) {
-	  std::cout << "  value[" << i << "]=(" 
+	  std::cout << "  value[" << i << "]=("
 		    << valueVector[i] << ")" << std::endl;
 	}
 	command->setParameterValues(valueVector);
@@ -277,7 +277,7 @@ namespace dynamicgraph {
 	}
 	return NULL;
       }
-      
+
       PyObject* listCommands(PyObject* self, PyObject* args)
       {
 	PyObject* object = NULL;
