@@ -277,6 +277,36 @@ namespace dynamicgraph {
 	}
 	return NULL;
       }
+      
+      PyObject* listCommands(PyObject* self, PyObject* args)
+      {
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args, "O", &object)) {
+	  return NULL;
+	}
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(error, "first argument is not an object");
+	  return NULL;
+	}
+	void* pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+	typedef	std::map<const std::string, command::Command*>  CommandMap;
+	CommandMap map = entity->getNewStyleCommandMap();
+	unsigned int nbCommands = map.size();
+	// Create a tuple of same size as the command map
+	PyObject* result = PyTuple_New(nbCommands);
+	unsigned int count = 0;
+	for (CommandMap::iterator it=map.begin();
+	     it != map.end(); it++) {
+	  std::string commandName = it->first;
+	  PyObject* pyName = Py_BuildValue("s", commandName.c_str());
+	  PyTuple_SET_ITEM(result, count, pyName);
+	  count++;
+	}
+	return result;
+      }
     }
   }
 }
