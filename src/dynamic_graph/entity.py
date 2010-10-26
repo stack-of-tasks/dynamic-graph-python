@@ -7,11 +7,24 @@ import wrap, signal_base
 
 entityClassNameList = []
 
+def commandMethod(name) :
+    def method(self, *arg):
+        return wrap.entity_execute_command(self.object, name, arg)
+    return method
+
 def initEntity(self, name):
     """
     Common constructor of Entity classes
     """
-    Entity.__init__(self, self.class_name, name)
+    Entity.__init__(self, self.className, name)
+    if not self.__class__.commandCreated:
+        # Get list of commands of the Entity object
+        commands = wrap.entity_list_commands(self.object)
+        # for each command, add a method with the name of the command
+        for command in commands:
+            print ('adding method %s in class %s' %(command, self.__class__))
+            setattr(self.__class__, command, commandMethod(command))
+        self.__class__.commandCreated = True
 
 def updateEntityClasses(dictionary):
     cxx_entityList = wrap.factory_get_entity_class_list()
@@ -23,11 +36,13 @@ def updateEntityClasses(dictionary):
         # Create new class
         a = metacls(e, (Entity,), {})
         # Store class name in class member
-        a.class_name = e
+        a.className = e
         # set class constructor
         setattr(a, '__init__', initEntity)
         # set class attribute to store whether command methods have been created
         setattr(a, 'commandCreated', False)
+        #
+
         # Store new class in dictionary with class name
         dictionary[e] = a
         # Store class name in local list
