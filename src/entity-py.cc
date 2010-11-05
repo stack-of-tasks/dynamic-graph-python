@@ -145,19 +145,51 @@ namespace dynamicgraph {
       Value pythonToValue(PyObject* pyObject,
 			  const Value::Type& valueType)
       {
+	bool bvalue;
+	unsigned uvalue;
+	int ivalue;
+	float fvalue;
 	double dvalue;
 	std::string svalue;
-	int ivalue;
 
 	switch (valueType) {
+	case (Value::BOOL) :
+	  if (!PyBool_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "bool");
+	  }
+	  bvalue = (pyObject == Py_True);
+	  return Value(bvalue);
+	  break;
+	case (Value::UNSIGNED) :
+	  if (!PyLong_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "int");
+	  }
+	  // Check that value is not negative
+	  ivalue = (int)PyLong_AsLong(pyObject);
+	  if (ivalue < 0) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "unsigned int");
+	  }
+	  uvalue = (unsigned) ivalue;
+	  return Value(uvalue);
+	  break;
 	case (Value::INT) :
 	  if (!PyLong_Check(pyObject)) {
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
-				   "float");
+				   "int");
 	  }
 	  ivalue = (int)PyLong_AsLong(pyObject);
-	  std::cout << "int param = " << ivalue << std::endl;
 	  return Value(ivalue);
+	  break;
+	case (Value::FLOAT) :
+	  if (!PyFloat_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "float");
+	  }
+	  fvalue = (float)PyFloat_AsDouble(pyObject);
+	  return Value(fvalue);
 	  break;
 	case (Value::DOUBLE) :
 	  if (!PyFloat_Check(pyObject)) {
@@ -165,12 +197,10 @@ namespace dynamicgraph {
 				   "float");
 	  }
 	  dvalue = PyFloat_AsDouble(pyObject);
-	  std::cout << "double param = " << dvalue << std::endl;
 	  return Value(dvalue);
 	  break;
 	case (Value::STRING) :
 	  svalue = PyString_AsString(pyObject);
-	  std::cout << "string param = \"" << dvalue << "\"" << std::endl;
 	  return Value(svalue);
 	  break;
 	}
