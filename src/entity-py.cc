@@ -162,25 +162,19 @@ namespace dynamicgraph {
 	  return Value(bvalue);
 	  break;
 	case (Value::UNSIGNED) :
-	  if (!PyLong_Check(pyObject)) {
-	    throw ExceptionFactory(ExceptionFactory::GENERIC,
-				   "int");
-	  }
-	  // Check that value is not negative
-	  ivalue = (int)PyLong_AsLong(pyObject);
-	  if (ivalue < 0) {
+	  if (!PyInt_Check(pyObject)) {
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
 				   "unsigned int");
 	  }
-	  uvalue = (unsigned) ivalue;
+	  uvalue = PyInt_AsUnsignedLongMask(pyObject);
 	  return Value(uvalue);
 	  break;
 	case (Value::INT) :
-	  if (!PyLong_Check(pyObject)) {
+	  if (!PyInt_Check(pyObject)) {
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
 				   "int");
 	  }
-	  ivalue = (int)PyLong_AsLong(pyObject);
+	  ivalue = (int)PyInt_AS_LONG(pyObject);
 	  return Value(ivalue);
 	  break;
 	case (Value::FLOAT) :
@@ -211,14 +205,29 @@ namespace dynamicgraph {
 
       PyObject* valueToPython(const Value& value)
       {
+	bool boolValue;
+	unsigned unsignedValue;
 	int intValue;
+	float floatValue;
 	double doubleValue;
 	std::string stringValue;
 
 	switch(value.type()) {
+	case (Value::BOOL) :
+	  boolValue = value.value();
+	  if (boolValue) {
+	    return PyBool_FromLong(1);
+	  }
+	  return PyBool_FromLong(0);
+	case (Value::UNSIGNED) :
+	  unsignedValue = value.value();
+	  return Py_BuildValue("I", unsignedValue);
 	case (Value::INT) :
 	  intValue = value.value();
 	  return Py_BuildValue("i", intValue);
+	case (Value::FLOAT) :
+	  floatValue = value.value();
+	  return Py_BuildValue("f", floatValue);
 	case (Value::DOUBLE) :
 	  doubleValue = value.value();
 	  return Py_BuildValue("d", doubleValue);
