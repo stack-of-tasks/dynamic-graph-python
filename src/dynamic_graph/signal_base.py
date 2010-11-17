@@ -26,6 +26,12 @@ def stringToTuple(vector):
         res.append(float(a.group(i)))
     return tuple(res)
 
+def tupleToString(vector):
+    string = '[%d]('%len(vector)
+    for x in vector[:-1]:
+        string += '%f,'%x
+    string += '%f)'%vector[-1]
+    return string
 
 class SignalBase (object) :
     """
