@@ -7,12 +7,12 @@ from wrap import *
 import entity, signal_base
 import re
 
-def plug (signalIn, signalOut) :
+def plug (signalOut, signalIn) :
     """
     Plug an output signal into an input signal
     syntax is plug ("entityIn.signalIn", "entityOut.signalOut")
     """
     # get signals and entities
-    [eIn, sIn] = re.split("\.", signalOut)
     [eOut, sOut] = re.split("\.", signalOut)
-    w_plug(eIn, sIn, eOut, sOut)
+    [eIn, sIn] = re.split("\.", signalIn)
+    w_plug(eOut, sOut, eIn, sIn)

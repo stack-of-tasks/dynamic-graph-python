@@ -44,18 +44,18 @@ namespace dynamicgraph {
     PyObject*
     plug(PyObject* self, PyObject* args)
     {
-      char* objOut = NULL;
       char* objIn = NULL;
-      char* sigOut = NULL;
+      char* objOut = NULL;
       char* sigIn = NULL;
-      if (!PyArg_ParseTuple(args,"ssss", &objIn, &sigIn, &objOut, &sigOut))
+      char* sigOut = NULL;
+      if (!PyArg_ParseTuple(args,"ssss", &objOut, &sigOut, &objIn, &sigIn))
 	return NULL;
 
       std::ostringstream os;
       try {
-	interpreter.cmdPlug(objIn, sigIn, objOut, sigOut, os);
-      } catch (dynamicgraph::ExceptionFactory& exc) {
-	PyErr_SetString(error, exc.getStringMessage().c_str());
+	interpreter.cmdPlug(objOut, sigOut, objIn, sigIn, os);
+      } catch (std::exception& exc) {
+	PyErr_SetString(error, exc.what());
 	return NULL;
       }
 
