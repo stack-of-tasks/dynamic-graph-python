@@ -8,7 +8,7 @@ import re
 
 def stringToTuple(vector):
     """
-    Transform a string of format '[n](x_1, x_2, ..., x_{n-1} into a list of
+    Transform a string of format '[n](x_1, x_2, ..., x_{n-1}) into a list of
     numbers
     """
     # Find vector length
