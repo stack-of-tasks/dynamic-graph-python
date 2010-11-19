@@ -10,6 +10,7 @@
 
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/factory.h>
+#include <dynamic-graph/linear-algebra.h>
 
 #include "dynamic-graph/command.h"
 #include "dynamic-graph/value.h"
@@ -19,6 +20,8 @@ using dynamicgraph::SignalBase;
 using dynamicgraph::ExceptionAbstract;
 using dynamicgraph::command::Command;
 using dynamicgraph::command::Value;
+using dynamicgraph::Vector;
+using dynamicgraph::Matrix;
 
 namespace dynamicgraph {
   namespace python {
@@ -28,9 +31,14 @@ namespace dynamicgraph {
     namespace entity {
 
       static void destroy (void* self);
+      static void fillMatrixRow(Matrix& m, unsigned index,
+				PyObject* tuple);
+
       static Value pythonToValue(PyObject* pyObject,
-					const Value::Type& valueType);
+				 const Value::Type& valueType);
+      static PyObject* vectorToPython(const Vector& vector);
       static PyObject* valueToPython(const Value& value);
+
       /**
 	 \brief Create an instance of Entity
       */
@@ -142,6 +150,23 @@ namespace dynamicgraph {
 	return Py_BuildValue("");
       }
 
+      void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
+      {
+	if (PyTuple_Size(tuple) != m.size2()) {
+	  throw ExceptionFactory(ExceptionFactory::GENERIC,
+				 "lines of matrix have different sizes.");
+	}
+	for (unsigned int iCol=0; iCol < m.size2(); iCol++) {
+	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
+	  if (!PyFloat_Check(pyDouble)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "element of matrix should be "
+				   "a floating point number.");
+	  }
+	  m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
+	}
+      }
+
       Value pythonToValue(PyObject* pyObject,
 			  const Value::Type& valueType)
       {
@@ -151,6 +176,13 @@ namespace dynamicgraph {
 	float fvalue;
 	double dvalue;
 	std::string svalue;
+	Vector v;
+	Matrix m;
+	unsigned int nCols;
+	unsigned int size;
+	PyObject* row;
+	unsigned int nRows;
+	FILE* file;
 
 	switch (valueType) {
 	case (Value::BOOL) :
@@ -197,10 +229,87 @@ namespace dynamicgraph {
 	  svalue = PyString_AsString(pyObject);
 	  return Value(svalue);
 	  break;
+	case (Value::VECTOR) :
+	  // Check that argument is a tuple
+	  if (!PyTuple_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "vector");
+	  }
+	  size = PyTuple_Size(pyObject);
+	  v.resize(size);
+	  for (unsigned int i=0; i<size; i++) {
+	    PyObject* pyDouble = PyTuple_GetItem(pyObject, i);
+	    if (!PyFloat_Check(pyDouble)) {
+	      throw ExceptionFactory(ExceptionFactory::GENERIC,
+				     "element of vector should be a floating "
+				     "point number.");
+	    }
+	    v[i] = PyFloat_AsDouble(pyDouble);
+	  }
+	  return Value(v);
+	  break;
+	case (Value::MATRIX) :
+	  // Check that argument is a tuple
+	  if (!PyTuple_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "matrix");
+	  }
+	  nRows = PyTuple_Size(pyObject);
+	  if (nRows == 0) {
+	    return Value(Matrix(0,0));
+	  }
+	  row = PyTuple_GetItem(pyObject, 0);
+	  if (!PyTuple_Check(row)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "matrix");
+	  }
+	  nCols = PyTuple_Size(row);
+	  file = fopen("/home/florent/tmp/python", "w");
+	  PyObject_Print(row, file, Py_PRINT_RAW);
+	  fclose(file);
+
+	  m.resize(nRows, nCols);
+	  fillMatrixRow(m, 0, row);
+
+	  for (unsigned int iRow=1; iRow<nRows; iRow++) {
+	    row = PyTuple_GetItem(pyObject, iRow);
+	    if (!PyTuple_Check(row)) {
+	      throw ExceptionFactory(ExceptionFactory::GENERIC,
+				     "matrix");
+	      fillMatrixRow(m, iRow, row);
+	    }
+	  }
+	  return Value(m);
+	  break;
+	default:
+	  std::cerr << "Only int, double and string are supported."
+		    << std::endl;
 	}
-	std::cerr << "Only int, double and string are supported."
-		  << std::endl;
 	return Value();
+      }
+
+      PyObject* vectorToPython(const Vector& vector)
+      {
+	PyObject* tuple = PyTuple_New(vector.size());
+	for (unsigned int index = 0; index < vector.size(); index++) {
+	  PyObject* pyDouble = PyFloat_FromDouble(vector[index]);
+	  PyTuple_SET_ITEM(tuple, index, pyDouble);
+	}
+	return tuple;
+      }
+
+      PyObject* matrixToPython(const Matrix& matrix)
+      {
+	PyObject* tuple = PyTuple_New(matrix.size1());
+	for (unsigned int iRow = 0; iRow < matrix.size1(); iRow++) {
+	  PyObject* row = PyTuple_New(matrix.size2());
+	  for (unsigned iCol=0; iCol < matrix.size2(); iCol++) {
+	    PyObject* pyDouble = PyFloat_FromDouble(matrix(iRow, iCol));
+	    PyTuple_SET_ITEM(row, iCol, pyDouble);
+	  }
+	  PyTuple_SET_ITEM(tuple, iRow, row);
+	}
+	return tuple;
       }
 
       PyObject* valueToPython(const Value& value)
@@ -211,6 +320,8 @@ namespace dynamicgraph {
 	float floatValue;
 	double doubleValue;
 	std::string stringValue;
+	Vector vectorValue;
+	Matrix matrixValue;
 
 	switch(value.type()) {
 	case (Value::BOOL) :
@@ -234,6 +345,14 @@ namespace dynamicgraph {
 	case (Value::STRING) :
 	  stringValue = (std::string) value.value();
 	  return Py_BuildValue("s", stringValue.c_str());
+	case (Value::VECTOR) :
+	  vectorValue = value.value();
+	  return vectorToPython(vectorValue);
+	case (Value::MATRIX) :
+	  matrixValue = value.value();
+	  return matrixToPython(matrixValue);
+	default:
+	  return Py_BuildValue("");
 	}
 	return Py_BuildValue("");
       }
@@ -298,11 +417,6 @@ namespace dynamicgraph {
 	    PyErr_SetString(error, ss.str().c_str()) ;
 	    return NULL;
 	  }
-	}
-	std::cout << "executeCommand:"<< std::endl;
-	for (unsigned int i=0; i<valueVector.size(); i++) {
-	  std::cout << "  value[" << i << "]=("
-		    << valueVector[i] << ")" << std::endl;
 	}
 	command->setParameterValues(valueVector);
 	try {
