@@ -22,7 +22,6 @@ def initEntity(self, name):
         commands = wrap.entity_list_commands(self.object)
         # for each command, add a method with the name of the command
         for command in commands:
-            print ('adding method %s in class %s' %(command, self.__class__))
             setattr(self.__class__, command, commandMethod(command))
         self.__class__.commandCreated = True
 
