@@ -11,6 +11,7 @@
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/interpreter-helper.h>
 #include <dynamic-graph/functions.h>
+#include <dynamic-graph/signal-base.h>
 
 namespace dynamicgraph {
   namespace python {
@@ -44,21 +45,31 @@ namespace dynamicgraph {
     PyObject*
     plug(PyObject* self, PyObject* args)
     {
-      char* objIn = NULL;
-      char* objOut = NULL;
-      char* sigIn = NULL;
-      char* sigOut = NULL;
-      if (!PyArg_ParseTuple(args,"ssss", &objOut, &sigOut, &objIn, &sigIn))
+      PyObject* objOut = NULL;
+      PyObject* objIn = NULL;
+      void* pObjOut;
+      void* pObjIn;
+
+      if (!PyArg_ParseTuple(args,"OO", &objOut, &objIn))
 	return NULL;
 
+      if (!PyCObject_Check(objOut))
+	return NULL;
+      if (!PyCObject_Check(objIn))
+	return NULL;
+
+      pObjIn = PyCObject_AsVoidPtr(objIn);
+	SignalBase<int>* signalIn = (SignalBase<int>*)pObjIn;
+      pObjOut = PyCObject_AsVoidPtr(objOut);
+	SignalBase<int>* signalOut = (SignalBase<int>*)pObjOut;
       std::ostringstream os;
+
       try {
-	interpreter.cmdPlug(objOut, sigOut, objIn, sigIn, os);
+	signalIn->plug(signalOut);
       } catch (std::exception& exc) {
 	PyErr_SetString(error, exc.what());
 	return NULL;
       }
-
       return Py_BuildValue("");
     }
 
