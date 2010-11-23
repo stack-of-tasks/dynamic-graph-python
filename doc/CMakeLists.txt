@@ -1,15 +1,15 @@
-# 
-#  Copyright 
-# 
+#
+#  Copyright 2010 CNRS
+#  Author: Florent Lamiraux
+#
 
-# Configure package.dox file
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/package.dox.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/package.dox
-)
-
+CONFIG_FILES_CMAKE(
+  sphinx/index.rst
+  sphinx/conf.py
+  )
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
-  COMMAND ${DOXYGEN_EXECUTABLE} \"${CMAKE_CURRENT_BINARY_DIR}/package.dox\"
+  COMMAND ${SPHINX_EXECUTABLE} -b html \"${CMAKE_CURRENT_BINARY_DIR}/sphinx\" \"${CMAKE_CURRENT_BINARY_DIR}/sphinx-html\"
 )
 
 ADD_CUSTOM_TARGET(documentation ALL
@@ -20,13 +20,9 @@ ADD_CUSTOM_TARGET(documentation ALL
 #
 
 # html files
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sphinx-html
   DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME})
-
-# doxytag
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.doxytag
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME}/html)
 
 # pictures
 INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/pictures
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME}/html)
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME})
