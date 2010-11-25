@@ -7,9 +7,10 @@ import wrap, signal_base
 
 entityClassNameList = []
 
-def commandMethod(name) :
+def commandMethod(name, docstring) :
     def method(self, *arg):
         return wrap.entity_execute_command(self.object, name, arg)
+    method.__doc__ = docstring
     return method
 
 def initEntity(self, name):
@@ -22,7 +23,8 @@ def initEntity(self, name):
         commands = wrap.entity_list_commands(self.object)
         # for each command, add a method with the name of the command
         for command in commands:
-            setattr(self.__class__, command, commandMethod(command))
+            docstring = wrap.entity_get_command_docstring(self.object, command)
+            setattr(self.__class__, command, commandMethod(command, docstring))
         self.__class__.commandCreated = True
 
 def updateEntityClasses(dictionary):

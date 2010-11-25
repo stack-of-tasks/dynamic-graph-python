@@ -458,6 +458,32 @@ namespace dynamicgraph {
 	}
 	return result;
       }
+      PyObject* getCommandDocstring(PyObject* self, PyObject* args)
+      {
+	PyObject* object = NULL;
+	char* commandName;
+	if (!PyArg_ParseTuple(args, "Os", &object, &commandName)) {
+	  return NULL;
+	}
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(error, "first argument is not an object");
+	  return NULL;
+	}
+	void* pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+	typedef	std::map<const std::string, command::Command*>  CommandMap;
+	CommandMap map = entity->getNewStyleCommandMap();
+	command::Command* command = NULL;
+	try {
+	  command = map[commandName];
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	}
+	std::string docstring = command->getDocstring();
+	return Py_BuildValue("s", docstring.c_str());
+      }
     }
   }
 }
