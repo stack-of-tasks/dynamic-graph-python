@@ -145,24 +145,24 @@ class SignalBase (object) :
     This class binds dynamicgraph::SignalBase<int> C++ class
     """
 
-    object = None
+    obj = None
 
-    def __init__(self, name, object = None) :
+    def __init__(self, name, obj = None) :
         """
         Constructor: if not called by a child class, create and store a pointer
         to a C++ SignalBase<int> object.
         """
-        if object :
-            self.object = object
-        if not self.object :
-            self.object = wrap.create_signal_base(self, name)
+        if obj :
+            self.obj = obj
+        if not self.obj :
+            self.obj = wrap.create_signal_base(self, name)
 
     @property
     def time(self) :
         """
         Get time of signal
         """
-        return wrap.signalBaseGetTime(self.object)
+        return wrap.signal_base_get_time(self.obj)
 
     @property
     def value(self) :
@@ -185,7 +185,7 @@ class SignalBase (object) :
             >>> s.value
             (2.5, 0.1, 100.0)
         """
-        string = wrap.signal_base_get_value(self.object)
+        string = wrap.signal_base_get_value(self.obj)
         return stringToObject(string)
 
     @value.setter
@@ -195,4 +195,4 @@ class SignalBase (object) :
         If the signal is plugged, it will be unplugged
         """
         string = objectToString(val)
-        return wrap.signal_base_set_value(self.object, string)
+        return wrap.signal_base_set_value(self.obj, string)

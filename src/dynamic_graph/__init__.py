@@ -12,4 +12,4 @@ def plug (signalOut, signalIn) :
     Plug an output signal into an input signal
     """
     # get signals and entities
-    w_plug(signalOut.object, signalIn.object)
+    w_plug(signalOut.obj, signalIn.obj)

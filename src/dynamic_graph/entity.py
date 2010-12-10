@@ -9,7 +9,7 @@ entityClassNameList = []
 
 def commandMethod(name, docstring) :
     def method(self, *arg):
-        return wrap.entity_execute_command(self.object, name, arg)
+        return wrap.entity_execute_command(self.obj, name, arg)
     method.__doc__ = docstring
     return method
 
@@ -20,10 +20,10 @@ def initEntity(self, name):
     Entity.__init__(self, self.className, name)
     if not self.__class__.commandCreated:
         # Get list of commands of the Entity object
-        commands = wrap.entity_list_commands(self.object)
+        commands = wrap.entity_list_commands(self.obj)
         # for each command, add a method with the name of the command
         for command in commands:
-            docstring = wrap.entity_get_command_docstring(self.object, command)
+            docstring = wrap.entity_get_command_docstring(self.obj, command)
             setattr(self.__class__, command, commandMethod(command, docstring))
         self.__class__.commandCreated = True
 
@@ -55,29 +55,29 @@ class Entity (object) :
     This class binds dynamicgraph::Entity C++ class
     """
 
-    object = None
+    obj = None
 
     def __init__(self, className, instanceName):
         """
         Constructor: if not called by a child class, create and store a pointer
         to a C++ Entity object.
         """
-        self.object = wrap.create_entity(className, instanceName)
+        self.obj = wrap.create_entity(className, instanceName)
 
     @property
     def name(self) :
-        return wrap.entity_get_name(self.object)
+        return wrap.entity_get_name(self.obj)
 
     def signal (self, name) :
         """
         Get a signal of the entity from signal name
         """
-        signalPt = wrap.entity_get_signal(self.object, name)
+        signalPt = wrap.entity_get_signal(self.obj, name)
         return signal_base.SignalBase("", signalPt)
 
     def display_signals(self) :
         """
         Write the list of signals into standard output: temporary.
         """
-        wrap.entity_display_signals(self.object)
+        wrap.entity_display_signals(self.obj)
 
