@@ -114,7 +114,7 @@ static PyMethodDef dynamicGraphMethods[] = {
   // Signals
   {"create_signal_base", dynamicgraph::python::signalBase::create, METH_VARARGS,
    "create a SignalBase C++ object"},
-  {"signalbase_get_time", dynamicgraph::python::signalBase::getTime,
+  {"signal_base_get_time", dynamicgraph::python::signalBase::getTime,
    METH_VARARGS, "Get time of  a SignalBase"},
   {"signal_base_get_value", dynamicgraph::python::signalBase::getValue,
    METH_VARARGS, "Read the value of a signal"},
