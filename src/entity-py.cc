@@ -152,11 +152,11 @@ namespace dynamicgraph {
 
       void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
       {
-	if (PyTuple_Size(tuple) != m.size2()) {
+	if (PyTuple_Size(tuple) != m.nbCols()) {
 	  throw ExceptionFactory(ExceptionFactory::GENERIC,
 				 "lines of matrix have different sizes.");
 	}
-	for (unsigned int iCol=0; iCol < m.size2(); iCol++) {
+	for (unsigned int iCol=0; iCol < m.nbCols(); iCol++) {
 	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
 	  if (!PyFloat_Check(pyDouble)) {
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
@@ -244,7 +244,7 @@ namespace dynamicgraph {
 				     "element of vector should be a floating "
 				     "point number.");
 	    }
-	    v[i] = PyFloat_AsDouble(pyDouble);
+	    v(i) = PyFloat_AsDouble(pyDouble);
 	  }
 	  return Value(v);
 	  break;
@@ -256,7 +256,7 @@ namespace dynamicgraph {
 	  }
 	  nRows = PyTuple_Size(pyObject);
 	  if (nRows == 0) {
-	    return Value(Matrix(0,0));
+	    return Value(Matrix());
 	  }
 	  row = PyTuple_GetItem(pyObject, 0);
 	  if (!PyTuple_Check(row)) {
@@ -292,7 +292,7 @@ namespace dynamicgraph {
       {
 	PyObject* tuple = PyTuple_New(vector.size());
 	for (unsigned int index = 0; index < vector.size(); index++) {
-	  PyObject* pyDouble = PyFloat_FromDouble(vector[index]);
+	  PyObject* pyDouble = PyFloat_FromDouble(vector(index));
 	  PyTuple_SET_ITEM(tuple, index, pyDouble);
 	}
 	return tuple;
@@ -300,10 +300,10 @@ namespace dynamicgraph {
 
       PyObject* matrixToPython(const Matrix& matrix)
       {
-	PyObject* tuple = PyTuple_New(matrix.size1());
-	for (unsigned int iRow = 0; iRow < matrix.size1(); iRow++) {
-	  PyObject* row = PyTuple_New(matrix.size2());
-	  for (unsigned iCol=0; iCol < matrix.size2(); iCol++) {
+	PyObject* tuple = PyTuple_New(matrix.nbRows());
+	for (unsigned int iRow = 0; iRow < matrix.nbRows(); iRow++) {
+	  PyObject* row = PyTuple_New(matrix.nbCols());
+	  for (unsigned iCol=0; iCol < matrix.nbCols(); iCol++) {
 	    PyObject* pyDouble = PyFloat_FromDouble(matrix(iRow, iCol));
 	    PyTuple_SET_ITEM(row, iCol, pyDouble);
 	  }
