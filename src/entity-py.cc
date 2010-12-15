@@ -422,7 +422,7 @@ namespace dynamicgraph {
 	try {
 	  Value result = command->execute();
 	  return valueToPython(result);
-	} catch (const ExceptionAbstract& exc) {
+	} catch (const std::exception& exc) {
 	  PyErr_SetString(error, exc.what()) ;
 	  return NULL;
 	}
