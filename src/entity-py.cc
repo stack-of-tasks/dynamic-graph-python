@@ -226,6 +226,10 @@ namespace dynamicgraph {
 	  return Value(dvalue);
 	  break;
 	case (Value::STRING) :
+	  if (!PyString_Check(pyObject)) {
+	    throw ExceptionFactory(ExceptionFactory::GENERIC,
+				   "string");
+	  }
 	  svalue = PyString_AsString(pyObject);
 	  return Value(svalue);
 	  break;
