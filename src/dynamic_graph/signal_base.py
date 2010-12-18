@@ -13,16 +13,18 @@ def stringToTuple (vector) :
     # Find vector length
     a = re.match('\[(\d+)\]',vector)
     size = int(a.group(1))
-    format = '\('
-    for i in range(size):
-        format += '(.*)'
-        if i != size-1:
-            format += ','
-    format += '\)'
-    a = re.search(format, vector)
-    res = []
-    for i in range (1, size+1):
-        res.append (float(a.group(i)))
+    # remove '[n]' prefix
+    vector = vector[len(a.group(0)):]
+    # remove '(' and ')' at beginning and end
+    vector = vector.lstrip('(').rstrip(')\n')
+    # split string by ','
+    vector = vector.split(',')
+    # check size
+    if len(vector) != size:
+        raise TypeError('displayed size ' +
+                        size + ' of vector does not fit actual size: '
+                        + str(len(vector)))
+    res = map(float, vector)
     return tuple (res)
 
 def tupleToString (vector) :
@@ -46,26 +48,23 @@ def stringToMatrix (string) :
     a = re.search ('\[(\d+),(\d+)]', string)
     nRows = int (a.group(1))
     nCols = int (a.group(2))
-    format = '\('
-    for row in range (nRows) :
-        format += '\('
-        for col in range (nCols) :
-            format += '(.*)'
-            if col != nCols-1 :
-                format += ','
-        format += '\)'
-        if row != nRows-1 :
-            format += ','
-    format += '\)'
-    a = re.search (format, string)
+    # Remove '[n,m]' prefix
+    string = string[len(a.group(0)):]
+    rows = string.split('),(')
+    if len(rows) != nRows:
+        raise TypeError('displayed nb rows ' +
+                        nRows + ' of matrix does not fit actual nb rows: '
+                        + str(len(rows)))
     m = []
-    index = 1
-    for r in range (nRows) :
-        row = []
-        for c in range (nCols) :
-            row.append (float (a.group (index)))
-            index += 1
-        m.append (tuple (row))
+    for rstr in rows:
+        rstr = rstr.lstrip('(').rstrip(')\n')
+        r = map(float, rstr.split(','))
+        if len(r) != nCols:
+            raise TypeError('one row length ' +
+                            len(r) +
+                            ' of matrix does not fit displayed nb cols: ' +
+                            nCols)
+        m.append(tuple(r))
     return tuple (m)
 
 def matrixToString(matrix) :
