@@ -182,7 +182,6 @@ namespace dynamicgraph {
 	unsigned int size;
 	PyObject* row;
 	unsigned int nRows;
-	FILE* file;
 
 	switch (valueType) {
 	case (Value::BOOL) :
@@ -268,9 +267,6 @@ namespace dynamicgraph {
 				   "matrix");
 	  }
 	  nCols = PyTuple_Size(row);
-	  file = fopen("/home/florent/tmp/python", "w");
-	  PyObject_Print(row, file, Py_PRINT_RAW);
-	  fclose(file);
 
 	  m.resize(nRows, nCols);
 	  fillMatrixRow(m, 0, row);
