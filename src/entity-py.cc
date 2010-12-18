@@ -280,8 +280,8 @@ namespace dynamicgraph {
 	    if (!PyTuple_Check(row)) {
 	      throw ExceptionFactory(ExceptionFactory::GENERIC,
 				     "matrix");
-	      fillMatrixRow(m, iRow, row);
 	    }
+	    fillMatrixRow(m, iRow, row);
 	  }
 	  return Value(m);
 	  break;
