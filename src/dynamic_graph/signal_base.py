@@ -4,6 +4,7 @@
   Author: Florent Lamiraux
 """
 import wrap
+import entity
 import re
 
 def stringToTuple (vector) :
@@ -92,11 +93,12 @@ def matrixToString(matrix) :
 def objectToString(obj) :
     """
     Transform an object to a string. Object is either
+      - an entity (more precisely a sub-class named Feature)
+      - a matrix
+      - a vector or
       - a floating point number,
       - an integer,
       - a boolean,
-      - a vector or
-      - a matrix
     """
     if (isinstance(obj, tuple)) :
         # matrix or vector
@@ -109,6 +111,8 @@ def objectToString(obj) :
             else :
                 #vector
                 return tupleToString(obj)
+    elif isinstance(obj, entity.Entity) :
+        return obj.name
     else :
         return str(obj)
 
