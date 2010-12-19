@@ -54,8 +54,8 @@ namespace dynamicgraph {
 	try {
 	  obj = dynamicgraph::g_factory.newEntity(std::string(className),
 						  std::string(instanceName));
-	} catch (dynamicgraph::ExceptionFactory& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	} catch (std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
 	  return NULL;
 	}
 
