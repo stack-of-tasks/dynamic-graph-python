@@ -162,7 +162,7 @@ initwrap(void)
     if (m == NULL)
         return;
 
-    std::string msg("dynamic_graph.wrap.error");
+    std::string msg("dynamic_graph.error");
 
     dynamicgraph::python::error =
       PyErr_NewException(const_cast<char*>(msg.c_str()), NULL, NULL);
