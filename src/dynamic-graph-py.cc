@@ -8,9 +8,8 @@
 #include <sstream>
 #include <string>
 
+#include <dynamic-graph/debug.h>
 #include <dynamic-graph/exception-factory.h>
-#include <dynamic-graph/interpreter-helper.h>
-#include <dynamic-graph/functions.h>
 #include <dynamic-graph/signal-base.h>
 
 namespace dynamicgraph {
@@ -37,8 +36,6 @@ namespace dynamicgraph {
       PyObject* getEntityClassList(PyObject* self, PyObject* args);
     }
     PyObject* error;
-
-    static dynamicgraph::InterpreterHelper interpreter;
 
     /**
        \brief plug a signal into another one.
@@ -77,27 +74,34 @@ namespace dynamicgraph {
     PyObject*
     enableTrace(PyObject* self, PyObject* args)
     {
-      char* trueFalse = NULL;
+      PyObject* boolean;
       char* filename = NULL;
-      std::stringstream ss;
-      std::ostringstream os;
 
-      if (PyArg_ParseTuple(args,"ss", &trueFalse, &filename)) {
-	ss << std::string(trueFalse) << " " << std::string(filename);
-      } else if (PyArg_ParseTuple(args,"s", &trueFalse)) {
-	ss << std::string(trueFalse);
+      if (PyArg_ParseTuple(args,"Os", &boolean, &filename)) {
+	if (!PyBool_Check(boolean)) {
+	  PyErr_SetString(PyExc_TypeError, "enableTrace takes as first "
+			  "argument True or False,\n""           and as "
+			  "second argument a filename.");
+	  return NULL;
+	}
+	if (boolean == Py_True) {
+	  try {
+	    DebugTrace::openFile(filename);
+	  } catch (const std::exception& exc) {
+	    PyErr_SetString(PyExc_IOError, exc.what());
+	    return NULL;
+	  }
+	} else {
+	  try {
+	    DebugTrace::closeFile(filename);
+	  } catch (const std::exception& exc) {
+	    PyErr_SetString(PyExc_IOError, exc.what());
+	    return NULL;
+	  }
+	}
       } else {
 	return NULL;
       }
-
-      std::istringstream cmdArg(ss.str());
-      try {
-	ShellFunctions::cmdEnableTrace(std::string("debugtrace"), cmdArg, os);
-      } catch (dynamicgraph::ExceptionFactory& exc) {
-	PyErr_SetString(error, exc.getStringMessage().c_str());
-	return NULL;
-      }
-
       return Py_BuildValue("");
     }
   }
@@ -109,7 +113,7 @@ namespace dynamicgraph {
 static PyMethodDef dynamicGraphMethods[] = {
   {"w_plug",  dynamicgraph::python::plug, METH_VARARGS,
    "plug an output signal into an input signal"},
-  {"w_debugtrace",  dynamicgraph::python::enableTrace, METH_VARARGS,
+  {"enableTrace",  dynamicgraph::python::enableTrace, METH_VARARGS,
    "Enable or disable tracing debug info in a file"},
   // Signals
   {"create_signal_base", dynamicgraph::python::signalBase::create, METH_VARARGS,
