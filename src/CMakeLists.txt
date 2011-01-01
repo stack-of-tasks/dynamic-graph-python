@@ -35,6 +35,7 @@ ADD_LIBRARY(${PYTHON_MODULE}
 	signal-base-py.cc
 	entity-py.cc
 	factory-py.cc
+	signal-caster-py.cc
 )
 
 # Remove prefix lib

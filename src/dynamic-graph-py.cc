@@ -35,6 +35,10 @@ namespace dynamicgraph {
     namespace factory {
       PyObject* getEntityClassList(PyObject* self, PyObject* args);
     }
+    namespace signalCaster {
+      PyObject* getSignalTypeList(PyObject* self, PyObject* args);
+    }
+
     PyObject* error;
 
     /**
@@ -150,6 +154,10 @@ static PyMethodDef dynamicGraphMethods[] = {
    dynamicgraph::python::factory::getEntityClassList,
    METH_VARARGS,
    "return the list of entity classes"},
+  {"signal_caster_get_type_list",
+   dynamicgraph::python::signalCaster::getSignalTypeList,
+   METH_VARARGS,
+   "return the list of signal type names"},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
