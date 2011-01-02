@@ -136,7 +136,11 @@ namespace dynamicgraph {
 
 	pointer = PyCObject_AsVoidPtr(object);
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
-	signal->recompute(time);
+	try {
+	  signal->recompute(time);
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	}
 	return Py_BuildValue("");
       }
     }
