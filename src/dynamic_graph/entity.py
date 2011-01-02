@@ -75,7 +75,7 @@ class Entity (object) :
         signalPt = wrap.entity_get_signal(self.obj, name)
         return signal_base.SignalBase("", signalPt)
 
-    def display_signals(self) :
+    def displaySignals(self) :
         """
         Write the list of signals into standard output: temporary.
         """
