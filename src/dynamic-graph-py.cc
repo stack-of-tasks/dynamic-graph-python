@@ -21,6 +21,7 @@ namespace dynamicgraph {
       extern PyObject* getTime(PyObject* self, PyObject* args);
       extern PyObject* getValue(PyObject* self, PyObject* args);
       extern PyObject* setValue(PyObject* self, PyObject* args);
+      extern PyObject* recompute(PyObject* self, PyObject* args);
     }
     namespace entity {
       extern PyObject* create(PyObject* self, PyObject* args);
@@ -128,6 +129,8 @@ static PyMethodDef dynamicGraphMethods[] = {
    METH_VARARGS, "Read the value of a signal"},
   {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
    METH_VARARGS, "Set the value of a signal"},
+  {"signal_base_recompute", dynamicgraph::python::signalBase::recompute,
+   METH_VARARGS, "Recompute the signal at given time"},
   // Entity
   {"create_entity", dynamicgraph::python::entity::create, METH_VARARGS,
    "create an Entity C++ object"},

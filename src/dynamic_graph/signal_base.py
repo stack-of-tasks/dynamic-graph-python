@@ -199,3 +199,9 @@ class SignalBase (object) :
         """
         string = objectToString(val)
         return wrap.signal_base_set_value(self.obj, string)
+
+    def recompute(self, time):
+        """
+        Force signal to recompute the value at given time.
+        """
+        return wrap.signal_base_recompute(self.obj, time)

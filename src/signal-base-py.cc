@@ -123,6 +123,22 @@ namespace dynamicgraph {
 
 	return Py_BuildValue("");
       }
+
+      PyObject* recompute(PyObject* self, PyObject* args)
+      {
+	void * pointer = NULL;
+	PyObject* object = NULL;
+	unsigned int time;
+	if (!PyArg_ParseTuple(args,"OI", &object, &time))
+	  return NULL;
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* signal = (SignalBase<int>*)pointer;
+	signal->recompute(time);
+	return Py_BuildValue("");
+      }
     }
   }
 }
