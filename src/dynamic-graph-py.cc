@@ -56,10 +56,18 @@ namespace dynamicgraph {
       if (!PyArg_ParseTuple(args,"OO", &objOut, &objIn))
 	return NULL;
 
-      if (!PyCObject_Check(objOut))
+      if (!PyCObject_Check(objOut)) {
+	PyErr_SetString(PyExc_TypeError,
+			"first argument should be a pointer to"
+			" signalBase<int>.");
 	return NULL;
-      if (!PyCObject_Check(objIn))
+      }
+      if (!PyCObject_Check(objIn)) {
+	PyErr_SetString(PyExc_TypeError,
+			"second argument should be a pointer to"
+			" signalBase<int>.");
 	return NULL;
+      }
 
       pObjIn = PyCObject_AsVoidPtr(objIn);
 	SignalBase<int>* signalIn = (SignalBase<int>*)pObjIn;
