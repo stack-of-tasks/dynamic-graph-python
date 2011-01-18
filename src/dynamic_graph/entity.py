@@ -62,7 +62,7 @@ class Entity (object) :
         Constructor: if not called by a child class, create and store a pointer
         to a C++ Entity object.
         """
-        self.obj = wrap.create_entity(className, instanceName)
+        object.__setattr__(self, 'obj', wrap.create_entity(className, instanceName) )
 
     @property
     def name(self) :
@@ -115,3 +115,13 @@ class Entity (object) :
             self.globalHelp()
         else:
             print comm+":\n"+wrap.entity_get_command_docstring(self.obj,comm)
+
+
+    def __getattr__(self, name):
+       return self.signal(name).value
+
+    def __setattr__(self, name,value):
+        try:
+            self.signal(name).value = value
+        except:
+            object.__setattr__(self, name, value)
