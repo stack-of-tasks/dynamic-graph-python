@@ -77,18 +77,26 @@ class Entity (object) :
 
     def displaySignals(self) :
         """
-        Write the list of signals into standard output: temporary.
+        Print the list of signals into standard output: temporary.
         """
         wrap.entity_display_signals(self.obj)
 
     def signals(self) :
+        """
+        Alias of displaySignals to reduce verbosity. To be confirmed.
+        """
         self.displaySignals()
 
-
     def commands(self):
+        """
+        Return the list of commands.
+        """
         return wrap.entity_list_commands(self.obj)
 
     def globalHelp(self):
+        """
+        Print a short description of each command.
+        """
         for cstr in self.commands():
             ctitle=cstr+':'
             for i in range(len(cstr),15):
@@ -99,6 +107,10 @@ class Entity (object) :
                     break
 
     def help( self,comm=None ):
+        """
+        With no arg, print the global help. With arg the name of
+        a specific command, print the help associated to the command.
+        """
         if comm is None:
             self.globalHelp()
         else:
