@@ -81,3 +81,25 @@ class Entity (object) :
         """
         wrap.entity_display_signals(self.obj)
 
+    def signals(self) :
+        self.displaySignals()
+
+
+    def commands(self):
+        return wrap.entity_list_commands(self.obj)
+
+    def globalHelp(self):
+        for cstr in self.commands():
+            ctitle=cstr+':'
+            for i in range(len(cstr),15):
+                ctitle+=' '
+            for docstr in wrap.entity_get_command_docstring(self.obj,cstr).split('\n'):
+                if (len(docstr)>0) and (not docstr.isspace()):
+                    print ctitle+"\t"+docstr
+                    break
+
+    def help( self,comm=None ):
+        if comm is None:
+            self.globalHelp()
+        else:
+            print comm+":\n"+wrap.entity_get_command_docstring(self.obj,comm)
