@@ -118,7 +118,10 @@ class Entity (object) :
 
 
     def __getattr__(self, name):
-       return self.signal(name).value
+        try:
+            return self.signal(name).value
+        except:
+            object.__getattr__(self, name)
 
     def __setattr__(self, name,value):
         try:
