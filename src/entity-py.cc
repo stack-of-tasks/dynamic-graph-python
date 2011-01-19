@@ -60,7 +60,7 @@ namespace dynamicgraph {
 	}
 
 	// Return the pointer as a PyCObject
-	return PyCObject_FromVoidPtr((void*)obj, destroy);
+	return PyCObject_FromVoidPtr((void*)obj, NULL);
       }
 
       /**
