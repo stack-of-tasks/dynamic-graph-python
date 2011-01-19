@@ -91,6 +91,33 @@ namespace dynamicgraph {
 	return Py_BuildValue("s", valueString.c_str());
       }
 
+      PyObject* getName(PyObject* self, PyObject* args)
+      {
+	void* pointer = NULL;
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args,"O", &object))
+	  return NULL;
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* signal = (SignalBase<int>*)pointer;
+
+	std::string name;
+	try {
+	  name = signal->getName();
+	} catch (const dynamicgraph::ExceptionAbstract& exc) {
+	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  return NULL;
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	} catch (...) {
+	  PyErr_SetString(error, "Unknown exception");
+	  return NULL;
+	}
+	return Py_BuildValue("s", name.c_str());
+      }
+
       PyObject* setValue(PyObject* self, PyObject* args)
       {
 	void * pointer = NULL;

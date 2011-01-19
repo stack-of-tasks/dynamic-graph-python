@@ -200,6 +200,12 @@ class SignalBase (object) :
         string = objectToString(val)
         return wrap.signal_base_set_value(self.obj, string)
 
+    def getName(self):
+        """
+        Get name of signal
+        """
+        return wrap.signal_base_get_name(self.obj)
+
     def recompute(self, time):
         """
         Force signal to recompute the value at given time.

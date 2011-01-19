@@ -19,6 +19,7 @@ namespace dynamicgraph {
     namespace signalBase {
       extern PyObject* create(PyObject* self, PyObject* args);
       extern PyObject* getTime(PyObject* self, PyObject* args);
+      extern PyObject* getName(PyObject* self, PyObject* args);
       extern PyObject* getValue(PyObject* self, PyObject* args);
       extern PyObject* setValue(PyObject* self, PyObject* args);
       extern PyObject* recompute(PyObject* self, PyObject* args);
@@ -133,6 +134,8 @@ static PyMethodDef dynamicGraphMethods[] = {
    "create a SignalBase C++ object"},
   {"signal_base_get_time", dynamicgraph::python::signalBase::getTime,
    METH_VARARGS, "Get time of  a SignalBase"},
+  {"signal_base_get_name", dynamicgraph::python::signalBase::getName,
+   METH_VARARGS, "Get the name of a signal"},
   {"signal_base_get_value", dynamicgraph::python::signalBase::getValue,
    METH_VARARGS, "Read the value of a signal"},
   {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
