@@ -119,12 +119,7 @@ class Entity (object) :
 
     def __getattr__(self, name):
         try:
-            return self.signal(name).value
+            return self.signal(name)
         except:
             object.__getattr__(self, name)
 
-    def __setattr__(self, name,value):
-        try:
-            self.signal(name).value = value
-        except:
-            object.__setattr__(self, name, value)
