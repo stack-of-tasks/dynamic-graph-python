@@ -150,7 +150,7 @@ class SignalBase (object) :
 
     obj = None
 
-    def __init__(self, name, obj = None) :
+    def __init__(self, name = "", obj = None) :
         """
         Constructor: if not called by a child class, create and store a pointer
         to a C++ SignalBase<int> object.

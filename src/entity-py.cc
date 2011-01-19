@@ -157,6 +157,40 @@ namespace dynamicgraph {
 	return Py_BuildValue("");
       }
 
+      PyObject* listSignals(PyObject* self, PyObject* args)
+      {
+	void* pointer = NULL;
+	PyObject* object = NULL;
+
+	if (!PyArg_ParseTuple(args, "O", &object))
+	  return NULL;
+
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	try {
+	  Entity::SignalMap signalMap = entity->getSignalMap();
+	  // Create a tuple of same size as the command map
+	  PyObject* result = PyTuple_New(signalMap.size());
+	  unsigned int count = 0;
+
+	  for (Entity::SignalMap::iterator it = signalMap.begin();
+	       it != signalMap.end(); it++) {
+	    SignalBase<int>* signal = it->second;
+	    PyObject* pySignal = PyCObject_FromVoidPtr((void*)signal, NULL);
+	    PyTuple_SET_ITEM(result, count, pySignal);
+	    count++;
+	  }
+	  return result;
+	} catch(ExceptionAbstract& exc) {
+	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	}
+	return NULL;
+      }
+
       void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
       {
 	if (PyTuple_Size(tuple) != (int)m.nbCols()) {

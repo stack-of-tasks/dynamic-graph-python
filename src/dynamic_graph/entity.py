@@ -73,7 +73,7 @@ class Entity (object) :
         Get a signal of the entity from signal name
         """
         signalPt = wrap.entity_get_signal(self.obj, name)
-        return signal_base.SignalBase("", signalPt)
+        return signal_base.SignalBase(name = "", obj = signalPt)
 
     def displaySignals(self) :
         """
@@ -85,7 +85,8 @@ class Entity (object) :
         """
         Alias of displaySignals to reduce verbosity. To be confirmed.
         """
-        self.displaySignals()
+        sl = wrap.entity_list_signals(self.obj)
+        return map(lambda pyObj: signalBase.SignalBase(obj=pyObj), sl)
 
     def commands(self):
         """
