@@ -157,7 +157,7 @@ namespace dynamicgraph {
 	return Py_BuildValue("");
       }
 
-      PyObject* listSignals(PyObject* self, PyObject* args)
+      PyObject* listSignals(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
 	PyObject* object = NULL;
