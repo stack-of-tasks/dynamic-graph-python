@@ -1,12 +1,20 @@
-/*
- *  Copyright 2010 (C) CNRS
- *  Author: Florent Lamiraux
- */
+// Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
+//
+// This file is part of dynamic-graph-python.
+// dynamic-graph-python is free software: you can redistribute it
+// and/or modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
+//
+// dynamic-graph-python is distributed in the hope that it will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Lesser Public License for more details.  You should
+// have received a copy of the GNU Lesser General Public License along
+// with dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Python.h>
 #include <iostream>
-//#include <sstream>
-//#include <string>
 
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/factory.h>
@@ -30,7 +38,6 @@ namespace dynamicgraph {
 
     namespace entity {
 
-      static void destroy (void* self);
       static void fillMatrixRow(Matrix& m, unsigned index,
 				PyObject* tuple);
 
@@ -42,7 +49,7 @@ namespace dynamicgraph {
       /**
 	 \brief Create an instance of Entity
       */
-      PyObject* create(PyObject* self, PyObject* args)
+      PyObject* create(PyObject* /*self*/, PyObject* args)
       {
 	char *className = NULL;
 	char *instanceName = NULL;
@@ -64,18 +71,9 @@ namespace dynamicgraph {
       }
 
       /**
-	 \brief Destroy an instance of Entity
-      */
-      static void destroy (void* self)
-      {
-	Entity* obj = (Entity*)self;
-	delete obj;
-      }
-
-      /**
 	 \brief Get name of entity
       */
-      PyObject* getName(PyObject* self, PyObject* args)
+      PyObject* getName(PyObject* /*self*/, PyObject* args)
       {
 	PyObject* object = NULL;
 	void* pointer = NULL;
@@ -101,7 +99,7 @@ namespace dynamicgraph {
       /**
 	 \brief Get a signal by name
       */
-      PyObject* getSignal(PyObject* self, PyObject* args)
+      PyObject* getSignal(PyObject* /*self*/, PyObject* args)
       {
 	char *name = NULL;
 	PyObject* object = NULL;
@@ -128,7 +126,7 @@ namespace dynamicgraph {
 	return PyCObject_FromVoidPtr((void*)signal, NULL);
       }
 
-      PyObject* displaySignals(PyObject* self, PyObject* args)
+      PyObject* displaySignals(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
 	PyObject* object = NULL;
@@ -152,7 +150,7 @@ namespace dynamicgraph {
 
       void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
       {
-	if (PyTuple_Size(tuple) != m.nbCols()) {
+	if (PyTuple_Size(tuple) != (int)m.nbCols()) {
 	  throw ExceptionFactory(ExceptionFactory::GENERIC,
 				 "lines of matrix have different sizes.");
 	}
@@ -357,7 +355,7 @@ namespace dynamicgraph {
 	return Py_BuildValue("");
       }
 
-      PyObject* executeCommand(PyObject* self, PyObject* args)
+      PyObject* executeCommand(PyObject* /*self*/, PyObject* args)
       {
 	PyObject* object = NULL;
 	PyObject* argTuple = NULL;
@@ -429,7 +427,7 @@ namespace dynamicgraph {
 	return NULL;
       }
 
-      PyObject* listCommands(PyObject* self, PyObject* args)
+      PyObject* listCommands(PyObject* /*self*/, PyObject* args)
       {
 	PyObject* object = NULL;
 	if (!PyArg_ParseTuple(args, "O", &object)) {
@@ -458,7 +456,7 @@ namespace dynamicgraph {
 	}
 	return result;
       }
-      PyObject* getCommandDocstring(PyObject* self, PyObject* args)
+      PyObject* getCommandDocstring(PyObject* /*self*/, PyObject* args)
       {
 	PyObject* object = NULL;
 	char* commandName;

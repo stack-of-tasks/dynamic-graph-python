@@ -1,7 +1,17 @@
-/*
- *  Copyright 2010 (C) CNRS
- *  Author: Florent Lamiraux
- */
+// Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
+//
+// This file is part of dynamic-graph-python.
+// dynamic-graph-python is free software: you can redistribute it
+// and/or modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
+//
+// dynamic-graph-python is distributed in the hope that it will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Lesser Public License for more details.  You should
+// have received a copy of the GNU Lesser General Public License along
+// with dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Python.h>
 #include <iostream>
@@ -24,7 +34,7 @@ namespace dynamicgraph {
       /**
 	 \brief Create an instance of SignalBase
       */
-      PyObject* create(PyObject* self, PyObject* args)
+      PyObject* create(PyObject* /*self*/, PyObject* args)
       {
 	char *name = NULL;
 
@@ -47,7 +57,7 @@ namespace dynamicgraph {
 	delete obj;
       }
 
-      PyObject* getTime(PyObject* self, PyObject* args)
+      PyObject* getTime(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
 	PyObject* object = NULL;
@@ -63,7 +73,7 @@ namespace dynamicgraph {
 	return Py_BuildValue("i", time);
       }
 
-      PyObject* getValue(PyObject* self, PyObject* args)
+      PyObject* getValue(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
 	PyObject* object = NULL;
@@ -91,7 +101,7 @@ namespace dynamicgraph {
 	return Py_BuildValue("s", valueString.c_str());
       }
 
-      PyObject* getName(PyObject* self, PyObject* args)
+      PyObject* getName(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
 	PyObject* object = NULL;
@@ -118,7 +128,7 @@ namespace dynamicgraph {
 	return Py_BuildValue("s", name.c_str());
       }
 
-      PyObject* setValue(PyObject* self, PyObject* args)
+      PyObject* setValue(PyObject* /*self*/, PyObject* args)
       {
 	void * pointer = NULL;
 	PyObject* object = NULL;
@@ -151,7 +161,7 @@ namespace dynamicgraph {
 	return Py_BuildValue("");
       }
 
-      PyObject* recompute(PyObject* self, PyObject* args)
+      PyObject* recompute(PyObject* /*self*/, PyObject* args)
       {
 	void * pointer = NULL;
 	PyObject* object = NULL;
