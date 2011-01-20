@@ -79,7 +79,11 @@ class Entity (object) :
         """
         Print the list of signals into standard output: temporary.
         """
-        wrap.entity_display_signals(self.obj)
+        signals = self.signals()
+        print "--- <" +  self.name + "> signal list: "
+        for s in signals[:-1]:
+            print "    |-- <" + str(s)
+        print "    `-- <" + str(signals[-1])
 
     def signals(self) :
         """

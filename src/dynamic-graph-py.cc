@@ -30,6 +30,7 @@ namespace dynamicgraph {
       extern PyObject* create(PyObject* self, PyObject* args);
       extern PyObject* getTime(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
+      extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* getValue(PyObject* self, PyObject* args);
       extern PyObject* setValue(PyObject* self, PyObject* args);
       extern PyObject* recompute(PyObject* self, PyObject* args);
@@ -38,7 +39,6 @@ namespace dynamicgraph {
       extern PyObject* create(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
       extern PyObject* getSignal(PyObject* self, PyObject* args);
-      extern PyObject* displaySignals(PyObject* self, PyObject* args);
       extern PyObject* listSignals(PyObject* self, PyObject* args);
       extern PyObject* executeCommand(PyObject* self, PyObject* args);
       extern PyObject* listCommands(PyObject* self, PyObject* args);
@@ -147,9 +147,11 @@ static PyMethodDef dynamicGraphMethods[] = {
    METH_VARARGS, "Get time of  a SignalBase"},
   {"signal_base_get_name", dynamicgraph::python::signalBase::getName,
    METH_VARARGS, "Get the name of a signal"},
+  {"signal_base_display", dynamicgraph::python::signalBase::display,
+   METH_VARARGS, "Print the signal in a string"},
   {"signal_base_get_value", dynamicgraph::python::signalBase::getValue,
-   METH_VARARGS, "Read the value of a signal"},
-  {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
+   METH_VARARGS, "Read the value of a signal"}, 
+ {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
    METH_VARARGS, "Set the value of a signal"},
   {"signal_base_recompute", dynamicgraph::python::signalBase::recompute,
    METH_VARARGS, "Recompute the signal at given time"},
@@ -160,9 +162,6 @@ static PyMethodDef dynamicGraphMethods[] = {
    "get the name of an Entity"},
   {"entity_get_signal", dynamicgraph::python::entity::getSignal, METH_VARARGS,
    "get signal by name from an Entity"},
-  {"entity_display_signals", dynamicgraph::python::entity::displaySignals,
-   METH_VARARGS,
-   "Display the list of signals of an entity in standard output"},
   {"entity_list_signals", dynamicgraph::python::entity::listSignals,
    METH_VARARGS,
    "Return the list of signals of an entity."},

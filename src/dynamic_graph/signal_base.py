@@ -211,3 +211,9 @@ class SignalBase (object) :
         Force signal to recompute the value at given time.
         """
         return wrap.signal_base_recompute(self.obj, time)
+
+    def __str__(self):
+        """
+        Print signal in a string
+        """
+        return wrap.signal_base_display(self.obj)

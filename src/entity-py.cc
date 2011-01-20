@@ -132,31 +132,6 @@ namespace dynamicgraph {
 	return PyCObject_FromVoidPtr((void*)signal, NULL);
       }
 
-      PyObject* displaySignals(PyObject* /*self*/, PyObject* args)
-      {
-	void* pointer = NULL;
-	PyObject* object = NULL;
-
-	if (!PyArg_ParseTuple(args, "O", &object))
-	  return NULL;
-
-	if (!PyCObject_Check(object)) {
-	  PyErr_SetString(PyExc_TypeError,
-			  "function takes a PyCObject as argument");
-	  return NULL;
-	}
-
-	pointer = PyCObject_AsVoidPtr(object);
-	Entity* entity = (Entity*)pointer;
-	try {
-	  entity->displaySignalList(std::cout);
-	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
-	  return NULL;
-	}
-	return Py_BuildValue("");
-      }
-
       PyObject* listSignals(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
