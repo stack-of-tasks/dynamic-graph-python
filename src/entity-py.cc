@@ -81,8 +81,11 @@ namespace dynamicgraph {
 
 	if (!PyArg_ParseTuple(args, "O", &object))
 	  return NULL;
-	if (!PyCObject_Check(object))
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
 	  return NULL;
+	}
 
 	pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
@@ -108,8 +111,11 @@ namespace dynamicgraph {
 	if (!PyArg_ParseTuple(args, "Os", &object, &name))
 	  return NULL;
 
-	if (!PyCObject_Check(object))
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
 	  return NULL;
+	}
 
 	pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
@@ -134,8 +140,11 @@ namespace dynamicgraph {
 	if (!PyArg_ParseTuple(args, "O", &object))
 	  return NULL;
 
-	if (!PyCObject_Check(object))
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
 	  return NULL;
+	}
 
 	pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
@@ -368,7 +377,7 @@ namespace dynamicgraph {
 
 	// Retrieve the entity instance
 	if (!PyCObject_Check(object)) {
-	  PyErr_SetString(error, "first argument is not an object");
+	  PyErr_SetString(PyExc_TypeError, "first argument is not an object");
 	  return NULL;
 	}
 	pointer = PyCObject_AsVoidPtr(object);
@@ -376,7 +385,7 @@ namespace dynamicgraph {
 
 	// Retrieve the argument tuple
 	if (!PyTuple_Check(argTuple)) {
-	  PyErr_SetString(error, "third argument is not a tuple");
+	  PyErr_SetString(PyExc_TypeError, "third argument is not a tuple");
 	  return NULL;
 	}
 	unsigned int size = PyTuple_Size(argTuple);
@@ -436,7 +445,8 @@ namespace dynamicgraph {
 
 	// Retrieve the entity instance
 	if (!PyCObject_Check(object)) {
-	  PyErr_SetString(error, "first argument is not an object");
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
 	  return NULL;
 	}
 	void* pointer = PyCObject_AsVoidPtr(object);
