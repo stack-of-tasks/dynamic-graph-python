@@ -1,85 +1,39 @@
+# Copyright 2010, 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 #
-#  Copyright 2010 CNRS
-#  Author: Florent Lamiraux
+# This file is part of dynamic-graph-python.
+# dynamic-graph-python is free software: you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
 #
+# dynamic-graph-python is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Lesser Public License for more details.  You should have
+# received a copy of the GNU Lesser General Public License along with
+# dynamic-graph-python. If not, see <http://www.gnu.org/licenses/>.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 INCLUDE(cmake/base.cmake)
+INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/pthread.cmake)
+INCLUDE(cmake/cpack.cmake)
+
 SET(PROJECT_NAME dynamic-graph-python)
-project(${PROJECT_NAME})
+SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
+SET(PROJECT_URL "http://github.com/jrl-umi3218/dynamic-graph-python")
 
-SET(PROJECT_VERSION 1.0)
+SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
-SET(CMAKE_VERBOSE_MAKEFILE true)
+# Defines paths.
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-IF(WIN32)
-  SET(LIBDIR_KW "/LIBPATH:")
-  SET(LIBINCL_KW "")
-  SET(LIB_EXT ".lib")
-ENDIF(WIN32)
+SETUP_PROJECT()
 
-IF(UNIX)
-  SET(LIBDIR_KW "-L")
-  SET(LIBINCL_KW "-l")
-  SET(LIB_EXT "")
-ENDIF(UNIX)
-
-#
-# Look for dependencies
-#
-
-# Load Pkgconfig macros
-INCLUDE(FindPkgConfig)
-SET(PACKAGE_REQUIREMENTS "")
-
-#
-#  Dependency to package dynamic-graph
-#
-SET(DYNAMIC_GRAPH_FOUND 0)
-SET(DYNAMIC_GRAPH_REQUIRED "dynamic-graph >= 1.0")
-PKG_CHECK_MODULES(DYNAMIC_GRAPH REQUIRED ${DYNAMIC_GRAPH_REQUIRED})
-EXEC_PROGRAM(${PKG_CONFIG_EXECUTABLE} ARGS
-  --variable=doxygendocdir dynamic-graph
-  OUTPUT_VARIABLE DYNAMIC_GRAPH_DOXYGENDOCDIR)
-MESSAGE(STATUS "pkg-config: ${PKG_CONFIG_EXECUTABLE}")
-MESSAGE(STATUS "DYNAMIC_GRAPH_DOCDIR=${DYNAMIC_GRAPH_DOCDIR}")
-SET(DYNAMIC_GRAPH_FOUND 1)
-
-IF(NOT ${DYNAMIC_GRAPH_FOUND})
-  MESSAGE(FATAL_ERROR "Check that package dynamic-graph is installed in a directory pointed out by PKG_CONFIG_PATH.")
-ENDIF(NOT ${DYNAMIC_GRAPH_FOUND})
-
-IF(PACKAGE_REQUIREMENTS STREQUAL "")
-  SET(PACKAGE_REQUIREMENTS ${DYNAMIC_GRAPH_REQUIRED})
-ELSE(PACKAGE_REQUIREMENTS STREQUAL "")
-  SET(PACKAGE_REQUIREMENTS "${PACKAGE_REQUIREMENTS}, ${DYNAMIC_GRAPH_REQUIRED}")
-ENDIF(PACKAGE_REQUIREMENTS STREQUAL "")
-
-#
-# pkg-config file
-#
-
-SET(install_pkg_prefix "\${prefix}")
-SET(install_pkg_exec_prefix "\${exec_prefix}")
-SET(install_pkg_libdir "\${libdir}")
-SET(install_pkg_datarootdir "\${datarootdir}")
-SET(install_pkg_include_dir "\${includedir}")
-
-# Install the file in the appropriate place.
-SET(install_libdir_pkgconfig ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
-
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.pc.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc)
-
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
-  DESTINATION ${install_libdir_pkgconfig}
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE)
+# Trigger dependency to dynamic-graph.
+ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0")
 
 ADD_SUBDIRECTORY(src)
-
-#
-# Documentation produced by doxygen
-#
-SET(SPHINX_EXECUTABLE sphinx-build)
-add_subdirectory(doc)
+ADD_SUBDIRECTORY(doc)
+SETUP_PROJECT_FINALIZE()
