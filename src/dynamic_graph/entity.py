@@ -86,7 +86,7 @@ class Entity (object) :
         Alias of displaySignals to reduce verbosity. To be confirmed.
         """
         sl = wrap.entity_list_signals(self.obj)
-        return map(lambda pyObj: signalBase.SignalBase(obj=pyObj), sl)
+        return map(lambda pyObj: signal_base.SignalBase(obj=pyObj), sl)
 
     def commands(self):
         """
