@@ -20,10 +20,11 @@
 // Python initialization commands
 namespace dynamicgraph {
   namespace python {
-    static const std::string pythonPrefix[3] = {
+    static const std::string pythonPrefix[4] = {
       "import sys\n",
       "import traceback\n",
       "if '' not in sys.path: sys.path.append('')\n",
+      "sys.argv = ['']\n",
     };
   }
 }
@@ -41,6 +42,7 @@ Interpreter::Interpreter()
   PyRun_SimpleString(pythonPrefix[0].c_str());
   PyRun_SimpleString(pythonPrefix[1].c_str());
   PyRun_SimpleString(pythonPrefix[2].c_str());
+  PyRun_SimpleString(pythonPrefix[3].c_str());
   traceback_format_exception_ = PyDict_GetItemString
     (PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
   assert(PyCallable_Check(traceback_format_exception_));
@@ -96,12 +98,12 @@ std::string Interpreter::python( const std::string& command )
 
 void Interpreter::runPythonFile( std::string filename )
 {
+  Py_Finalize();
   Py_Initialize();
   PyRun_SimpleString(pythonPrefix[0].c_str());
   PyRun_SimpleString(pythonPrefix[1].c_str());
   PyRun_SimpleString(pythonPrefix[2].c_str());
   PyRun_SimpleFile(NULL, filename.c_str());
-  Py_Finalize();
 }
 
 std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
