@@ -174,12 +174,14 @@ namespace dynamicgraph {
 	}
 	for (unsigned int iCol=0; iCol < m.nbCols(); iCol++) {
 	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
-	  if (!PyFloat_Check(pyDouble)) {
+	  if (PyFloat_Check(pyDouble))
+	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
+	  else if(PyInt_Check(pyDouble))
+	    m(iRow, iCol) = (int)PyInt_AS_LONG(pyDouble)+0.0;
+	  else
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
 				   "element of matrix should be "
 				   "a floating point number.");
-	  }
-	  m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
 	}
       }
 
@@ -258,12 +260,14 @@ namespace dynamicgraph {
 	  v.resize(size);
 	  for (unsigned int i=0; i<size; i++) {
 	    PyObject* pyDouble = PyTuple_GetItem(pyObject, i);
-	    if (!PyFloat_Check(pyDouble)) {
+	    if (PyFloat_Check(pyDouble))
+	      v(i) = PyFloat_AsDouble(pyDouble);
+	    else if(PyInt_Check(pyDouble))
+	      v(i) = (int)PyInt_AS_LONG(pyObject)+0.0;
+	    else
 	      throw ExceptionFactory(ExceptionFactory::GENERIC,
 				     "element of vector should be a floating "
 				     "point number.");
-	    }
-	    v(i) = PyFloat_AsDouble(pyDouble);
 	  }
 	  return Value(v);
 	  break;
@@ -428,7 +432,7 @@ namespace dynamicgraph {
 	    valueVector.push_back(value);
 	  } catch (ExceptionAbstract& exc) {
 	    std::stringstream ss;
-	    ss << "argument " << iParam+1 << " should be a "
+	    ss << "Error while parsing argument " << iParam+1 << ": "
 	       << exc.what() << ".";
 	    PyErr_SetString(error, ss.str().c_str()) ;
 	    return NULL;
