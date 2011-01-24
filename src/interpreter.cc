@@ -20,11 +20,12 @@
 // Python initialization commands
 namespace dynamicgraph {
   namespace python {
-    static const std::string pythonPrefix[4] = {
+    static const std::string pythonPrefix[5] = {
       "import sys\n",
       "import traceback\n",
       "if '' not in sys.path: sys.path.append('')\n",
       "sys.argv = ['']\n",
+      "def display(s): return str(s) if not s is None else None"
     };
   }
 }
@@ -43,6 +44,7 @@ Interpreter::Interpreter()
   PyRun_SimpleString(pythonPrefix[1].c_str());
   PyRun_SimpleString(pythonPrefix[2].c_str());
   PyRun_SimpleString(pythonPrefix[3].c_str());
+  PyRun_SimpleString(pythonPrefix[4].c_str());
   traceback_format_exception_ = PyDict_GetItemString
     (PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
   assert(PyCallable_Check(traceback_format_exception_));
@@ -51,9 +53,9 @@ Interpreter::Interpreter()
 
 Interpreter::~Interpreter()
 {
-  Py_DECREF(mainmod_);
-  Py_DECREF(globals_);
-  Py_DECREF(traceback_format_exception_);
+  //Py_DECREF(mainmod_);
+  //Py_DECREF(globals_);
+  //Py_DECREF(traceback_format_exception_);
   Py_Finalize();
 }
 
@@ -103,6 +105,7 @@ void Interpreter::runPythonFile( std::string filename )
   PyRun_SimpleString(pythonPrefix[0].c_str());
   PyRun_SimpleString(pythonPrefix[1].c_str());
   PyRun_SimpleString(pythonPrefix[2].c_str());
+  PyRun_SimpleString(pythonPrefix[4].c_str());
   PyRun_SimpleFile(NULL, filename.c_str());
 }
 

@@ -6,6 +6,10 @@
 import wrap, signal_base
 
 entityClassNameList = []
+if 'display' not in globals().keys():
+    def display(s):
+        print(s)
+
 
 def commandMethod(name, docstring) :
     def method(self, *arg):
@@ -80,10 +84,10 @@ class Entity (object) :
         Print the list of signals into standard output: temporary.
         """
         signals = self.signals()
-        print "--- <" +  self.name + "> signal list: "
+        display ("--- <" +  self.name + "> signal list: ")
         for s in signals[:-1]:
-            print "    |-- <" + str(s)
-        print "    `-- <" + str(signals[-1])
+            display("    |-- <" + str(s))
+        display("    `-- <" + str(signals[-1]))
 
     def signals(self) :
         """
@@ -108,7 +112,7 @@ class Entity (object) :
                 ctitle+=' '
             for docstr in wrap.entity_get_command_docstring(self.obj,cstr).split('\n'):
                 if (len(docstr)>0) and (not docstr.isspace()):
-                    print ctitle+"\t"+docstr
+                    display(ctitle+"\t"+docstr)
                     break
 
     def help( self,comm=None ):
@@ -119,7 +123,7 @@ class Entity (object) :
         if comm is None:
             self.globalHelp()
         else:
-            print comm+":\n"+wrap.entity_get_command_docstring(self.obj,comm)
+            display(comm+":\n"+wrap.entity_get_command_docstring(self.obj,comm))
 
 
     def __getattr__(self, name):
