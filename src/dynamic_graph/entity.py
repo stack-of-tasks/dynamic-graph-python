@@ -128,3 +128,8 @@ class Entity (object) :
         except:
             object.__getattr__(self, name)
 
+    # Script short-cuts: don't use this syntaxt in python coding,
+    # use it for debuging online only!
+    @property
+    def sigs(self):
+        self.displaySignals()
