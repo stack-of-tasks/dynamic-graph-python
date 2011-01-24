@@ -202,6 +202,25 @@ namespace dynamicgraph {
 	}
 	return Py_BuildValue("");
       }
+
+      PyObject* unplug(PyObject* /*self*/, PyObject* args)
+      {
+	void * pointer = NULL;
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args,"O", &object))
+	  return NULL;
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* signal = (SignalBase<int>*)pointer;
+	try {
+	  signal->unplug();
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	}
+	return Py_BuildValue("");
+      }
     }
   }
 }

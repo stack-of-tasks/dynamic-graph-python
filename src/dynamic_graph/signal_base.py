@@ -211,9 +211,15 @@ class SignalBase (object) :
         Force signal to recompute the value at given time.
         """
         return wrap.signal_base_recompute(self.obj, time)
+    def unplug(self):
+        """
+        Unplug a PTR signal.
+        """
+        return wrap.signal_base_unplug(self.obj)
 
     def __str__(self):
         """
         Print signal in a string
         """
         return wrap.signal_base_display(self.obj)
+
