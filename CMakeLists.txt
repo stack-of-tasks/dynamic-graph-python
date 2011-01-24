@@ -24,7 +24,7 @@ SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
 SET(PROJECT_URL "http://github.com/jrl-umi3218/dynamic-graph-python")
 
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
+SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 
 # Defines paths.
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
@@ -35,5 +35,10 @@ SETUP_PROJECT()
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0")
 
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(doc)
+
+# Search for Boost.
+SEARCH_FOR_BOOST()
+
 SETUP_PROJECT_FINALIZE()
