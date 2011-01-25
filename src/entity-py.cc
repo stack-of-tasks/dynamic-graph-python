@@ -227,20 +227,28 @@ namespace dynamicgraph {
 	  return Value(ivalue);
 	  break;
 	case (Value::FLOAT) :
-	  if (!PyFloat_Check(pyObject)) {
+	  if (PyFloat_Check(pyObject)) {
+	    fvalue = (float)PyFloat_AsDouble(pyObject);
+	    return Value(fvalue);
+	  } else if (PyInt_Check(pyObject)) {
+	    fvalue = (float)PyInt_AS_LONG(pyObject);
+	    return Value(fvalue);
+	  } else {
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
 				   "float");
 	  }
-	  fvalue = (float)PyFloat_AsDouble(pyObject);
-	  return Value(fvalue);
 	  break;
 	case (Value::DOUBLE) :
-	  if (!PyFloat_Check(pyObject)) {
+	  if (PyFloat_Check(pyObject)) {
+	    dvalue = PyFloat_AsDouble(pyObject);
+	    return Value(dvalue);
+	  } else if (PyInt_Check(pyObject)) {
+	    dvalue = 0.0+PyInt_AS_LONG(pyObject);
+	    return Value(dvalue);
+	  } else {
 	    throw ExceptionFactory(ExceptionFactory::GENERIC,
-				   "float");
+				   "double");
 	  }
-	  dvalue = PyFloat_AsDouble(pyObject);
-	  return Value(dvalue);
 	  break;
 	case (Value::STRING) :
 	  if (!PyString_Check(pyObject)) {
