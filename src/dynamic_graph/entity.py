@@ -3,7 +3,7 @@
 
   Author: Florent Lamiraux
 """
-import wrap, signal_base
+import wrap, signal_base, new
 
 entityClassNameList = []
 if 'display' not in globals().keys():
@@ -131,6 +131,16 @@ class Entity (object) :
             return self.signal(name)
         except:
             object.__getattr__(self, name)
+
+    def boundNewCommand(self,cmdName):
+        """
+        At construction, all existing commands are bound directly in the class.
+        This method enables to bound new commands dynamically. These new bounds
+        are not made with the class, but directly with the object instance.
+        """
+        docstring = wrap.entity_get_command_docstring(self.obj, cmdName)
+        cmd = commandMethod(cmdName,docstring)
+        setattr(self,cmdName,new.instancemethod( cmd, self,self.__class__))
 
     # Script short-cuts: don't use this syntaxt in python coding,
     # use it for debuging online only!
