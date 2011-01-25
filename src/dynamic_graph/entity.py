@@ -138,11 +138,24 @@ class Entity (object) :
         This method enables to bound new commands dynamically. These new bounds
         are not made with the class, but directly with the object instance.
         """
+        if (cmdName in self.__dict__) | (cmdName in self.__class__.__dict__):
+            print "Warning: command ",cmdName," will overwrite an object attribute."
         docstring = wrap.entity_get_command_docstring(self.obj, cmdName)
         cmd = commandMethod(cmdName,docstring)
         setattr(self,cmdName,new.instancemethod( cmd, self,self.__class__))
 
-    # Script short-cuts: don't use this syntaxt in python coding,
+    def boundAllNewCommands(self):
+        """
+        For all commands that are not attribute of the object instance nor of the
+        class, a new attribute of the instance is created to bound the command.
+        """
+        cmdList = wrap.entity_list_commands(self.obj)
+        cmdList = filter(lambda x: not x in self.__dict__, cmdList)
+        cmdList = filter(lambda x: not x in self.__class__.__dict__, cmdList)
+        for cmd in cmdList:
+            self.boundNewCommand( cmd )
+
+   # Script short-cuts: don't use this syntaxt in python coding,
     # use it for debuging online only!
     @property
     def sigs(self):
