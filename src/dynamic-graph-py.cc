@@ -38,6 +38,7 @@ namespace dynamicgraph {
     }
     namespace entity {
       extern PyObject* create(PyObject* self, PyObject* args);
+      extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
       extern PyObject* getSignal(PyObject* self, PyObject* args);
       extern PyObject* listSignals(PyObject* self, PyObject* args);
@@ -161,6 +162,8 @@ static PyMethodDef dynamicGraphMethods[] = {
   // Entity
   {"create_entity", dynamicgraph::python::entity::create, METH_VARARGS,
    "create an Entity C++ object"},
+  {"display_entity", dynamicgraph::python::entity::display, METH_VARARGS,
+   "print an Entity C++ object"},
   {"entity_get_name", dynamicgraph::python::entity::getName, METH_VARARGS,
    "get the name of an Entity"},
   {"entity_get_signal", dynamicgraph::python::entity::getSignal, METH_VARARGS,

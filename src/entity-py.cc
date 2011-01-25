@@ -505,6 +505,27 @@ namespace dynamicgraph {
 	std::string docstring = command->getDocstring();
 	return Py_BuildValue("s", docstring.c_str());
       }
+
+      PyObject* display(PyObject* /*self*/, PyObject* args)
+      {
+	/* Retrieve the entity instance. */
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args, "O", &object)
+	    || (!PyCObject_Check(object)) )
+	  {
+	    PyErr_SetString(error, "first argument is not an object");
+	    return NULL;
+	  }
+	void* pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	/* Run the display function. */
+	std::ostringstream oss;
+	entity->display(oss);
+
+	/* Return the resulting string. */
+	return Py_BuildValue("s", oss.str().c_str());
+      }
     }
   }
 }
