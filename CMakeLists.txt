@@ -30,6 +30,7 @@ SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 # Headers list.
 SET(${PROJECT_NAME}_HEADERS
   include/dynamic-graph/python/interpreter.hh
+  include/dynamic-graph/python/api.hh
 )
 
 # Defines paths.
