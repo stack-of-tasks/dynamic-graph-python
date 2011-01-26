@@ -19,6 +19,7 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/pthread.cmake)
 INCLUDE(cmake/cpack.cmake)
+include(cmake/header.cmake)
 
 SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
@@ -26,6 +27,10 @@ SET(PROJECT_URL "http://github.com/jrl-umi3218/dynamic-graph-python")
 SET(PROJECT_VERSION 1.99)
 
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
+# Headers list.
+SET(${PROJECT_NAME}_HEADERS
+  include/dynamic-graph/python/interpreter.hh
+)
 
 # Defines paths.
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
