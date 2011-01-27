@@ -13,10 +13,3 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph-python. If not, see <http://www.gnu.org/licenses/>.
 
-include(../cmake/header.cmake)
-
-# Headers list.
-SET(${PROJECT_NAME}_HEADERS
-  interpreter.hh
-  exception-python.hh
-)

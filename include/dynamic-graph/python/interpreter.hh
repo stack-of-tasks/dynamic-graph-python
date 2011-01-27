@@ -23,6 +23,8 @@
 #ifndef DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
 # define DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
 
+#include "dynamic-graph/python/api.hh"
+
 namespace dynamicgraph {
   namespace python {
       ///
