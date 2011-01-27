@@ -18,4 +18,5 @@ include(../cmake/header.cmake)
 # Headers list.
 SET(${PROJECT_NAME}_HEADERS
   interpreter.hh
+  exception-python.hh
 )
