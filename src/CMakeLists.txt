@@ -67,6 +67,7 @@ SET(PYTHON_MODULE wrap)
 ADD_LIBRARY(${PYTHON_MODULE}
 	MODULE
 	exception-python.cc
+	convert-dg-to-py.cc
 	dynamic-graph-py.cc
 	signal-base-py.cc
 	entity-py.cc
