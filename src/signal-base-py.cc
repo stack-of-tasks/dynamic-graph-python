@@ -18,7 +18,10 @@
 #include <sstream>
 
 #include <dynamic-graph/signal-base.h>
+#include <dynamic-graph/signal.h>
 #include <dynamic-graph/signal-caster.h>
+#include <dynamic-graph/linear-algebra.h>
+#include <../src/convert-dg-to-py.hh>
 
 using dynamicgraph::SignalBase;
 
@@ -26,6 +29,7 @@ namespace dynamicgraph {
   namespace python {
 
     extern PyObject* error;
+    using namespace convert;
 
     namespace signalBase {
 
@@ -107,6 +111,29 @@ namespace dynamicgraph {
 	pointer = PyCObject_AsVoidPtr(object);
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
+	/* Temptative for specific signal type. */
+	Signal<dynamicgraph::Vector,int> * sigvec
+	  = dynamic_cast< Signal<dynamicgraph::Vector,int>* >( signal );
+	if( NULL!= sigvec )
+	  {
+	    return vectorToPython( sigvec->accessCopy() );
+	  }
+
+	Signal<dynamicgraph::Matrix,int> * sigmat
+	  = dynamic_cast< Signal<dynamicgraph::Matrix,int>* >( signal );
+	if( NULL!= sigmat )
+	  {
+	    return matrixToPython( sigmat->accessCopy() );
+	  }
+
+	Signal<double,int> * sigdouble
+	  = dynamic_cast< Signal<double,int>* >( signal );
+	if( NULL!= sigdouble )
+	  {
+	    return Py_BuildValue("d", sigdouble->accessCopy() );
+	  }
+
+	/* Non specific signal: use a generic way. */
 	std::ostringstream value;
 	try {
 	  signal->get(value);
