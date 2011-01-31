@@ -77,6 +77,25 @@ namespace dynamicgraph {
 	return Py_BuildValue("i", time);
       }
 
+      PyObject* setTime(PyObject* /*self*/, PyObject* args)
+      {
+	void* pointer = NULL;
+	PyObject* object = NULL;
+	int time;
+	if (!PyArg_ParseTuple(args,"Oi", &object, &time))
+	  return NULL;
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(error, "object should be a C object");
+	  return NULL;
+	}
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* obj = (SignalBase<int>*)pointer;
+
+	obj->setTime(time);
+	return Py_BuildValue("");
+      }
+
       PyObject* display(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;

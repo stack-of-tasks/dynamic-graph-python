@@ -167,6 +167,16 @@ class SignalBase (object) :
         """
         return wrap.signal_base_get_time(self.obj)
 
+    @time.setter
+    def time(self, val) :
+        """
+        Set Time of signal
+
+          Input:
+            - an integer
+        """
+        return wrap.signal_base_set_time(self.obj, val)
+
     @property
     def value(self) :
         """
