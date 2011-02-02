@@ -24,7 +24,6 @@ include(cmake/header.cmake)
 SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
 SET(PROJECT_URL "http://github.com/jrl-umi3218/dynamic-graph-python")
-SET(PROJECT_VERSION 1.99)
 
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 # Headers list.
@@ -42,6 +41,9 @@ SETUP_PROJECT()
 
 # Trigger dependency to dynamic-graph.
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0")
+
+# Add dependency toward dynamic graph library in pkg-config file.
+PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
