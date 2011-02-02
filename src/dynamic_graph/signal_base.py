@@ -222,6 +222,11 @@ class SignalBase (object) :
         Print signal in a string
         """
         return wrap.signal_base_display(self.obj)
+    def displayDependencies(self,iter):
+        """
+        Print signal dependencies in a string
+        """
+        return(wrap.signal_base_display_dependencies(self.obj,iter))
 
     # Script short-cuts: don't use this syntaxt in python coding,
     # use it for debuging online only!

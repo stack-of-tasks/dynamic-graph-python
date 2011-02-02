@@ -99,6 +99,29 @@ namespace dynamicgraph {
 	return Py_BuildValue("s", oss.str().c_str());
       }
 
+      PyObject* displayDependencies(PyObject* /*self*/, PyObject* args)
+      {
+	void* pointer = NULL;
+	PyObject* object = NULL;
+	int time;
+	if (!PyArg_ParseTuple(args,"OI", &object,&time))
+	  return NULL;
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* obj = (SignalBase<int>*)pointer;
+
+	std::ostringstream oss;
+	try {
+	  obj->displayDependencies(oss,time);
+	} catch (std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
+	  return NULL;
+	}
+	return Py_BuildValue("s", oss.str().c_str());
+      }
+
       PyObject* getValue(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;

@@ -31,6 +31,7 @@ namespace dynamicgraph {
       extern PyObject* getTime(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
       extern PyObject* display(PyObject* self, PyObject* args);
+      extern PyObject* displayDependencies(PyObject* self, PyObject* args);
       extern PyObject* getValue(PyObject* self, PyObject* args);
       extern PyObject* setValue(PyObject* self, PyObject* args);
       extern PyObject* recompute(PyObject* self, PyObject* args);
@@ -38,6 +39,7 @@ namespace dynamicgraph {
     }
     namespace entity {
       extern PyObject* create(PyObject* self, PyObject* args);
+      extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
       extern PyObject* getSignal(PyObject* self, PyObject* args);
@@ -151,9 +153,11 @@ static PyMethodDef dynamicGraphMethods[] = {
    METH_VARARGS, "Get the name of a signal"},
   {"signal_base_display", dynamicgraph::python::signalBase::display,
    METH_VARARGS, "Print the signal in a string"},
+  {"signal_base_display_dependencies", dynamicgraph::python::signalBase::displayDependencies,
+   METH_VARARGS, "Print the signal dependencies in a string"},
   {"signal_base_get_value", dynamicgraph::python::signalBase::getValue,
    METH_VARARGS, "Read the value of a signal"}, 
- {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
+  {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
    METH_VARARGS, "Set the value of a signal"},
   {"signal_base_recompute", dynamicgraph::python::signalBase::recompute,
    METH_VARARGS, "Recompute the signal at given time"},
