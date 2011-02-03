@@ -30,7 +30,7 @@ namespace dynamicgraph {
 	if (!PyArg_ParseTuple(args, ""))
 	  return NULL;
 	std::vector<std::string> typeList =
-	  dynamicgraph::g_caster.listTypenames();
+	  dynamicgraph::g_caster().listTypenames();
 	unsigned int typeNumber = typeList.size();
 	// Build a tuple object
 	PyObject* typeTuple = PyTuple_New(typeNumber);
