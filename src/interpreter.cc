@@ -98,6 +98,11 @@ std::string Interpreter::python( const std::string& command )
   return value;
 }
 
+PyObject* Interpreter::globals()
+{
+  return globals_;
+}
+
 void Interpreter::runPythonFile( std::string filename )
 {
   Py_Finalize();
