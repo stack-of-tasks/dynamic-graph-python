@@ -104,6 +104,8 @@ SET (PYTHON_SOURCES
     dynamic_graph/__init__.py
     dynamic_graph/entity.py
     dynamic_graph/signal_base.py
+    dynamic_graph/matlab.py
+    dynamic_graph/script_shortcuts.py
 )
 
 SET (PYTHON_SOURCES_FULLPATH "")
