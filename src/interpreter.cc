@@ -94,7 +94,7 @@ std::string Interpreter::python( const std::string& command )
       std::cout << "Result is NULL but no error occurred." << std::endl;
     }
   } else {
-    result = PyObject_Str(result);
+    result = PyObject_Repr(result);
   }
   std::string value = PyString_AsString(result);
   return value;
