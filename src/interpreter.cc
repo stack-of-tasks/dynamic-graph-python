@@ -100,13 +100,20 @@ std::string Interpreter::python( const std::string& command )
 
 void Interpreter::runPythonFile( std::string filename )
 {
-  Py_Finalize();
-  Py_Initialize();
-  PyRun_SimpleString(pythonPrefix[0].c_str());
-  PyRun_SimpleString(pythonPrefix[1].c_str());
-  PyRun_SimpleString(pythonPrefix[2].c_str());
-  PyRun_SimpleString(pythonPrefix[4].c_str());
-  PyRun_SimpleFile(NULL, filename.c_str());
+  PyObject* pymainContext = globals_;
+  PyRun_File(fopen( filename.c_str(),"r" ), filename.c_str(),
+	     Py_file_input, pymainContext,pymainContext);
+  if (PyErr_Occurred())
+    {
+      std::cout << "Error occures..." << std::endl;
+      PyErr_Print();
+    }
+}
+
+void Interpreter::runMain( void )
+{
+  const char * argv [] = { "dg-embedded-pysh" };
+  Py_Main(1,const_cast<char**>(argv));
 }
 
 std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
