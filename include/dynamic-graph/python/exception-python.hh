@@ -38,6 +38,7 @@ namespace dynamicgraph {
 	,VALUE_PARSING
 	,VECTOR_PARSING
 	,MATRIX_PARSING
+	,CLASS_INCONSISTENT
       };
 
       static const std::string EXCEPTION_NAME;
