@@ -50,6 +50,9 @@ namespace dynamicgraph {
       /// \param stream input stream
       std::string processStream(std::istream& stream, std::ostream& os);
 
+      /// \brief Return a pointer to the dictionary of global variables
+      PyObject* globals();
+
     private:
       /// Pointer to the dictionary of global variables
       PyObject* globals_;

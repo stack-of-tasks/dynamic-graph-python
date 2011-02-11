@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include "dynamic-graph/python/interpreter.hh"
+#include "link-to-python.hh"
 
 // Python initialization commands
 namespace dynamicgraph {
@@ -31,9 +32,13 @@ namespace dynamicgraph {
 }
 
 using dynamicgraph::python::Interpreter;
+using dynamicgraph::python::libpython;
 
 Interpreter::Interpreter()
 {
+  // load python dynamic library
+  // this is silly, but required to be able to import dl module.
+  dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
   Py_Initialize();
   mainmod_ = PyImport_AddModule("__main__");
   Py_INCREF(mainmod_);
@@ -96,6 +101,11 @@ std::string Interpreter::python( const std::string& command )
   }
   std::string value = PyString_AsString(result);
   return value;
+}
+
+PyObject* Interpreter::globals()
+{
+  return globals_;
 }
 
 void Interpreter::runPythonFile( std::string filename )
