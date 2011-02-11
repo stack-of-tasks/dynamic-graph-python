@@ -20,8 +20,9 @@
 #include <dynamic-graph/factory.h>
 #include <../src/convert-dg-to-py.hh>
 
-#include "dynamic-graph/command.h"
-#include "dynamic-graph/value.h"
+#include <dynamic-graph/command.h>
+#include <dynamic-graph/value.h>
+#include <dynamic-graph/pool.h>
 
 using dynamicgraph::Entity;
 using dynamicgraph::SignalBase;
@@ -51,13 +52,23 @@ namespace dynamicgraph {
 	  return NULL;
 
 	Entity* obj = NULL;
-	try {
-	  obj = dynamicgraph::g_factory.newEntity(std::string(className),
-						  std::string(instanceName));
-	} catch (std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
-	  return NULL;
-	}
+	/* Try to find if the corresponding object already exists. */
+	if( dynamicgraph::g_pool.existEntity( instanceName,obj ) )
+	  {
+	    if( obj->getClassName()!=className )
+	      throw ExceptionPython( ExceptionPython::CLASS_INCONSISTENT,
+				     "Found an object with the same name but of different class." );
+	  }
+	else /* If not, create a new object. */
+	  {
+	    try {
+	      obj = dynamicgraph::g_factory.newEntity(std::string(className),
+						      std::string(instanceName));
+	    } catch (std::exception& exc) {
+	      PyErr_SetString(error, exc.what());
+	      return NULL;
+	    }
+	  }
 
 	// Return the pointer as a PyCObject
 	return PyCObject_FromVoidPtr((void*)obj, NULL);
