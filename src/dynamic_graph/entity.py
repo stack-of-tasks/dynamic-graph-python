@@ -31,25 +31,38 @@ def initEntity(self, name):
             setattr(self.__class__, command, commandMethod(command, docstring))
         self.__class__.commandCreated = True
 
+
+
+class PyEntityFactoryClass(type):
+    """
+    The class build dynamically a new class type, and return the reference
+    on the class-type object. The class type is not added to any context.
+    """
+    def __new__(factory, className ):
+        EntityClass = type.__new__(factory, className, (Entity,), {})
+        EntityClass.className = className
+        EntityClass.__init__ = initEntity
+        EntityClass.commandCreated = False
+        return EntityClass
+
+def PyEntityFactory( className, context ):
+    """
+    Build a new class type by calling the factory, and add it
+    to the given context.
+    """
+    EntityClass = PyEntityFactoryClass( className )
+    context[ className ] = EntityClass
+    return EntityClass
+
 def updateEntityClasses(dictionary):
+    """
+    For all c++entity types that are not in the pyentity class list (entityClassNameList)
+    run the factory and store the new type in the given context (dictionary).
+    """
     cxx_entityList = wrap.factory_get_entity_class_list()
     for e in filter(lambda x: not x in entityClassNameList, cxx_entityList):
-        class metacls(type):
-            def __new__(mcs, name, bases, dict):
-                return type.__new__(mcs, name, bases, dict)
-
-        # Create new class
-        a = metacls(e, (Entity,), {})
-        # Store class name in class member
-        a.className = e
-        # set class constructor
-        setattr(a, '__init__', initEntity)
-        # set class attribute to store whether command methods have been created
-        setattr(a, 'commandCreated', False)
-        #
-
         # Store new class in dictionary with class name
-        dictionary[e] = a
+        PyEntityFactory( e,dictionary )
         # Store class name in local list
         entityClassNameList.append(e)
 
