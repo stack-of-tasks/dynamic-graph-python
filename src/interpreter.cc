@@ -22,10 +22,7 @@
 namespace dynamicgraph {
   namespace python {
     static const std::string pythonPrefix[5] = {
-      "import sys\n",
       "import traceback\n",
-      "if '' not in sys.path: sys.path.append('')\n",
-      "sys.argv = ['']\n",
       "def display(s): return str(s) if not s is None else None"
     };
   }
