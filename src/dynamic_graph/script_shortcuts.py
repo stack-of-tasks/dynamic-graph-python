@@ -77,6 +77,7 @@ class SignalDepPrint:
 
 setattr(SignalBase,'deps',property(SignalDepPrint))
 
+setattr(Entity,'sigs',property(Entity.displaySignals))
 setattr(Entity,'__repr__',Entity.__str__)
 
 # Changing prompt
