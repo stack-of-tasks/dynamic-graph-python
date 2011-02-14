@@ -47,7 +47,7 @@ class CommandLauncher(object):
     fun=None
     def __init__(self,fun): self.fun=fun
     def __call__(self,*arg):
-        self.fun(self.mother,*arg)
+        return self.fun(self.mother,*arg)
 
 def createCommandLauncher( target,name,fun ):
     if isinstance(target,CommandPath) :
