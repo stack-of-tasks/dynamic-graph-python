@@ -4,12 +4,12 @@
   Author: Florent Lamiraux
 """
 import wrap, signal_base, new
+from attrpath import setattrpath
 
 entityClassNameList = []
 if 'display' not in globals().keys():
     def display(s):
         print(s)
-
 
 def commandMethod(name, docstring) :
     def method(self, *arg):
@@ -28,7 +28,7 @@ def initEntity(self, name):
         # for each command, add a method with the name of the command
         for command in commands:
             docstring = wrap.entity_get_command_docstring(self.obj, command)
-            setattr(self.__class__, command, commandMethod(command, docstring))
+            setattrpath(self.__class__, command, commandMethod(command, docstring))
         self.__class__.commandCreated = True
 
 
@@ -158,6 +158,7 @@ class Entity (object) :
             print "Warning: command ",cmdName," will overwrite an object attribute."
         docstring = wrap.entity_get_command_docstring(self.obj, cmdName)
         cmd = commandMethod(cmdName,docstring)
+        # Limitation (todo): does not handle for path attribute name (see setattrpath).
         setattr(self,cmdName,new.instancemethod( cmd, self,self.__class__))
 
     def boundAllNewCommands(self):
