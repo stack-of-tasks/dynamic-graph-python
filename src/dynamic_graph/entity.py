@@ -1,37 +1,18 @@
 """
   Copyright (C) 2010 CNRS
 
-  Author: Florent Lamiraux
+  Author: Florent Lamiraux, Nicolas Mansard
 """
 import wrap, signal_base, new
 from attrpath import setattrpath
 
-entityClassNameList = []
 if 'display' not in globals().keys():
     def display(s):
         print(s)
 
-def commandMethod(name, docstring) :
-    def method(self, *arg):
-        return wrap.entity_execute_command(self.obj, name, arg)
-    method.__doc__ = docstring
-    return method
-
-def initEntity(self, name):
-    """
-    Common constructor of Entity classes
-    """
-    Entity.__init__(self, self.className, name)
-    if not self.__class__.commandCreated:
-        # Get list of commands of the Entity object
-        commands = wrap.entity_list_commands(self.obj)
-        # for each command, add a method with the name of the command
-        for command in commands:
-            docstring = wrap.entity_get_command_docstring(self.obj, command)
-            setattrpath(self.__class__, command, commandMethod(command, docstring))
-        self.__class__.commandCreated = True
-
-
+# --- FACTORY ------------------------------------------------------------------
+# --- FACTORY ------------------------------------------------------------------
+# --- FACTORY ------------------------------------------------------------------
 
 class PyEntityFactoryClass(type):
     """
@@ -41,7 +22,7 @@ class PyEntityFactoryClass(type):
     def __new__(factory, className ):
         EntityClass = type.__new__(factory, className, (Entity,), {})
         EntityClass.className = className
-        EntityClass.__init__ = initEntity
+        EntityClass.__init__ = Entity.initEntity
         EntityClass.commandCreated = False
         return EntityClass
 
@@ -56,16 +37,20 @@ def PyEntityFactory( className, context ):
 
 def updateEntityClasses(dictionary):
     """
-    For all c++entity types that are not in the pyentity class list (entityClassNameList)
-    run the factory and store the new type in the given context (dictionary).
+    For all c++entity types that are not in the pyentity class list
+    (entityClassNameList) run the factory and store the new type in the given
+    context (dictionary).
     """
     cxx_entityList = wrap.factory_get_entity_class_list()
-    for e in filter(lambda x: not x in entityClassNameList, cxx_entityList):
+    for e in filter(lambda x: not x in Entity.entityClassNameList, cxx_entityList):
         # Store new class in dictionary with class name
         PyEntityFactory( e,dictionary )
         # Store class name in local list
-        entityClassNameList.append(e)
+        Entity.entityClassNameList.append(e)
 
+# --- ENTITY -------------------------------------------------------------------
+# --- ENTITY -------------------------------------------------------------------
+# --- ENTITY -------------------------------------------------------------------
 
 class Entity (object) :
     """
@@ -80,6 +65,18 @@ class Entity (object) :
         to a C++ Entity object.
         """
         object.__setattr__(self, 'obj', wrap.create_entity(className, instanceName) )
+
+    @staticmethod
+    def initEntity(self, name):
+        """
+        Common constructor of specialized Entity classes. This function is bound
+        by the factory to each new class derivated from the Entity class as the
+        constructor of the new class.
+        """
+        Entity.__init__(self, self.className, name)
+        if not self.__class__.commandCreated:
+            self.boundClassCommands()
+            self.__class__.commandCreated = True
 
     @property
     def name(self) :
@@ -148,6 +145,33 @@ class Entity (object) :
         except:
             object.__getattr__(self, name)
 
+    # --- COMMANDS BINDER -----------------------------------------------------
+    # List of all the entity classes from the c++ factory, that have been bound
+    # bind the py factory.
+    entityClassNameList = []
+
+    # This function dynamically create the function object that runs the command.
+    @staticmethod
+    def createCommandBind(name, docstring) :
+        def commandBind(self, *arg):
+            return wrap.entity_execute_command(self.obj, name, arg)
+        commandBind.__doc__ = docstring
+        return commandBind
+
+    def boundClassCommands(self):
+        """
+        This static function has to be called from a class heritating from Entity.
+        It should be called only once. It parses the list of commands obtained from
+        c++, and bind each of them to a python class method.
+        """
+        # Get list of commands of the Entity object
+        commands = wrap.entity_list_commands(self.obj)
+        # for each command, add a method with the name of the command
+        for cmdstr in commands:
+            docstr = wrap.entity_get_command_docstring(self.obj, cmdstr)
+            cmdpy = Entity.createCommandBind(cmdstr, docstr)
+            setattrpath(self.__class__, cmdstr, cmdpy)
+
     def boundNewCommand(self,cmdName):
         """
         At construction, all existing commands are bound directly in the class.
@@ -157,7 +181,7 @@ class Entity (object) :
         if (cmdName in self.__dict__) | (cmdName in self.__class__.__dict__):
             print "Warning: command ",cmdName," will overwrite an object attribute."
         docstring = wrap.entity_get_command_docstring(self.obj, cmdName)
-        cmd = commandMethod(cmdName,docstring)
+        cmd = Entity.createCommandBind(cmdName,docstring)
         # Limitation (todo): does not handle for path attribute name (see setattrpath).
         setattr(self,cmdName,new.instancemethod( cmd, self,self.__class__))
 
@@ -171,9 +195,3 @@ class Entity (object) :
         cmdList = filter(lambda x: not x in self.__class__.__dict__, cmdList)
         for cmd in cmdList:
             self.boundNewCommand( cmd )
-
-   # Script short-cuts: don't use this syntaxt in python coding,
-    # use it for debuging online only!
-    @property
-    def sigs(self):
-        self.displaySignals()
