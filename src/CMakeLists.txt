@@ -106,6 +106,7 @@ INSTALL(TARGETS ${PYTHON_MODULE}
 
 SET (PYTHON_SOURCES
     dynamic_graph/__init__.py
+    dynamic_graph/attrpath.py
     dynamic_graph/entity.py
     dynamic_graph/signal_base.py
     dynamic_graph/matlab.py

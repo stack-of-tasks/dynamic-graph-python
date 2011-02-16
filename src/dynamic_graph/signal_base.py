@@ -23,7 +23,7 @@ def stringToTuple (vector) :
     # check size
     if len(vector) != size:
         raise TypeError('displayed size ' +
-                        size + ' of vector does not fit actual size: '
+                        str(size) + ' of vector does not fit actual size: '
                         + str(len(vector)))
     res = map(float, vector)
     return tuple (res)
@@ -238,14 +238,4 @@ class SignalBase (object) :
         """
         return(wrap.signal_base_display_dependencies(self.obj,iter))
 
-    # Script short-cuts: don't use this syntaxt in python coding,
-    # use it for debuging online only!
-    @property
-    def m(self):
-        """
-        m stands for matlab: display the content of the
-        signal with matlab style, for debuging and transfert.
-        matlab-style to be coded ...
-        """
-        print(self.value)
 
