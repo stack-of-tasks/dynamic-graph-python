@@ -145,6 +145,12 @@ class Entity (object) :
         except:
             object.__getattr__(self, name)
 
+    def __setattr__(self, name, value):
+        if name in map(lambda s: s.getName().split(':')[-1],self.signals()):
+            raise NameError(name+" already designates a signal. "
+                            "It is not advised to set a new attribute of the same name.")
+        object.__setattr__(self, name, value)
+
     # --- COMMANDS BINDER -----------------------------------------------------
     # List of all the entity classes from the c++ factory, that have been bound
     # bind the py factory.
