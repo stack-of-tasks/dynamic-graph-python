@@ -84,3 +84,13 @@ setattr(Entity,'__repr__',Entity.__str__)
 import sys
 sys.ps1 = '% '
 
+# Enable function that can be call without()def optionalparentheses(f):
+def optionalparentheses(f):
+    class decoclass:
+        def __repr__(self):
+            res=f()
+            if isinstance(res,str): return res
+            else: return ''
+        def __call__(self,*arg):
+            return f(*arg)
+    return decoclass()
