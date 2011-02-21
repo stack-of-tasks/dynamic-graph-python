@@ -143,7 +143,15 @@ class Entity (object) :
         try:
             return self.signal(name)
         except:
-            object.__getattr__(self, name)
+            try:
+                object.__getattr__(self, name)
+            except AttributeError:
+                raise AttributeError('Entity named "%s" has no attribute %s\n'%
+                                     (self.name, name)+
+                                     '  entity attributes are usually either\n'+
+                                     '    - commands,\n'+
+                                     '    - signals or,\n'+
+                                     '    - user defined attributes')
 
     def __setattr__(self, name, value):
         if name in map(lambda s: s.getName().split(':')[-1],self.signals()):
