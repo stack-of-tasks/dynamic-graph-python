@@ -41,6 +41,11 @@ namespace dynamicgraph {
       /// \param command string to execute
       std::string python( const std::string& command );
 
+      /// \brief Method to start python interperter.
+      /// \param command string to execute, result, stdout, stderr strings
+      void python( const std::string& command , std::string& result,
+                   std::string& out, std::string& err);
+
       /// \brief Method to exectue a python script.
       /// \param filename the filename
       void runPythonFile( std::string filename );

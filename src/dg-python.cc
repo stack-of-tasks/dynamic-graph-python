@@ -71,7 +71,7 @@ int main (int argc, char** argv)
 
   po::positional_options_description p;
   p.add("input", -1);
-  
+
   po::variables_map vm;
 
   try
@@ -121,7 +121,15 @@ int main (int argc, char** argv)
   while(1) {
     command = interpreter.processStream(std::cin, std::cout);
     if (command != "\n") {
-      std::string result = interpreter.python(command);
+      std::string result, out, err;
+      interpreter.python(command, result, out, err);
+
+      if (out != "")  {
+	std::cout << out << std::endl;
+      }
+      if (err != "")  {
+	std::cout << err << std::endl;
+      }
       if (result != "None")  {
 	std::cout << result << std::endl;
       }

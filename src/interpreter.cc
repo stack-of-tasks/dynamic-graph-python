@@ -23,7 +23,19 @@ namespace dynamicgraph {
   namespace python {
     static const std::string pythonPrefix[5] = {
       "import traceback\n",
-      "def display(s): return str(s) if not s is None else None"
+      "def display(s): return str(s) if not s is None else None",
+      "class StdoutCatcher:\n"
+      "    def __init__(self):\n"
+      "        self.data = ''\n"
+      "    def write(self, stuff):\n"
+      "        self.data = self.data + stuff\n"
+      "    def fetch(self):\n"
+      "        s = self.data[:]\n"
+      "        self.data = ''\n"
+      "        return s\n"
+      "stdout_catcher = StdoutCatcher()\n"
+      "import sys\n"
+      "sys.stdout = stdout_catcher"
     };
   }
 }
@@ -64,18 +76,18 @@ Interpreter::~Interpreter()
 std::string Interpreter::python( const std::string& command )
 {
   PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
-				  globals_);
+                                  globals_);
   if (!result) {
     PyErr_Clear();
     result = PyRun_String(command.c_str(), Py_single_input, globals_,
-				  globals_);
+                          globals_);
   }
   if (result == NULL) {
     if (PyErr_Occurred()) {
       PyObject *ptype, *pvalue, *ptraceback;
       PyErr_Fetch(&ptype, &pvalue, &ptraceback);
       if (ptraceback == NULL) {
-	ptraceback = Py_None;
+        ptraceback = Py_None;
       }
       PyObject* args = PyTuple_New(3);
       PyTuple_SET_ITEM(args, 0, ptype);
@@ -86,7 +98,7 @@ std::string Interpreter::python( const std::string& command )
       unsigned int size = PyList_GET_SIZE(result);
       std::string stringRes;
       for (unsigned int i=0; i<size; i++) {
-	stringRes += std::string(PyString_AsString(PyList_GET_ITEM(result, i)));
+        stringRes += std::string(PyString_AsString(PyList_GET_ITEM(result, i)));
       }
       result  = PyString_FromString(stringRes.c_str());
       PyErr_Clear();
@@ -98,6 +110,55 @@ std::string Interpreter::python( const std::string& command )
   }
   std::string value = PyString_AsString(result);
   return value;
+}
+
+void Interpreter::python( const std::string& command, std::string& res,
+                          std::string& out, std::string& err)
+{
+  res = "";
+  out = "";
+  err = "";
+  PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
+				  globals_);
+  if (!result) {
+    PyErr_Clear();
+    result = PyRun_String(command.c_str(), Py_single_input, globals_,
+				  globals_);
+  }
+
+  if (result == NULL) {
+    if (PyErr_Occurred()) {
+      PyObject *ptype, *pvalue, *ptraceback, *pyerr;
+      PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+      if (ptraceback == NULL) {
+        ptraceback = Py_None;
+      }
+      PyObject* args = PyTuple_New(3);
+      PyTuple_SET_ITEM(args, 0, ptype);
+      PyTuple_SET_ITEM(args, 1, pvalue);
+      PyTuple_SET_ITEM(args, 2, ptraceback);
+      pyerr = PyObject_CallObject(traceback_format_exception_, args);
+      assert(PyList_Check(pyerr));
+      unsigned int size = PyList_GET_SIZE(pyerr);
+      std::string stringRes;
+      for (unsigned int i=0; i<size; i++) {
+        stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+      }
+      pyerr  = PyString_FromString(stringRes.c_str());
+      err = PyString_AsString(pyerr);
+      PyErr_Clear();
+    } else {
+      std::cout << "Result is NULL but no error occurred." << std::endl;
+    }
+  }
+  PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
+                                      Py_eval_input, globals_,
+                                      globals_);
+  out = PyString_AsString(stdout_obj);
+  std::cout << out;
+  result = PyObject_Repr(result);
+  res = PyString_AsString(result);
+  return;
 }
 
 PyObject* Interpreter::globals()
