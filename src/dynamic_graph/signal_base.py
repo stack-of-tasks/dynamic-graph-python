@@ -126,6 +126,9 @@ def stringToObject(string) :
     Successively attempts conversion in the above order and return
     on success. If no conversion fits, the string is returned.
     """
+    if isinstance(string,float): return string
+    if isinstance(string,int): return string
+    if isinstance(string,tuple): return string
     try :
         return stringToMatrix(string)
     except :
