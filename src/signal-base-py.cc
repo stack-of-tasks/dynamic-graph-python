@@ -111,7 +111,7 @@ namespace dynamicgraph {
 	std::ostringstream oss;
 	try {
 	  obj->display(oss);
-	} catch (std::exception& exc) {
+	} catch (const std::exception& exc) {
 	  PyErr_SetString(error, exc.what());
 	  return NULL;
 	}
@@ -134,7 +134,7 @@ namespace dynamicgraph {
 	std::ostringstream oss;
 	try {
 	  obj->displayDependencies(oss,time);
-	} catch (std::exception& exc) {
+	} catch (const std::exception& exc) {
 	  PyErr_SetString(error, exc.what());
 	  return NULL;
 	}
@@ -179,9 +179,6 @@ namespace dynamicgraph {
 	std::ostringstream value;
 	try {
 	  signal->get(value);
-	} catch (const dynamicgraph::ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
-	  return NULL;
 	} catch (const std::exception& exc) {
 	  PyErr_SetString(error, exc.what());
 	} catch (...) {
@@ -207,9 +204,6 @@ namespace dynamicgraph {
 	std::string name;
 	try {
 	  name = signal->getName();
-	} catch (const dynamicgraph::ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
-	  return NULL;
 	} catch (const std::exception& exc) {
 	  PyErr_SetString(error, exc.what());
 	} catch (...) {
@@ -238,9 +232,6 @@ namespace dynamicgraph {
 
 	try {
 	  signal->set(value);
-	} catch (const dynamicgraph::ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
-	  return NULL;
 	} catch (const std::exception& exc) {
 	  PyErr_SetString(error, exc.what());
 	  return NULL;
