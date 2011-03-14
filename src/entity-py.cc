@@ -35,7 +35,7 @@ using dynamicgraph::Matrix;
 namespace dynamicgraph {
   namespace python {
 
-    extern PyObject* error;
+    extern PyObject* dgpyError;
     using namespace convert;
 
     namespace entity {
@@ -65,7 +65,7 @@ namespace dynamicgraph {
 	      obj = dynamicgraph::g_factory.newEntity(std::string(className),
 						      std::string(instanceName));
 	    } catch (std::exception& exc) {
-	      PyErr_SetString(error, exc.what());
+	      PyErr_SetString(dgpyError, exc.what());
 	      return NULL;
 	    }
 	  }
@@ -97,7 +97,7 @@ namespace dynamicgraph {
 	try {
 	 name = entity->getName();
 	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
 	  return NULL;
 	}
 	return Py_BuildValue("s", name.c_str());
@@ -128,7 +128,7 @@ namespace dynamicgraph {
 	try {
 	  signal = &(entity->getSignal(std::string(name)));
 	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
 	  return NULL;
 	}
 	// Return the pointer to the signal without destructor since the signal
@@ -165,7 +165,8 @@ namespace dynamicgraph {
 	  }
 	  return result;
 	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
+	  return NULL;
 	}
 	return NULL;
       }
@@ -202,7 +203,7 @@ namespace dynamicgraph {
 	if (commandMap.count(std::string(commandName)) != 1) {
 	  std::string msg = "command " + std::string(commandName) +
 	    " is not referenced in Entity " + entity->getName();
-	  PyErr_SetString(error, msg.c_str());
+	  PyErr_SetString(dgpyError, msg.c_str());
 	  return NULL;
 	}
 	Command* command = commandMap[std::string(commandName)];
@@ -212,7 +213,7 @@ namespace dynamicgraph {
 	  std::stringstream ss;
 	  ss << "command takes " <<  typeVector.size()
 	     << " parameters, " << size << " given.";
-	  PyErr_SetString(error, ss.str().c_str());
+	  PyErr_SetString(dgpyError, ss.str().c_str());
 	  return NULL;
 	}
 
@@ -227,7 +228,7 @@ namespace dynamicgraph {
 	    std::stringstream ss;
 	    ss << "Error while parsing argument " << iParam+1 << ": "
 	       << exc.what() << ".";
-	    PyErr_SetString(error, ss.str().c_str()) ;
+	    PyErr_SetString(dgpyError, ss.str().c_str()) ;
 	    return NULL;
 	  }
 	}
@@ -236,7 +237,7 @@ namespace dynamicgraph {
 	  Value result = command->execute();
 	  return valueToPython(result);
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what()) ;
+	  PyErr_SetString(dgpyError, exc.what()) ;
 	  return NULL;
 	}
 	return NULL;
@@ -282,7 +283,7 @@ namespace dynamicgraph {
 
 	// Retrieve the entity instance
 	if (!PyCObject_Check(object)) {
-	  PyErr_SetString(error, "first argument is not an object");
+	  PyErr_SetString(dgpyError, "first argument is not an object");
 	  return NULL;
 	}
 	void* pointer = PyCObject_AsVoidPtr(object);
@@ -293,7 +294,8 @@ namespace dynamicgraph {
 	try {
 	  command = map[commandName];
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
 	}
 	std::string docstring = command->getDocstring();
 	return Py_BuildValue("s", docstring.c_str());
@@ -306,7 +308,7 @@ namespace dynamicgraph {
 	if (!PyArg_ParseTuple(args, "O", &object)
 	    || (!PyCObject_Check(object)) )
 	  {
-	    PyErr_SetString(error, "first argument is not an object");
+	    PyErr_SetString(dgpyError, "first argument is not an object");
 	    return NULL;
 	  }
 	void* pointer = PyCObject_AsVoidPtr(object);

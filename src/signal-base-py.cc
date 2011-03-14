@@ -28,10 +28,11 @@ using dynamicgraph::SignalBase;
 namespace dynamicgraph {
   namespace python {
 
-    extern PyObject* error;
+    extern PyObject* dgpyError;
     using namespace convert;
 
     namespace signalBase {
+
 
       static void destroy (void* self);
 
@@ -85,7 +86,7 @@ namespace dynamicgraph {
 	if (!PyArg_ParseTuple(args,"Oi", &object, &time))
 	  return NULL;
 	if (!PyCObject_Check(object)) {
-	  PyErr_SetString(error, "object should be a C object");
+	  PyErr_SetString(dgpyError, "object should be a C object");
 	  return NULL;
 	}
 
@@ -112,7 +113,7 @@ namespace dynamicgraph {
 	try {
 	  obj->display(oss);
 	} catch (std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	return Py_BuildValue("s", oss.str().c_str());
@@ -135,7 +136,7 @@ namespace dynamicgraph {
 	try {
 	  obj->displayDependencies(oss,time);
 	} catch (std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	return Py_BuildValue("s", oss.str().c_str());
@@ -180,12 +181,13 @@ namespace dynamicgraph {
 	try {
 	  signal->get(value);
 	} catch (const dynamicgraph::ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
 	  return NULL;
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
 	} catch (...) {
-	  PyErr_SetString(error, "Unknown exception");
+	  PyErr_SetString(dgpyError, "Unknown exception");
 	  return NULL;
 	}
 	std::string valueString = value.str();
@@ -208,12 +210,13 @@ namespace dynamicgraph {
 	try {
 	  name = signal->getName();
 	} catch (const dynamicgraph::ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
 	  return NULL;
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
 	} catch (...) {
-	  PyErr_SetString(error, "Unknown exception");
+	  PyErr_SetString(dgpyError, "Unknown exception");
 	  return NULL;
 	}
 	return Py_BuildValue("s", name.c_str());
@@ -239,13 +242,13 @@ namespace dynamicgraph {
 	try {
 	  signal->set(value);
 	} catch (const dynamicgraph::ExceptionAbstract& exc) {
-	  PyErr_SetString(error, exc.getStringMessage().c_str());
+	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
 	  return NULL;
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	} catch (...) {
-	  PyErr_SetString(error, "Unknown exception");
+	  PyErr_SetString(dgpyError, "Unknown exception");
 	  return NULL;
 	}
 
@@ -267,7 +270,8 @@ namespace dynamicgraph {
 	try {
 	  signal->recompute(time);
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
 	}
 	return Py_BuildValue("");
       }
@@ -286,7 +290,8 @@ namespace dynamicgraph {
 	try {
 	  signal->unplug();
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
 	}
 	return Py_BuildValue("");
       }

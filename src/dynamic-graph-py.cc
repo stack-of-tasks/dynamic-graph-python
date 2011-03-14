@@ -57,7 +57,7 @@ namespace dynamicgraph {
       PyObject* getSignalTypeList(PyObject* self, PyObject* args);
     }
 
-    PyObject* error;
+    PyObject* dgpyError;
 
     /**
        \brief plug a signal into another one.
@@ -95,7 +95,7 @@ namespace dynamicgraph {
       try {
 	signalIn->plug(signalOut);
       } catch (std::exception& exc) {
-	PyErr_SetString(error, exc.what());
+	PyErr_SetString(dgpyError, exc.what());
 	return NULL;
       }
       return Py_BuildValue("");
@@ -212,8 +212,8 @@ initwrap(void)
 
     std::string msg("dynamic_graph.error");
 
-    dynamicgraph::python::error =
+    dynamicgraph::python::dgpyError =
       PyErr_NewException(const_cast<char*>(msg.c_str()), NULL, NULL);
-    Py_INCREF(dynamicgraph::python::error);
-    PyModule_AddObject(m, "error", dynamicgraph::python::error);
+    Py_INCREF(dynamicgraph::python::dgpyError);
+    PyModule_AddObject(m, "error", dynamicgraph::python::dgpyError);
 }

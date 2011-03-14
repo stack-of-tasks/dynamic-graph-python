@@ -22,8 +22,6 @@ using dynamicgraph::ExceptionAbstract;
 
 namespace dynamicgraph {
   namespace python {
-    
-    extern PyObject* error;
 
     namespace factory {
 

@@ -22,8 +22,6 @@
 namespace dynamicgraph {
   namespace python {
 
-    extern PyObject* error;
-
     namespace signalCaster {
       PyObject* getSignalTypeList(PyObject* /*self*/, PyObject* args)
       {
