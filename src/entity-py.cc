@@ -26,7 +26,6 @@
 
 using dynamicgraph::Entity;
 using dynamicgraph::SignalBase;
-using dynamicgraph::ExceptionAbstract;
 using dynamicgraph::command::Command;
 using dynamicgraph::command::Value;
 using dynamicgraph::Vector;
@@ -96,8 +95,8 @@ namespace dynamicgraph {
 
 	try {
 	 name = entity->getName();
-	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
+	} catch(const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
 	  return NULL;
 	}
 	return Py_BuildValue("s", name.c_str());
@@ -127,8 +126,8 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = NULL;
 	try {
 	  signal = &(entity->getSignal(std::string(name)));
-	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
+	} catch(const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
 	  return NULL;
 	}
 	// Return the pointer to the signal without destructor since the signal
@@ -164,8 +163,8 @@ namespace dynamicgraph {
 	    count++;
 	  }
 	  return result;
-	} catch(ExceptionAbstract& exc) {
-	  PyErr_SetString(dgpyError, exc.getStringMessage().c_str());
+	} catch(const std::exception& exc) {
+	  PyErr_SetString(error, exc.what());
 	  return NULL;
 	}
 	return NULL;
@@ -224,7 +223,7 @@ namespace dynamicgraph {
 	  try {
 	    Value value = pythonToValue(PyValue, valueType);
 	    valueVector.push_back(value);
-	  } catch (ExceptionAbstract& exc) {
+	  } catch(const std::exception& exc) {
 	    std::stringstream ss;
 	    ss << "Error while parsing argument " << iParam+1 << ": "
 	       << exc.what() << ".";
