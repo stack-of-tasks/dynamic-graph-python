@@ -137,7 +137,7 @@ namespace dynamicgraph {
 	    if (PyFloat_Check(pyDouble))
 	      v(i) = PyFloat_AsDouble(pyDouble);
 	    else if(PyInt_Check(pyDouble))
-	      v(i) = (int)PyInt_AS_LONG(pyObject)+0.0;
+	      v(i) = (int)PyInt_AS_LONG(pyDouble)+0.0;
 	    else
 	      throw ExceptionPython(ExceptionPython::VECTOR_PARSING,
 				     "element of vector should be a floating "
