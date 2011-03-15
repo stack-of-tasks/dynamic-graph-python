@@ -96,7 +96,7 @@ namespace dynamicgraph {
 	try {
 	 name = entity->getName();
 	} catch(const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	return Py_BuildValue("s", name.c_str());
@@ -127,7 +127,7 @@ namespace dynamicgraph {
 	try {
 	  signal = &(entity->getSignal(std::string(name)));
 	} catch(const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	// Return the pointer to the signal without destructor since the signal
@@ -164,7 +164,7 @@ namespace dynamicgraph {
 	  }
 	  return result;
 	} catch(const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	return NULL;
