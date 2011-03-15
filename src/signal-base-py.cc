@@ -113,7 +113,7 @@ namespace dynamicgraph {
 	try {
 	  obj->display(oss);
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	return Py_BuildValue("s", oss.str().c_str());
@@ -136,7 +136,7 @@ namespace dynamicgraph {
 	try {
 	  obj->displayDependencies(oss,time);
 	} catch (const std::exception& exc) {
-	  PyErr_SetString(error, exc.what());
+	  PyErr_SetString(dgpyError, exc.what());
 	  return NULL;
 	}
 	return Py_BuildValue("s", oss.str().c_str());
