@@ -54,9 +54,16 @@ namespace dynamicgraph {
 	/* Try to find if the corresponding object already exists. */
 	if( dynamicgraph::g_pool.existEntity( instanceName,obj ) )
 	  {
-	    if( obj->getClassName()!=className )
-	      throw ExceptionPython( ExceptionPython::CLASS_INCONSISTENT,
-				     "Found an object with the same name but of different class." );
+	    if( obj->getClassName()!=className ) {
+	      std::string msg ("Found an object named "
+			       + std::string(instanceName)
+			       + ",\n""but this object is of type "
+			       + std::string(obj->getClassName())
+			       + " and not "
+			       + std::string(className));
+	      PyErr_SetString(dgpyError, msg.c_str());
+	      return NULL;
+	    }
 	  }
 	else /* If not, create a new object. */
 	  {
