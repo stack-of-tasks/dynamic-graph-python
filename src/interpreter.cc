@@ -47,7 +47,11 @@ Interpreter::Interpreter()
 {
   // load python dynamic library
   // this is silly, but required to be able to import dl module.
+#ifndef WIN32
   dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+#else
+  LoadLibrary(libpython.c_str());
+#endif
   Py_Initialize();
   mainmod_ = PyImport_AddModule("__main__");
   Py_INCREF(mainmod_);
