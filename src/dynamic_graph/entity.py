@@ -19,10 +19,19 @@ class PyEntityFactoryClass(type):
     The class build dynamically a new class type, and return the reference
     on the class-type object. The class type is not added to any context.
     """
-    def __new__(factory, className ):
-        EntityClass = type.__new__(factory, className, (Entity,), {})
-        EntityClass.className = className
-        EntityClass.__init__ = Entity.initEntity
+    def __new__(factory, className,bases=(), dict={} ):
+        if len(bases)==0:
+            # Initialize a basic Entity class
+            EntityClass = type.__new__(factory, className, (Entity,), dict)
+            EntityClass.className = className
+            EntityClass.__init__ = Entity.initEntity
+        else:
+            # Initialize a heritated class
+            EntityClass = type.__new__(factory, className, bases, dict)
+            for c in bases:
+                if issubclass(c,Entity):
+                    EntityClass.className = c.className
+                    break
         EntityClass.commandCreated = False
         return EntityClass
 
