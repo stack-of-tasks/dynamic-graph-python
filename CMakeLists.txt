@@ -17,7 +17,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/pthread.cmake)
 INCLUDE(cmake/cpack.cmake)
 include(cmake/header.cmake)
@@ -48,7 +47,6 @@ PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
 # Search for Boost.
 SEARCH_FOR_BOOST()
-SEARCH_FOR_LAPACK()
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
