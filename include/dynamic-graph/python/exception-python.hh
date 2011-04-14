@@ -20,8 +20,19 @@
 # include <string>
 
 # include <dynamic-graph/fwd.hh>
-# include <dynamic-graph/dynamic-graph-api.h>
 # include <dynamic-graph/exception-abstract.h>
+
+// Depending on whether one is building or using the
+// library define DLLAPI to import or export.
+# if defined (WIN32)
+#   if defined (wrap_EXPORTS)
+#     define WRAP_DLLAPI __declspec(dllexport)
+#   else
+#     define WRAP_DLLAPI __declspec(dllimport)
+#   endif
+# else
+#   define WRAP_DLLAPI
+# endif
 
 namespace dynamicgraph {
   namespace python {
@@ -29,7 +40,7 @@ namespace dynamicgraph {
     /// \ingroup error
     ///
     /// \brief Generic error class.
-    class DYNAMIC_GRAPH_DLLAPI ExceptionPython : public ExceptionAbstract
+    class WRAP_DLLAPI ExceptionPython : public ExceptionAbstract
     {
     public:
       enum ErrorCodeEnum
