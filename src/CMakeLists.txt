@@ -111,15 +111,13 @@ EXEC_PROGRAM("${PKG_CONFIG_EXECUTABLE}"
              OUTPUT_VARIABLE "DYNAMIC_GRAPH_PLUGIN_DIR")
 
 # Tracer plugin
-ADD_DEPENDENCIES(${LIBRARY_NAME} MKDIR_tracer)
-ADD_CUSTOM_TARGET(MKDIR_tracer mkdir -p ../lib/dynamic_graph/tracer)
-SET(TRACER_PLUGIN ${DYNAMIC_GRAPH_PLUGIN_DIR}/tracer.so)
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer" ${TRACER_PLUGIN} tracer/wrap)
+file(MAKE_DIRECTORY ../lib/dynamic_graph/tracer)
+SET(TRACER_PLUGIN ${DYNAMIC_GRAPH_PLUGIN_DIR}/tracer${CMAKE_STATIC_LIBRARY_SUFFIX})
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer" ${TRACER_PLUGIN} tracer-wrap)
 
 # TracerRealTime plugin
-ADD_DEPENDENCIES(${LIBRARY_NAME} MKDIR_TracerRealTime)
-ADD_CUSTOM_TARGET(MKDIR_TracerRealTime mkdir -p ../lib/dynamic_graph/tracer_real_time)
-SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGIN_DIR}/tracer-real-time.so)
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" ${TRACERREALTIME_PLUGIN} tracer_real_time/wrap)
+file(MAKE_DIRECTORY ../lib/dynamic_graph/tracer_real_time)
+SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGIN_DIR}/tracer-real-time${CMAKE_STATIC_LIBRARY_SUFFIX})
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" ${TRACERREALTIME_PLUGIN} tracer_real_time-wrap)
 
 
