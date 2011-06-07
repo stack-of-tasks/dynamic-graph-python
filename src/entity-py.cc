@@ -294,15 +294,20 @@ namespace dynamicgraph {
 	}
 	void* pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
-	typedef	std::map<const std::string, command::Command*>  CommandMap;
-	CommandMap map = entity->getNewStyleCommandMap();
+	typedef	std::map<const std::string, command::Command*> commandMap_t;
+	typedef	std::map<const std::string, command::Command*>::iterator
+	  iterator_t;
+	commandMap_t map = entity->getNewStyleCommandMap();
 	command::Command* command = NULL;
-	try {
-	  command = map[commandName];
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
+	iterator_t it = map.find(commandName);
+	if (it == map.end()) {
+	  std::ostringstream oss;
+	  oss << "'" << entity->getName() << "' entity has no command '"
+	      << commandName << "'.";
+	  PyErr_SetString(PyExc_AttributeError, oss.str().c_str());
 	  return NULL;
 	}
+	command = it->second;
 	std::string docstring = command->getDocstring();
 	return Py_BuildValue("s", docstring.c_str());
       }
