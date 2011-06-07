@@ -207,9 +207,10 @@ namespace dynamicgraph {
 	  entity->getNewStyleCommandMap();
 
 	if (commandMap.count(std::string(commandName)) != 1) {
-	  std::string msg = "command " + std::string(commandName) +
-	    " is not referenced in Entity " + entity->getName();
-	  PyErr_SetString(dgpyError, msg.c_str());
+	  std::ostringstream oss;
+	  oss << "'" << entity->getName() << "' entity has no command '"
+	      << commandName << "'.";
+	  PyErr_SetString(PyExc_AttributeError, oss.str().c_str());
 	  return NULL;
 	}
 	Command* command = commandMap[std::string(commandName)];

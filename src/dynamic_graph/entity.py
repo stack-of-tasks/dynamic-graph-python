@@ -155,7 +155,7 @@ class Entity (object) :
             try:
                 object.__getattr__(self, name)
             except AttributeError:
-                raise AttributeError('Entity named "%s" has no attribute %s\n'%
+                raise AttributeError("'%s' entity has no attribute %s\n"%
                                      (self.name, name)+
                                      '  entity attributes are usually either\n'+
                                      '    - commands,\n'+
