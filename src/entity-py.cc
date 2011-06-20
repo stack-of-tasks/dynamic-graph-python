@@ -52,7 +52,8 @@ namespace dynamicgraph {
 
 	Entity* obj = NULL;
 	/* Try to find if the corresponding object already exists. */
-	if( dynamicgraph::g_pool.existEntity( instanceName,obj ) )
+	if( dynamicgraph::PoolStorage::getInstance()->existEntity(instanceName,
+								  obj))
 	  {
 	    if( obj->getClassName()!=className ) {
 	      std::string msg ("Found an object named "
@@ -68,8 +69,8 @@ namespace dynamicgraph {
 	else /* If not, create a new object. */
 	  {
 	    try {
-	      obj = dynamicgraph::g_factory.newEntity(std::string(className),
-						      std::string(instanceName));
+	      obj = dynamicgraph::FactoryStorage::getInstance()->newEntity
+		(std::string(className), std::string(instanceName));
 	    } catch (std::exception& exc) {
 	      PyErr_SetString(dgpyError, exc.what());
 	      return NULL;

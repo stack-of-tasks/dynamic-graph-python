@@ -34,7 +34,7 @@ namespace dynamicgraph {
 	  return NULL;
 
 	std::vector <std::string> classNames;
-	dynamicgraph::g_factory.listEntities(classNames);
+	dynamicgraph::FactoryStorage::getInstance()->listEntities(classNames);
 	unsigned int classNumber = classNames.size();
 	// Build a tuple object
 	PyObject* classTuple = PyTuple_New(classNumber);

@@ -13,7 +13,6 @@ from wrap import *
 sys.setdlopenflags(flags)
 
 import entity, signal_base
-import re
 
 def plug (signalOut, signalIn) :
     """
