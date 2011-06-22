@@ -18,6 +18,7 @@
 #include <sstream>
 
 #include <dynamic-graph/signal-base.h>
+#include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal.h>
 #include <dynamic-graph/signal-caster.h>
 #include <dynamic-graph/linear-algebra.h>
@@ -154,20 +155,61 @@ namespace dynamicgraph {
 	pointer = PyCObject_AsVoidPtr(object);
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
-	/* Temptative for specific signal type. */
-	Signal<dynamicgraph::Vector,int> * sigvec
-	  = dynamic_cast< Signal<dynamicgraph::Vector,int>* >( signal );
-	if( NULL!= sigvec )
-	  {
-	    return vectorToPython( sigvec->accessCopy() );
-	  }
+	{ // --- VECTOR SIGNALS -----------------
+	  // Two cases: the signal embeds directly a vector, or embeds
+	  // an object deriving from vector.In the first case,
+	  // the signal is directly cast into sig<vector>.
+	  // In the second case, the derived object can be access as a vector
+	  // using the signal-ptr<vector> type.
+	  Signal<dynamicgraph::Vector,int> * sigvec
+	    = dynamic_cast< Signal<dynamicgraph::Vector,int>* >( signal );
+	  if( NULL!= sigvec )
+	    {
+	      return vectorToPython( sigvec->accessCopy() );
+	    }
 
-	Signal<dynamicgraph::Matrix,int> * sigmat
-	  = dynamic_cast< Signal<dynamicgraph::Matrix,int>* >( signal );
-	if( NULL!= sigmat )
-	  {
-	    return matrixToPython( sigmat->accessCopy() );
-	  }
+	  // Extraction of object derinving from vector: plug signal into
+	  // a vector signal and get the value from the signal-ptr instead
+	  // of the original vector.
+	  SignalPtr<dynamicgraph::Vector,int> sigptr(NULL,"vector-caster");
+	  try
+	    {
+	      sigptr.plug(signal);
+	      return vectorToPython( sigptr.accessCopy() );
+	    }
+	  catch( dynamicgraph::ExceptionSignal& ex )
+	    {
+	      if( ex.getCode() != dynamicgraph::ExceptionSignal::PLUG_IMPOSSIBLE )
+		throw;
+	    }
+	}
+
+	{ // --- MATRIX SIGNALS --------------------
+	  // Two cases: the signal embeds directly a matrix, or embeds
+	  // an object deriving from matrix.In the first case,
+	  // the signal is directly cast into sig<matrix>.
+	  // In the second case, the derived object can be access as a matrix
+	  // using the signal-ptr<matrix> type.
+	  Signal<dynamicgraph::Matrix,int> * sigmat
+	    = dynamic_cast< Signal<dynamicgraph::Matrix,int>* >( signal );
+  	  if( NULL!= sigmat )
+	    {
+	      return matrixToPython( sigmat->accessCopy() );
+	    }
+
+	  SignalPtr<dynamicgraph::Matrix,int> sigptr(NULL,"matrix-caster");
+	  try
+	    {
+	      sigptr.plug(signal);
+	      return matrixToPython( sigptr.accessCopy() );
+	    }
+	  catch( dynamicgraph::ExceptionSignal& ex )
+	    {
+	      if( ex.getCode() != dynamicgraph::ExceptionSignal::PLUG_IMPOSSIBLE )
+		throw;
+	    }
+	}
+
 
 	Signal<double,int> * sigdouble
 	  = dynamic_cast< Signal<double,int>* >( signal );
