@@ -34,9 +34,6 @@ SET(${PROJECT_NAME}_HEADERS
 
 )
 
-# Defines paths.
-SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-
 SETUP_PROJECT()
 
 # Trigger dependency to dynamic-graph.
