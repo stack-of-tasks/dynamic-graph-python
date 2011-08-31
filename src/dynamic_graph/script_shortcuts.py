@@ -30,8 +30,10 @@ class PrettySignalPrint:
     sig = None
     def __init__(self,sig):
         self.sig = sig
+    def __str__(self):
+        return self.sig.name+" = "+str(matlab(self.sig.value))
     def __repr__(self):
-        return str(matlab(self.sig.value))
+        return str(self)
     def __call__(self,iter):
         self.sig.recompute(iter)
         return self
@@ -43,7 +45,7 @@ def sigMatPrint(sig):
     return PrettySignalPrint(sig)
 
 setattr(SignalBase,'m',property(PrettySignalPrint))
-print('Pretty matlab print set')
+#print('Pretty matlab print set')
 
 # Enable the same as 'm', but directly on the signal object.
 def sigRepr( self ):
@@ -87,10 +89,11 @@ sys.ps1 = '% '
 # Enable function that can be call without()def optionalparentheses(f):
 def optionalparentheses(f):
     class decoclass:
+        def __init__(self,f): self.functor=f
         def __repr__(self):
-            res=f()
+            res=self.functor()
             if isinstance(res,str): return res
             else: return ''
         def __call__(self,*arg):
-            return f(*arg)
-    return decoclass()
+            return self.functor(*arg)
+    return decoclass(f)
