@@ -27,6 +27,8 @@
 
 #include "dynamic-graph/python/interpreter.hh"
 
+using namespace dynamicgraph;
+
 // Factorize exception catching code.
 #define CATCH_EXCEPTIONS()						\
   catch (std::exception& e)						\
