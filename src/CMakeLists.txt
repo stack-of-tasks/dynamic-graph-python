@@ -34,6 +34,7 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${DYNAMIC_GRAPH_LIBRARY_DIRS})
 ADD_DEFINITIONS(${DYNAMIC_GRAPH_CFLAGS})
 
+INCLUDE(../cmake/python.cmake)
 #
 #
 #  Python interpreter
@@ -93,8 +94,9 @@ INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH}
 # Installation
 #
 
-EXEC_PROGRAM(${PYTHON_EXECUTABLE} ARGS "-c \"from distutils import sysconfig; print sysconfig.get_python_lib(0,0,prefix='')\""
-  OUTPUT_VARIABLE PYTHON_SITELIB)
+EXEC_PROGRAM(${PYTHON_EXECUTABLE} ARGS
+    "-c \"import sys, os; print os.sep.join(['lib', 'python' + sys.version[:3], 'site-packages'])\""
+    OUTPUT_VARIABLE PYTHON_SITELIB)
 
 MESSAGE(STATUS "PYTHON_SITELIB=${PYTHON_SITELIB}")
 
@@ -105,29 +107,22 @@ INSTALL(TARGETS ${PYTHON_MODULE}
 	       ${PYTHON_INSTALL_DIR})
 
 SET (PYTHON_SOURCES
-    dynamic_graph/__init__.py
-    dynamic_graph/attrpath.py
-    dynamic_graph/entity.py
-    dynamic_graph/signal_base.py
-    dynamic_graph/matlab.py
-    dynamic_graph/script_shortcuts.py
-    dynamic_graph/tools.py
-)
+    __init__.py
+    attrpath.py
+    entity.py
+    signal_base.py
+    matlab.py
+    script_shortcuts.py
+    tools.py
+)	
 
-SET (PYTHON_SOURCES_FULLPATH "")
 FOREACH (SOURCE ${PYTHON_SOURCES})
-    SET(PYTHON_SOURCES_FULLPATH
-    	${PYTHON_SOURCES_FULLPATH}
-	${CMAKE_SOURCE_DIR}/src/${SOURCE}
-    )
+  PYTHON_INSTALL_ON_SITE(dynamic_graph ${SOURCE} )
 ENDFOREACH (SOURCE)
 
-INSTALL(FILES ${PYTHON_SOURCES_FULLPATH}
-	DESTINATION ${PYTHON_INSTALL_DIR})
 
 
 # --- ADD the wrap on the dg modules
-INCLUDE(../cmake/python.cmake)
 EXEC_PROGRAM("${PKG_CONFIG_EXECUTABLE}"
              ARGS "--variable=plugindir" "dynamic-graph"
              OUTPUT_VARIABLE "DYNAMIC_GRAPH_PLUGIN_DIR")
