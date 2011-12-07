@@ -202,7 +202,7 @@ class Entity (object) :
         are not made with the class, but directly with the object instance.
         """
         if (cmdName in self.__dict__) | (cmdName in self.__class__.__dict__):
-            print "Warning: command ",cmdName," will overwrite an object attribute."
+            print("Warning: command ",cmdName," will overwrite an object attribute.")
         docstring = wrap.entity_get_command_docstring(self.obj, cmdName)
         cmd = Entity.createCommandBind(cmdName,docstring)
         # Limitation (todo): does not handle for path attribute name (see setattrpath).

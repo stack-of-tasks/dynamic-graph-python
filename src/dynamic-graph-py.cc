@@ -114,7 +114,7 @@ namespace dynamicgraph {
 			  "second argument a filename.");
 	  return NULL;
 	}
-	if (boolean == Py_True) {
+	if (PyObject_IsTrue(boolean)) {
 	  try {
 	    DebugTrace::openFile(filename);
 	  } catch (const std::exception& exc) {

@@ -73,7 +73,7 @@ namespace dynamicgraph {
 	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
 				   "bool");
 	  }
-	  bvalue = (pyObject == Py_True);
+	  bvalue = PyObject_IsTrue(pyObject);
 	  return Value(bvalue);
 	  break;
 	case (Value::UNSIGNED) :

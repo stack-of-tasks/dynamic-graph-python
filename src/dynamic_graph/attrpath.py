@@ -73,7 +73,7 @@ def setattrpath( target,path,attribute ):
     if callable(attribute):
         createCommandLauncher( pathk,path[-1],attribute )
     else:
-        print "Should not happen"
+        print("Should not happen")
         setattr(pathk,path[-1],attribute )
 
 def getattrpath( target,path ):
@@ -100,7 +100,7 @@ def existattrpath( target,path ):
     pathk=target
     if type(path)==type(str()): path=path.split('.')
     for tokenk in path[0:-1]:
-        print 'check ',tokenk
+        print('check ',tokenk)
         privateName=tokenk+"_obj"
         if (privateName not in pathk.__dict__):
             return False

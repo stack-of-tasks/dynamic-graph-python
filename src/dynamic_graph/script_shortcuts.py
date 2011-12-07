@@ -53,11 +53,11 @@ def sigRepr( self ):
 
 def sigCall( sig,iter ):
     sig.recompute(iter)
-    print sigRepr(sig)
+    print(sigRepr(sig))
 
 def sigTimeIncr( sig,iter ):
     sig.recompute(sig.time+iter)
-    print sigRepr(sig)
+    print(sigRepr(sig))
 
 setattr(SignalBase,'__repr__',sigRepr)
 setattr(SignalBase,'__call__',sigCall)
