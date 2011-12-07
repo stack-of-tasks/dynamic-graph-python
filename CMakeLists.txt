@@ -45,12 +45,12 @@ ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0")
 # Add dependency toward dynamic graph library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
+# Search for Boost.
+SEARCH_FOR_BOOST()
+
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(doc)
-
-# Search for Boost.
-SEARCH_FOR_BOOST()
 
 SETUP_PROJECT_FINALIZE()
 
