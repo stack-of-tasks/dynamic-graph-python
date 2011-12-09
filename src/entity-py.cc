@@ -234,7 +234,7 @@ namespace dynamicgraph {
 	    valueVector.push_back(value);
 	  } catch(const std::exception& exc) {
 	    std::stringstream ss;
-	    ss << "Error while parsing argument " << iParam+1 << ": "
+	    ss << "while parsing argument " << iParam+1 << ": expecting "
 	       << exc.what() << ".";
 	    PyErr_SetString(dgpyError, ss.str().c_str()) ;
 	    return NULL;
