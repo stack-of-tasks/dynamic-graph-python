@@ -51,10 +51,13 @@ namespace dynamicgraph {
     }
 
     namespace factory {
-      PyObject* getEntityClassList(PyObject* self, PyObject* args);
+      extern PyObject* getEntityClassList(PyObject* self, PyObject* args);
     }
     namespace signalCaster {
-      PyObject* getSignalTypeList(PyObject* self, PyObject* args);
+      extern PyObject* getSignalTypeList(PyObject* self, PyObject* args);
+    }
+    namespace pool {
+      extern PyObject* writeGraph (PyObject* self, PyObject* args);
     }
 
     PyObject* dgpyError;
@@ -198,6 +201,10 @@ static PyMethodDef dynamicGraphMethods[] = {
    dynamicgraph::python::signalCaster::getSignalTypeList,
    METH_VARARGS,
    "return the list of signal type names"},
+  {"writeGraph",
+   dynamicgraph::python::pool::writeGraph,
+   METH_VARARGS,
+   "Write the graph of entities in a filename."},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

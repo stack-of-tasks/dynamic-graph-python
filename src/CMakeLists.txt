@@ -77,6 +77,7 @@ ADD_LIBRARY(${PYTHON_MODULE}
 	signal-base-py.cc
 	entity-py.cc
 	factory-py.cc
+	pool-py.cc
 	signal-caster-py.cc
 )
 
