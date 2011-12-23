@@ -160,9 +160,9 @@ class SignalBase (object) :
         """
         if obj :
             self.obj = obj
-        if not self.obj :
-            self.obj = wrap.create_signal_base(self, name)
-
+        else :
+            raise RuntimeError(
+                "A pointer is required to create SignalBase object.")
     @property
     def time(self) :
         """
