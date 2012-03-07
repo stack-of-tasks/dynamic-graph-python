@@ -154,28 +154,35 @@ namespace dynamicgraph {
 	pointer = PyCObject_AsVoidPtr(object);
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
-	/* Temptative for specific signal type. */
-	Signal<dynamicgraph::Vector,int> * sigvec
-	  = dynamic_cast< Signal<dynamicgraph::Vector,int>* >( signal );
-	if( NULL!= sigvec )
-	  {
-	    return vectorToPython( sigvec->accessCopy() );
-	  }
+	try {
+	  /* Temptative for specific signal type. */
+	  Signal<dynamicgraph::Vector,int> * sigvec
+	    = dynamic_cast< Signal<dynamicgraph::Vector,int>* >( signal );
+	  if( NULL!= sigvec )
+	    {
+	      return vectorToPython( sigvec->accessCopy() );
+	    }
 
-	Signal<dynamicgraph::Matrix,int> * sigmat
-	  = dynamic_cast< Signal<dynamicgraph::Matrix,int>* >( signal );
-	if( NULL!= sigmat )
-	  {
-	    return matrixToPython( sigmat->accessCopy() );
-	  }
+	  Signal<dynamicgraph::Matrix,int> * sigmat
+	    = dynamic_cast< Signal<dynamicgraph::Matrix,int>* >( signal );
+	  if( NULL!= sigmat )
+	    {
+	      return matrixToPython( sigmat->accessCopy() );
+	    }
 
-	Signal<double,int> * sigdouble
-	  = dynamic_cast< Signal<double,int>* >( signal );
-	if( NULL!= sigdouble )
-	  {
-	    return Py_BuildValue("d", sigdouble->accessCopy() );
-	  }
-
+	  Signal<double,int> * sigdouble
+	    = dynamic_cast< Signal<double,int>* >( signal );
+	  if( NULL!= sigdouble )
+	    {
+	      return Py_BuildValue("d", sigdouble->accessCopy() );
+	    }
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
+	} catch (...) {
+	  PyErr_SetString(dgpyError, "Unknown exception");
+	  return NULL;
+	}
 	/* Non specific signal: use a generic way. */
 	std::ostringstream value;
 	try {
