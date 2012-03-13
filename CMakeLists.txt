@@ -45,6 +45,9 @@ PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 # Search for Boost.
 SEARCH_FOR_BOOST()
 
+# Make sure Boost.Filesystem v2 is used.
+ADD_DEFINITIONS(-DBOOST_FILESYSTEM_VERSION=2)
+
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(doc)
