@@ -22,6 +22,8 @@
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/signal-base.h>
 
+#include "exception.hh"
+
 namespace dynamicgraph {
   namespace python {
 
@@ -97,10 +99,7 @@ namespace dynamicgraph {
 
       try {
 	signalIn->plug(signalOut);
-      } catch (std::exception& exc) {
-	PyErr_SetString(dgpyError, exc.what());
-	return NULL;
-      }
+      } CATCH_ALL_EXCEPTIONS();
       return Py_BuildValue("");
     }
 
@@ -120,17 +119,11 @@ namespace dynamicgraph {
 	if (PyObject_IsTrue(boolean)) {
 	  try {
 	    DebugTrace::openFile(filename);
-	  } catch (const std::exception& exc) {
-	    PyErr_SetString(PyExc_IOError, exc.what());
-	    return NULL;
-	  }
+	  } CATCH_ALL_EXCEPTIONS();
 	} else {
 	  try {
 	    DebugTrace::closeFile(filename);
-	  } catch (const std::exception& exc) {
-	    PyErr_SetString(PyExc_IOError, exc.what());
-	    return NULL;
-	  }
+	  } CATCH_ALL_EXCEPTIONS();
 	}
       } else {
 	return NULL;

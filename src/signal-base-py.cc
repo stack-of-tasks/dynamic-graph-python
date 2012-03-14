@@ -21,7 +21,9 @@
 #include <dynamic-graph/signal.h>
 #include <dynamic-graph/signal-caster.h>
 #include <dynamic-graph/linear-algebra.h>
-#include <../src/convert-dg-to-py.hh>
+
+#include "convert-dg-to-py.hh"
+#include "exception.hh"
 
 using dynamicgraph::SignalBase;
 
@@ -112,10 +114,8 @@ namespace dynamicgraph {
 	std::ostringstream oss;
 	try {
 	  obj->display(oss);
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
+
 	return Py_BuildValue("s", oss.str().c_str());
       }
 
@@ -135,10 +135,7 @@ namespace dynamicgraph {
 	std::ostringstream oss;
 	try {
 	  obj->displayDependencies(oss,time);
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
 	return Py_BuildValue("s", oss.str().c_str());
       }
 
@@ -176,24 +173,14 @@ namespace dynamicgraph {
 	    {
 	      return Py_BuildValue("d", sigdouble->accessCopy() );
 	    }
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	} catch (...) {
-	  PyErr_SetString(dgpyError, "Unknown exception");
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
+
 	/* Non specific signal: use a generic way. */
 	std::ostringstream value;
 	try {
 	  signal->get(value);
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	} catch (...) {
-	  PyErr_SetString(dgpyError, "Unknown exception");
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
+
 	std::string valueString = value.str();
 	return Py_BuildValue("s", valueString.c_str());
       }
@@ -213,13 +200,8 @@ namespace dynamicgraph {
 	std::string name;
 	try {
 	  name = signal->getName();
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	} catch (...) {
-	  PyErr_SetString(dgpyError, "Unknown exception");
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
+
 	return Py_BuildValue("s", name.c_str());
       }
 
@@ -242,14 +224,7 @@ namespace dynamicgraph {
 
 	try {
 	  signal->set(value);
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	} catch (...) {
-	  PyErr_SetString(dgpyError, "Unknown exception");
-	  return NULL;
-	}
-
+	} CATCH_ALL_EXCEPTIONS ();
 	return Py_BuildValue("");
       }
 
@@ -267,10 +242,7 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 	try {
 	  signal->recompute(time);
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
 	return Py_BuildValue("");
       }
 
@@ -287,10 +259,7 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 	try {
 	  signal->unplug();
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS ();
 	return Py_BuildValue("");
       }
     }

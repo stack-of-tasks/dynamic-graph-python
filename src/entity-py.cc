@@ -18,11 +18,13 @@
 
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/factory.h>
-#include <../src/convert-dg-to-py.hh>
 
 #include <dynamic-graph/command.h>
 #include <dynamic-graph/value.h>
 #include <dynamic-graph/pool.h>
+
+#include "convert-dg-to-py.hh"
+#include "exception.hh"
 
 using dynamicgraph::Entity;
 using dynamicgraph::SignalBase;
@@ -71,10 +73,7 @@ namespace dynamicgraph {
 	    try {
 	      obj = dynamicgraph::FactoryStorage::getInstance()->newEntity
 		(std::string(className), std::string(instanceName));
-	    } catch (std::exception& exc) {
-	      PyErr_SetString(dgpyError, exc.what());
-	      return NULL;
-	    }
+	    } CATCH_ALL_EXCEPTIONS();
 	  }
 
 	// Return the pointer as a PyCObject
@@ -103,10 +102,7 @@ namespace dynamicgraph {
 
 	try {
 	 name = entity->getName();
-	} catch(const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS();
 	return Py_BuildValue("s", name.c_str());
       }
 
@@ -134,10 +130,8 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = NULL;
 	try {
 	  signal = &(entity->getSignal(std::string(name)));
-	} catch(const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS();
+
 	// Return the pointer to the signal without destructor since the signal
 	// is not owned by the calling object but by the Entity.
 	return PyCObject_FromVoidPtr((void*)signal, NULL);
@@ -171,10 +165,7 @@ namespace dynamicgraph {
 	    count++;
 	  }
 	  return result;
-	} catch(const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what());
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS();
 	return NULL;
       }
 
@@ -238,16 +229,16 @@ namespace dynamicgraph {
 	       << exc.what() << ".";
 	    PyErr_SetString(dgpyError, ss.str().c_str()) ;
 	    return NULL;
+	  } catch (...) {
+	    PyErr_SetString(dgpyError, "Unknown exception");
+	    return NULL;
 	  }
 	}
 	command->setParameterValues(valueVector);
 	try {
 	  Value result = command->execute();
 	  return valueToPython(result);
-	} catch (const std::exception& exc) {
-	  PyErr_SetString(dgpyError, exc.what()) ;
-	  return NULL;
-	}
+	} CATCH_ALL_EXCEPTIONS();
 	return NULL;
       }
 
