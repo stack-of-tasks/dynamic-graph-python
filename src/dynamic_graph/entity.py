@@ -128,6 +128,10 @@ class Entity (object) :
         """
         Print a short description of each command.
         """
+        if self.__doc__ :
+            print self.__doc__
+        print "List of commands:"
+        print "-----------------"
         for cstr in self.commands():
             ctitle=cstr+':'
             for i in range(len(cstr),15):
