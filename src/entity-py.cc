@@ -305,6 +305,32 @@ namespace dynamicgraph {
 	return Py_BuildValue("s", docstring.c_str());
       }
 
+      PyObject* getDocString(PyObject* /*self*/, PyObject* args)
+      {
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args, "O", &object)) {
+	  return NULL;
+	}
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(dgpyError, "first argument is not an object");
+	  return NULL;
+	}
+	void* pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+	try {
+	  return Py_BuildValue ("s", entity->getDocString ().c_str ());
+	} catch (const std::exception& exc) {
+	    PyErr_SetString(dgpyError, exc.what ()) ;
+	    return NULL;
+	} catch (...) {
+	  PyErr_SetString(dgpyError, "Unknown exception");
+	  return NULL;
+	}
+	return NULL;
+      }
+
       PyObject* display(PyObject* /*self*/, PyObject* args)
       {
 	/* Retrieve the entity instance. */

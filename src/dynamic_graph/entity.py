@@ -85,6 +85,7 @@ class Entity (object) :
         Entity.__init__(self, self.className, name)
         if not self.__class__.commandCreated:
             self.boundClassCommands()
+            self.__class__.__doc__ = wrap.entity_get_docstring (self.obj)
             self.__class__.commandCreated = True
 
     @property
