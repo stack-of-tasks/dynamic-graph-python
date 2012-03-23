@@ -67,6 +67,10 @@ class Entity (object) :
     """
 
     obj = None
+    """
+    Store list of entities created via python
+    """
+    entities = dict ()
 
     def __init__(self, className, instanceName):
         """
@@ -74,6 +78,7 @@ class Entity (object) :
         to a C++ Entity object.
         """
         object.__setattr__(self, 'obj', wrap.create_entity(className, instanceName) )
+        Entity.entities [instanceName] = self
 
     @staticmethod
     def initEntity(self, name):
