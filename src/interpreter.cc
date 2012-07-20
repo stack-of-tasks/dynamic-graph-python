@@ -110,7 +110,11 @@ std::string Interpreter::python( const std::string& command )
   } else {
     result = PyObject_Repr(result);
   }
-  std::string value = PyString_AsString(result);
+  std::string value = "";
+  // PyString_AsString will generate a segv if result is NULL.
+  // This might be the case if PyObject_Repr fails.
+  if (result!=NULL)
+    value = PyString_AsString(result);
   return value;
 }
 
@@ -157,9 +161,13 @@ void Interpreter::python( const std::string& command, std::string& res,
                                       Py_eval_input, globals_,
                                       globals_);
   out = PyString_AsString(stdout_obj);
+  // Local display for the robot (in debug mode or for the logs)
   std::cout << out;
   result = PyObject_Repr(result);
-  res = PyString_AsString(result);
+  // If python cannot build a string representation of result
+  // then results is equal to NULL. This will trigger a SEGV
+  if (result!=NULL)
+    res = PyString_AsString(result);
   return;
 }
 
