@@ -43,6 +43,66 @@ namespace dynamicgraph {
 using dynamicgraph::python::Interpreter;
 using dynamicgraph::python::libpython;
 
+bool HandleErr(std::string & err,
+	       PyObject * traceback_format_exception,
+	       PyObject * globals_,
+	       int PythonInputType)
+{
+  err="";
+  bool lres=false;
+
+  if (PyErr_Occurred()) {
+    std::cout << "v3.0 An exception was raised in the python interpreter." << std::endl;
+    PyObject *ptype, *pvalue, *ptraceback, *pyerr;
+    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+    if (ptraceback == NULL) {
+      ptraceback = Py_None;
+    }
+    PyObject* args = PyTuple_New(3);
+    PyTuple_SET_ITEM(args, 0, ptype);
+    PyTuple_SET_ITEM(args, 1, pvalue);
+    PyTuple_SET_ITEM(args, 2, ptraceback);
+    pyerr = PyObject_CallObject(traceback_format_exception, args);
+    assert(PyList_Check(pyerr));
+    unsigned int size = PyList_GET_SIZE(pyerr);
+    std::string stringRes;
+    for (unsigned int i=0; i<size; i++) {
+      stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+    }
+    pyerr  = PyString_FromString(stringRes.c_str());
+    err = PyString_AsString(pyerr);
+    std::cout << "err: " << err << std::endl;
+
+    // Here if there is a syntax error and 
+    // and the interpreter input is set to Py_eval_input,
+    // it is maybe a statement instead of an expression.
+    // Therefore we indicate to re-evaluate the command.
+    if (PyErr_GivenExceptionMatches(ptype, PyExc_SyntaxError) &&
+	 (PythonInputType==Py_eval_input))
+      {
+	std::cout << "Detected a syntax error " << std::endl;
+	lres=false;
+      }
+    else
+      lres=true;
+
+    PyErr_Clear();    
+  } else {
+    std::cout << "no object generated but no error occured." << std::endl;
+  }
+  PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
+                                      Py_eval_input, globals_,
+                                      globals_);
+  std::string out("");
+
+  out = PyString_AsString(stdout_obj);
+  // Local display for the robot (in debug mode or for the logs)
+  if (out.length()!=0)
+    std::cout << out;
+  else std::cout << "No exception." << std::endl;
+  return lres;
+}
+
 Interpreter::Interpreter()
 {
   // load python dynamic library
@@ -77,46 +137,11 @@ Interpreter::~Interpreter()
 
 std::string Interpreter::python( const std::string& command )
 {
-  PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
-                                  globals_);
-  if (!result) {
-    PyErr_Clear();
-    result = PyRun_String(command.c_str(), Py_single_input, globals_,
-                          globals_);
-  }
-  if (result == NULL) {
-    if (PyErr_Occurred()) {
-      PyObject *ptype, *pvalue, *ptraceback;
-      PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-      if (ptraceback == NULL) {
-        ptraceback = Py_None;
-      }
-      PyObject* args = PyTuple_New(3);
-      PyTuple_SET_ITEM(args, 0, ptype);
-      PyTuple_SET_ITEM(args, 1, pvalue);
-      PyTuple_SET_ITEM(args, 2, ptraceback);
-      result = PyObject_CallObject(traceback_format_exception_, args);
-      assert(PyList_Check(result));
-      unsigned int size = PyList_GET_SIZE(result);
-      std::string stringRes;
-      for (unsigned int i=0; i<size; i++) {
-        stringRes += std::string(PyString_AsString(PyList_GET_ITEM(result, i)));
-      }
-      result  = PyString_FromString(stringRes.c_str());
-      PyErr_Clear();
-    } else {
-      std::cout << "Result is NULL but no error occurred." << std::endl;
-    }
-  } else {
-    result = PyObject_Repr(result);
-  }
-  std::string value = "";
-  // PyString_AsString will generate a segv if result is NULL.
-  // This might be the case if PyObject_Repr fails.
-  if (result!=NULL)
-    value = PyString_AsString(result);
-  return value;
+  std::string lerr(""),lout(""),lres("");
+  python(command,lres,lout,lerr);
+  return lres;
 }
+
 
 void Interpreter::python( const std::string& command, std::string& res,
                           std::string& out, std::string& err)
@@ -124,39 +149,33 @@ void Interpreter::python( const std::string& command, std::string& res,
   res = "";
   out = "";
   err = "";
+  
   PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
 				  globals_);
+  // Check if the result is null.
   if (!result) {
-    PyErr_Clear();
-    result = PyRun_String(command.c_str(), Py_single_input, globals_,
-				  globals_);
+
+    // Test if this is a syntax error (due to the evaluation of an expression)
+    // else just output the problem.
+    if (!HandleErr(err,
+		   traceback_format_exception_, globals_,
+		   Py_eval_input))
+      {
+	// If this is a statement, re-parse the command.
+	result = PyRun_String(command.c_str(), Py_single_input, globals_, globals_);
+
+	// If there is still an error build the appropriate err string.
+	if (result == NULL) 
+	  HandleErr(err,
+		    traceback_format_exception_, globals_,
+		    Py_single_input);
+	else 
+	  // If there is no error, make sure that the previous error message is erased.
+	  err="";
+      }
+    else std::cout << "Do not try a second time." << std::endl;
   }
 
-  if (result == NULL) {
-    if (PyErr_Occurred()) {
-      PyObject *ptype, *pvalue, *ptraceback, *pyerr;
-      PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-      if (ptraceback == NULL) {
-        ptraceback = Py_None;
-      }
-      PyObject* args = PyTuple_New(3);
-      PyTuple_SET_ITEM(args, 0, ptype);
-      PyTuple_SET_ITEM(args, 1, pvalue);
-      PyTuple_SET_ITEM(args, 2, ptraceback);
-      pyerr = PyObject_CallObject(traceback_format_exception_, args);
-      assert(PyList_Check(pyerr));
-      unsigned int size = PyList_GET_SIZE(pyerr);
-      std::string stringRes;
-      for (unsigned int i=0; i<size; i++) {
-        stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
-      }
-      pyerr  = PyString_FromString(stringRes.c_str());
-      err = PyString_AsString(pyerr);
-      PyErr_Clear();
-    } else {
-      std::cout << "Result is NULL but no error occurred." << std::endl;
-    }
-  }
   PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
                                       Py_eval_input, globals_,
                                       globals_);
@@ -167,7 +186,15 @@ void Interpreter::python( const std::string& command, std::string& res,
   // If python cannot build a string representation of result
   // then results is equal to NULL. This will trigger a SEGV
   if (result!=NULL)
-    res = PyString_AsString(result);
+    {
+      std::cout << "For command :" << command << std::endl;
+      res = PyString_AsString(result);
+      std::cout << "Result is: " << res <<std::endl;
+      std::cout << "Out is: " << out <<std::endl;
+      std::cout << "Err is :" << err << std::endl;
+    }
+  else 
+    std::cout << "Result is empty" << std::endl;
   return;
 }
 
