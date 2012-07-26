@@ -15,6 +15,7 @@
 // dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include "dynamic-graph/debug.h"
 #include "dynamic-graph/python/interpreter.hh"
 #include "link-to-python.hh"
 
@@ -48,11 +49,12 @@ bool HandleErr(std::string & err,
 	       PyObject * globals_,
 	       int PythonInputType)
 {
+  dgDEBUGIN(15);
   err="";
   bool lres=false;
 
   if (PyErr_Occurred()) {
-    std::cout << "v3.0 An exception was raised in the python interpreter." << std::endl;
+
     PyObject *ptype, *pvalue, *ptraceback, *pyerr;
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
     if (ptraceback == NULL) {
@@ -71,7 +73,7 @@ bool HandleErr(std::string & err,
     }
     pyerr  = PyString_FromString(stringRes.c_str());
     err = PyString_AsString(pyerr);
-    std::cout << "err: " << err << std::endl;
+    dgDEBUG(15) << "err: " << err << std::endl;
 
     // Here if there is a syntax error and 
     // and the interpreter input is set to Py_eval_input,
@@ -80,7 +82,7 @@ bool HandleErr(std::string & err,
     if (PyErr_GivenExceptionMatches(ptype, PyExc_SyntaxError) &&
 	 (PythonInputType==Py_eval_input))
       {
-	std::cout << "Detected a syntax error " << std::endl;
+	dgDEBUG(15) << "Detected a syntax error " << std::endl;
 	lres=false;
       }
     else
@@ -88,7 +90,7 @@ bool HandleErr(std::string & err,
 
     PyErr_Clear();    
   } else {
-    std::cout << "no object generated but no error occured." << std::endl;
+    dgDEBUG(15) << "no object generated but no error occured." << std::endl;
   }
   PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
                                       Py_eval_input, globals_,
@@ -98,8 +100,9 @@ bool HandleErr(std::string & err,
   out = PyString_AsString(stdout_obj);
   // Local display for the robot (in debug mode or for the logs)
   if (out.length()!=0)
-    std::cout << out;
-  else std::cout << "No exception." << std::endl;
+    { dgDEBUG(15) << std::endl; }
+  else { dgDEBUG(15) << "No exception." << std::endl; }
+  dgDEBUGOUT(15);
   return lres;
 }
 
@@ -173,7 +176,8 @@ void Interpreter::python( const std::string& command, std::string& res,
 	  // If there is no error, make sure that the previous error message is erased.
 	  err="";
       }
-    else std::cout << "Do not try a second time." << std::endl;
+    else 
+      { dgDEBUG(15) << "Do not try a second time." << std::endl; }
   }
 
   PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
@@ -187,14 +191,14 @@ void Interpreter::python( const std::string& command, std::string& res,
   // then results is equal to NULL. This will trigger a SEGV
   if (result!=NULL)
     {
-      std::cout << "For command :" << command << std::endl;
+      dgDEBUG(15) << "For command :" << command << std::endl;
       res = PyString_AsString(result);
-      std::cout << "Result is: " << res <<std::endl;
-      std::cout << "Out is: " << out <<std::endl;
-      std::cout << "Err is :" << err << std::endl;
+      dgDEBUG(15) << "Result is: " << res <<std::endl;
+      dgDEBUG(15) << "Out is: " << out <<std::endl;
+      dgDEBUG(15) << "Err is :" << err << std::endl;
     }
   else 
-    std::cout << "Result is empty" << std::endl;
+    { dgDEBUG(15) << "Result is empty" << std::endl; }
   return;
 }
 
