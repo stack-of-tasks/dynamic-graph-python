@@ -19,6 +19,7 @@
 
 #include <dynamic-graph/signal-base.h>
 #include <dynamic-graph/signal.h>
+#include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-caster.h>
 #include <dynamic-graph/linear-algebra.h>
 
