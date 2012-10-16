@@ -132,7 +132,7 @@ namespace dynamicgraph {
 	  }
 	  size = PyTuple_Size(pyObject);
 	  v.resize(size);
-	  for (unsigned int i=0; i<size; i++) {
+	  for (Py_ssize_t i=0; i<size; i++) {
 	    PyObject* pyDouble = PyTuple_GetItem(pyObject, i);
 	    if (PyFloat_Check(pyDouble))
 	      v(i) = PyFloat_AsDouble(pyDouble);
@@ -165,7 +165,7 @@ namespace dynamicgraph {
 	  m.resize((unsigned int)nRows, (unsigned int)nCols);
 	  fillMatrixRow(m, 0, row);
 
-	  for (unsigned int iRow=1; iRow<nRows; iRow++) {
+	  for (Py_ssize_t iRow=1; iRow<nRows; iRow++) {
 	    row = PyTuple_GetItem(pyObject, iRow);
 	    if (!PyTuple_Check(row)) {
 	      throw ExceptionPython(ExceptionPython::MATRIX_PARSING,

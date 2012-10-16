@@ -218,7 +218,7 @@ namespace dynamicgraph {
 	  }
 
 	std::vector<Value> valueVector;
-	for (unsigned int iParam=0; iParam<size; iParam++) {
+	for (Py_ssize_t iParam=0; iParam<size; iParam++) {
 	  PyObject* PyValue = PyTuple_GetItem(argTuple, iParam);
 	  Value::Type valueType = typeVector[iParam];
 	  try {
