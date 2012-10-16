@@ -29,13 +29,15 @@ namespace dynamicgraph {
 	  return NULL;
 	std::vector<std::string> typeList =
 	  dynamicgraph::SignalCaster::getInstance()->listTypenames();
-	unsigned int typeNumber = typeList.size();
+	Py_ssize_t typeNumber = typeList.size();
 	// Build a tuple object
 	PyObject* typeTuple = PyTuple_New(typeNumber);
 
-	for (unsigned int iType = 0; iType < typeNumber; iType++) {
-	  PyObject* className = Py_BuildValue("s", typeList[iType].c_str());
-	  PyTuple_SetItem(typeTuple, iType, className);
+	for (Py_ssize_t iType = 0; iType < typeNumber; ++iType)
+	  {
+	    PyObject* className =
+	      Py_BuildValue("s", typeList[iType].c_str());
+	    PyTuple_SetItem(typeTuple, iType, className);
 	}
 
 	return Py_BuildValue("O", typeTuple);

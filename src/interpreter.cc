@@ -68,11 +68,12 @@ bool HandleErr(std::string & err,
     PyTuple_SET_ITEM(args, 2, ptraceback);
     pyerr = PyObject_CallObject(traceback_format_exception, args);
     assert(PyList_Check(pyerr));
-    unsigned int size = PyList_GET_SIZE(pyerr);
+    Py_ssize_t size = PyList_GET_SIZE(pyerr);
     std::string stringRes;
-    for (unsigned int i=0; i<size; i++) {
-      stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
-    }
+    for (Py_ssize_t i=0; i<size; ++i)
+      stringRes += std::string
+	(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+
     pyerr  = PyString_FromString(stringRes.c_str());
     err = PyString_AsString(pyerr);
     dgDEBUG(15) << "err: " << err << std::endl;
