@@ -193,7 +193,7 @@ namespace dynamicgraph {
 	  PyErr_SetString(PyExc_TypeError, "third argument is not a tuple");
 	  return NULL;
 	}
-	unsigned int size = PyTuple_Size(argTuple);
+	Py_ssize_t size = PyTuple_Size(argTuple);
 
 	std::map<const std::string, Command*> commandMap =
 	  entity->getNewStyleCommandMap();
@@ -208,16 +208,17 @@ namespace dynamicgraph {
 	Command* command = commandMap[std::string(commandName)];
 	// Check that tuple size is equal to command number of arguments
 	const std::vector<Value::Type> typeVector = command->valueTypes();
-	if (size != typeVector.size()) {
-	  std::stringstream ss;
-	  ss << "command takes " <<  typeVector.size()
-	     << " parameters, " << size << " given.";
-	  PyErr_SetString(dgpyError, ss.str().c_str());
-	  return NULL;
-	}
+	if ((unsigned)size != typeVector.size())
+	  {
+	    std::stringstream ss;
+	    ss << "command takes " <<  typeVector.size()
+	       << " parameters, " << size << " given.";
+	    PyErr_SetString(dgpyError, ss.str().c_str());
+	    return NULL;
+	  }
 
 	std::vector<Value> valueVector;
-	for (unsigned int iParam=0; iParam<size; iParam++) {
+	for (Py_ssize_t iParam=0; iParam<size; iParam++) {
 	  PyObject* PyValue = PyTuple_GetItem(argTuple, iParam);
 	  Value::Type valueType = typeVector[iParam];
 	  try {
@@ -257,9 +258,10 @@ namespace dynamicgraph {
 	}
 	void* pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
-	typedef	std::map<const std::string, command::Command*>  CommandMap;
+	typedef	std::map<const std::string, command::Command*>
+	  CommandMap;
 	CommandMap map = entity->getNewStyleCommandMap();
-	unsigned int nbCommands = map.size();
+	Py_ssize_t nbCommands = (Py_ssize_t)map.size();
 	// Create a tuple of same size as the command map
 	PyObject* result = PyTuple_New(nbCommands);
 	unsigned int count = 0;

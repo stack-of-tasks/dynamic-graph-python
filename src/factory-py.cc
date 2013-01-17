@@ -34,15 +34,20 @@ namespace dynamicgraph {
 	  return NULL;
 
 	std::vector <std::string> classNames;
-	dynamicgraph::FactoryStorage::getInstance()->listEntities(classNames);
-	unsigned int classNumber = classNames.size();
+	dynamicgraph::FactoryStorage::getInstance()
+	  ->listEntities(classNames);
+
+	Py_ssize_t classNumber = classNames.size();
 	// Build a tuple object
 	PyObject* classTuple = PyTuple_New(classNumber);
 	
-	for (unsigned int iEntity = 0; iEntity < classNames.size(); iEntity++) {
-	  PyObject* className = Py_BuildValue("s", classNames[iEntity].c_str());
-	  PyTuple_SetItem(classTuple, iEntity, className);
-	}
+	for (Py_ssize_t iEntity = 0;
+	     iEntity < (Py_ssize_t)classNames.size(); ++iEntity)
+	  {
+	    PyObject* className = 
+	      Py_BuildValue("s", classNames[iEntity].c_str());
+	    PyTuple_SetItem(classTuple, iEntity, className);
+	  }
 
 	return Py_BuildValue("O", classTuple);
       }

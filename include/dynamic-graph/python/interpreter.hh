@@ -19,6 +19,7 @@
 #include <Python.h>
 #include <string>
 #include "dynamic-graph/python/api.hh"
+#include "dynamic-graph/python/deprecated.hh"
 
 #ifndef DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
 # define DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
@@ -39,7 +40,8 @@ namespace dynamicgraph {
       ~Interpreter();
       /// \brief Method to start python interperter.
       /// \param command string to execute
-      std::string python( const std::string& command );
+      /// Method deprecated, you *SHOULD* handle error messages.
+      std::string python( const std::string& command ) DYNAMIC_GRAPH_PYTHON_DEPRECATED;
 
       /// \brief Method to start python interperter.
       /// \param command string to execute, result, stdout, stderr strings

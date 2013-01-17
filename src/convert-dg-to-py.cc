@@ -62,10 +62,10 @@ namespace dynamicgraph {
 	std::string svalue;
 	Vector v;
 	Matrix m;
-	unsigned int nCols;
-	unsigned int size;
+	Py_ssize_t nCols;
+	Py_ssize_t size;
 	PyObject* row;
-	unsigned int nRows;
+	Py_ssize_t nRows;
 
 	switch (valueType) {
 	case (Value::BOOL) :
@@ -81,7 +81,7 @@ namespace dynamicgraph {
 	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
 				   "unsigned int");
 	  }
-	  uvalue = PyInt_AsUnsignedLongMask(pyObject);
+	  uvalue = (unsigned int)PyInt_AsUnsignedLongMask(pyObject);
 	  return Value(uvalue);
 	  break;
 	case (Value::INT) :
@@ -109,7 +109,7 @@ namespace dynamicgraph {
 	    dvalue = PyFloat_AsDouble(pyObject);
 	    return Value(dvalue);
 	  } else if (PyInt_Check(pyObject)) {
-	    dvalue = 0.0+PyInt_AS_LONG(pyObject);
+	    dvalue = (double)PyInt_AS_LONG(pyObject);
 	    return Value(dvalue);
 	  } else {
 	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
@@ -132,7 +132,7 @@ namespace dynamicgraph {
 	  }
 	  size = PyTuple_Size(pyObject);
 	  v.resize(size);
-	  for (unsigned int i=0; i<size; i++) {
+	  for (Py_ssize_t i=0; i<size; i++) {
 	    PyObject* pyDouble = PyTuple_GetItem(pyObject, i);
 	    if (PyFloat_Check(pyDouble))
 	      v(i) = PyFloat_AsDouble(pyDouble);
@@ -162,10 +162,10 @@ namespace dynamicgraph {
 	  }
 	  nCols = PyTuple_Size(row);
 
-	  m.resize(nRows, nCols);
+	  m.resize((unsigned int)nRows, (unsigned int)nCols);
 	  fillMatrixRow(m, 0, row);
 
-	  for (unsigned int iRow=1; iRow<nRows; iRow++) {
+	  for (Py_ssize_t iRow=1; iRow<nRows; iRow++) {
 	    row = PyTuple_GetItem(pyObject, iRow);
 	    if (!PyTuple_Check(row)) {
 	      throw ExceptionPython(ExceptionPython::MATRIX_PARSING,

@@ -19,6 +19,8 @@
 #include "dynamic-graph/python/interpreter.hh"
 #include "link-to-python.hh"
 
+std::ofstream dg_debugfile( "/tmp/dynamic-graph-traces.txt", std::ios::trunc&std::ios::out );
+
 // Python initialization commands
 namespace dynamicgraph {
   namespace python {
@@ -41,8 +43,8 @@ namespace dynamicgraph {
   }
 }
 
-using dynamicgraph::python::Interpreter;
-using dynamicgraph::python::libpython;
+namespace dynamicgraph {
+  namespace python {
 
 bool HandleErr(std::string & err,
 	       PyObject * traceback_format_exception,
@@ -66,11 +68,12 @@ bool HandleErr(std::string & err,
     PyTuple_SET_ITEM(args, 2, ptraceback);
     pyerr = PyObject_CallObject(traceback_format_exception, args);
     assert(PyList_Check(pyerr));
-    unsigned int size = PyList_GET_SIZE(pyerr);
+    Py_ssize_t size = PyList_GET_SIZE(pyerr);
     std::string stringRes;
-    for (unsigned int i=0; i<size; i++) {
-      stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
-    }
+    for (Py_ssize_t i=0; i<size; ++i)
+      stringRes += std::string
+	(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+
     pyerr  = PyString_FromString(stringRes.c_str());
     err = PyString_AsString(pyerr);
     dgDEBUG(15) << "err: " << err << std::endl;
@@ -106,139 +109,143 @@ bool HandleErr(std::string & err,
   return lres;
 }
 
-Interpreter::Interpreter()
-{
-  // load python dynamic library
-  // this is silly, but required to be able to import dl module.
+
+    Interpreter::Interpreter()
+    {
+      // load python dynamic library
+      // this is silly, but required to be able to import dl module.
 #ifndef WIN32
-  dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+      dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 #endif
-  Py_Initialize();
-  mainmod_ = PyImport_AddModule("__main__");
-  Py_INCREF(mainmod_);
-  globals_ = PyModule_GetDict(mainmod_);
-  assert(globals_);
-  Py_INCREF(globals_);
-  PyRun_SimpleString(pythonPrefix[0].c_str());
-  PyRun_SimpleString(pythonPrefix[1].c_str());
-  PyRun_SimpleString(pythonPrefix[2].c_str());
-  PyRun_SimpleString(pythonPrefix[3].c_str());
-  PyRun_SimpleString(pythonPrefix[4].c_str());
-  traceback_format_exception_ = PyDict_GetItemString
-    (PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
-  assert(PyCallable_Check(traceback_format_exception_));
-  Py_INCREF(traceback_format_exception_);
-}
+      Py_Initialize();
+      mainmod_ = PyImport_AddModule("__main__");
+      Py_INCREF(mainmod_);
+      globals_ = PyModule_GetDict(mainmod_);
+      assert(globals_);
+      Py_INCREF(globals_);
+      PyRun_SimpleString(pythonPrefix[0].c_str());
+      PyRun_SimpleString(pythonPrefix[1].c_str());
+      PyRun_SimpleString(pythonPrefix[2].c_str());
+      PyRun_SimpleString(pythonPrefix[3].c_str());
+      PyRun_SimpleString(pythonPrefix[4].c_str());
+      traceback_format_exception_ = PyDict_GetItemString
+	(PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
+      assert(PyCallable_Check(traceback_format_exception_));
+      Py_INCREF(traceback_format_exception_);
+    }
 
-Interpreter::~Interpreter()
-{
-  //Py_DECREF(mainmod_);
-  //Py_DECREF(globals_);
-  //Py_DECREF(traceback_format_exception_);
-  Py_Finalize();
-}
+    Interpreter::~Interpreter()
+    {
+      //Py_DECREF(mainmod_);
+      //Py_DECREF(globals_);
+      //Py_DECREF(traceback_format_exception_);
+      Py_Finalize();
+    }
 
-std::string Interpreter::python( const std::string& command )
-{
-  std::string lerr(""),lout(""),lres("");
-  python(command,lres,lout,lerr);
-  return lres;
-}
+    std::string Interpreter::python( const std::string& command )
+    {
+      std::string lerr(""),lout(""),lres("");
+      python(command,lres,lout,lerr);
+      return lres;
+    }
 
 
-void Interpreter::python( const std::string& command, std::string& res,
-                          std::string& out, std::string& err)
-{
-  res = "";
-  out = "";
-  err = "";
-  
-  PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
-				  globals_);
-  // Check if the result is null.
-  if (!result) {
+    void Interpreter::python( const std::string& command, std::string& res,
+			      std::string& out, std::string& err)
+    {
+      res = "";
+      out = "";
+      err = "";
+      
+      std::cout << command.c_str() << std::endl;
+      PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
+				      globals_);
+      // Check if the result is null.
+      if (!result) {
 
-    // Test if this is a syntax error (due to the evaluation of an expression)
-    // else just output the problem.
-    if (!HandleErr(err,
-		   traceback_format_exception_, globals_,
-		   Py_eval_input))
-      {
-	// If this is a statement, re-parse the command.
-	result = PyRun_String(command.c_str(), Py_single_input, globals_, globals_);
+	// Test if this is a syntax error (due to the evaluation of an expression)
+	// else just output the problem.
+	if (!HandleErr(err,
+		       traceback_format_exception_, globals_,
+		       Py_eval_input))
+	  {
+	    // If this is a statement, re-parse the command.
+	    result = PyRun_String(command.c_str(), Py_single_input, globals_, globals_);
 
-	// If there is still an error build the appropriate err string.
-	if (result == NULL) 
-	  HandleErr(err,
-		    traceback_format_exception_, globals_,
-		    Py_single_input);
+	    // If there is still an error build the appropriate err string.
+	    if (result == NULL) 
+	      HandleErr(err,
+			traceback_format_exception_, globals_,
+			Py_single_input);
+	    else 
+	      // If there is no error, make sure that the previous error message is erased.
+	      err="";
+	  }
 	else 
-	  // If there is no error, make sure that the previous error message is erased.
-	  err="";
+	  { dgDEBUG(15) << "Do not try a second time." << std::endl; }
       }
-    else 
-      { dgDEBUG(15) << "Do not try a second time." << std::endl; }
-  }
 
-  PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
-                                      Py_eval_input, globals_,
-                                      globals_);
-  out = PyString_AsString(stdout_obj);
-  // Local display for the robot (in debug mode or for the logs)
-  std::cout << out;
-  result = PyObject_Repr(result);
-  // If python cannot build a string representation of result
-  // then results is equal to NULL. This will trigger a SEGV
-  if (result!=NULL)
-    {
-      dgDEBUG(15) << "For command :" << command << std::endl;
-      res = PyString_AsString(result);
-      dgDEBUG(15) << "Result is: " << res <<std::endl;
-      dgDEBUG(15) << "Out is: " << out <<std::endl;
-      dgDEBUG(15) << "Err is :" << err << std::endl;
+      PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
+					  Py_eval_input, globals_,
+					  globals_);
+      out = PyString_AsString(stdout_obj);
+      // Local display for the robot (in debug mode or for the logs)
+      std::cout << out;
+      result = PyObject_Repr(result);
+      // If python cannot build a string representation of result
+      // then results is equal to NULL. This will trigger a SEGV
+      if (result!=NULL)
+	{
+	  dgDEBUG(15) << "For command :" << command << std::endl;
+	  res = PyString_AsString(result);
+	  dgDEBUG(15) << "Result is: " << res <<std::endl;
+	  dgDEBUG(15) << "Out is: " << out <<std::endl;
+	  dgDEBUG(15) << "Err is :" << err << std::endl;
+	}
+      else 
+	{ dgDEBUG(15) << "Result is empty" << std::endl; }
+      return;
     }
-  else 
-    { dgDEBUG(15) << "Result is empty" << std::endl; }
-  return;
-}
 
-PyObject* Interpreter::globals()
-{
-  return globals_;
-}
-
-void Interpreter::runPythonFile( std::string filename )
-{
-  PyObject* pymainContext = globals_;
-  PyRun_File(fopen( filename.c_str(),"r" ), filename.c_str(),
-	     Py_file_input, pymainContext,pymainContext);
-  if (PyErr_Occurred())
+    PyObject* Interpreter::globals()
     {
-      std::cout << "Error occures..." << std::endl;
-      PyErr_Print();
+      return globals_;
     }
-}
 
-void Interpreter::runMain( void )
-{
-  const char * argv [] = { "dg-embedded-pysh" };
-  Py_Main(1,const_cast<char**>(argv));
-}
+    void Interpreter::runPythonFile( std::string filename )
+    {
+      PyObject* pymainContext = globals_;
+      PyRun_File(fopen( filename.c_str(),"r" ), filename.c_str(),
+		 Py_file_input, pymainContext,pymainContext);
+      if (PyErr_Occurred())
+	{
+	  std::cout << "Error occures..." << std::endl;
+	  PyErr_Print();
+	}
+    }
 
-std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
-{
-  char line[10000]; sprintf(line, "%s", "\n");
-  std::string command;
-  std::streamsize maxSize = 10000;
+    void Interpreter::runMain( void )
+    {
+      const char * argv [] = { "dg-embedded-pysh" };
+      Py_Main(1,const_cast<char**>(argv));
+    }
+
+    std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
+    {
+      char line[10000]; sprintf(line, "%s", "\n");
+      std::string command;
+      std::streamsize maxSize = 10000;
 #if 0
-  while (line != std::string("")) {
-    stream.getline(line, maxSize, '\n');
-    command += std::string(line) + std::string("\n");
-  };
+      while (line != std::string("")) {
+	stream.getline(line, maxSize, '\n');
+	command += std::string(line) + std::string("\n");
+      };
 #else
-  os << "dg> ";
-  stream.getline(line, maxSize, ';');
-  command += std::string(line);
+      os << "dg> ";
+      stream.getline(line, maxSize, ';');
+      command += std::string(line);
 #endif
-  return command;
-}
+      return command;
+    }
+  } //namespace python
+} // namespace dynamicgraph
