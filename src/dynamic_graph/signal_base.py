@@ -6,6 +6,7 @@
 import wrap
 import entity
 import re
+import collections
 
 def stringToTuple (vector) :
     """
@@ -100,12 +101,12 @@ def objectToString(obj) :
       - an integer,
       - a boolean,
     """
-    if (isinstance(obj, tuple)) :
+    if (isinstance(obj, collections.Iterable)) :
         # matrix or vector
         if len(obj) is 0 :
             return ""
         else :
-            if (isinstance(obj[0], tuple)) :
+            if (isinstance(obj[0], collections.Iterable)) :
                 #matrix
                 return matrixToString(obj)
             else :
