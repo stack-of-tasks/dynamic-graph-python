@@ -2,6 +2,16 @@ CHANGELOG
 ----------------------
 
 [Current]
+ * Synchronize
+ * Allow iterable instead of only tuple in signal value affectation.
+ * Synchronize.
+ * Fix compilation on Ubuntu 10.04 (32 bits).
+ * Fix Ubuntu 12.04 (64 bits) portability issues.
+ * Corrected the #include problem.
+ * Modify SignalBase.value.
+
+[v2.5.3]
+ * Update ChangeLog.
  * Fix pb with filesystem version.
 
 [v2.5.2]
