@@ -107,12 +107,20 @@ int main (int argc, char** argv)
       boost::filesystem::path path (pathStr);
 
       std::stringstream ss;
+#if BOOST_FILESYSTEM_VERSION == 2
       ss << "!! In file <" << path.file_string () << "> : ";
+#else 
+      ss << "!! In file <" << path.string () << "> : ";
+#endif
       std::string errorPrefix = ss.str ();
 
       try
 	{
+#if BOOST_FILESYSTEM_VERSION == 2
 	  interpreter.runPythonFile (path.file_string ());
+#else
+          interpreter.runPythonFile (path.string ());
+#endif
 	}
       CATCH_EXCEPTIONS ();
       return 0;
