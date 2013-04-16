@@ -101,12 +101,12 @@ def objectToString(obj) :
       - an integer,
       - a boolean,
     """
-    if (isinstance(obj, collections.Iterable)) :
+    if (hasattr (obj, "__iter__")) :
         # matrix or vector
         if len(obj) is 0 :
             return ""
         else :
-            if (isinstance(obj[0], collections.Iterable)) :
+            if (hasattr(obj[0], "__iter__")) :
                 #matrix
                 return matrixToString(obj)
             else :
