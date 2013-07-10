@@ -165,7 +165,7 @@ class SignalBase (object) :
             raise RuntimeError(
                 "A pointer is required to create SignalBase object.")
         self.name=self.getName()
-
+        self.className=self.getClassName()
     @property
     def time(self) :
         """
@@ -221,6 +221,12 @@ class SignalBase (object) :
         Get name of signal
         """
         return wrap.signal_base_get_name(self.obj)
+
+    def getClassName(self):
+        """
+        Get class name of signal
+        """
+        return wrap.signal_base_get_class_name(self.obj)
 
     def recompute(self, time):
         """

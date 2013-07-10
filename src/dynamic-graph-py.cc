@@ -33,6 +33,7 @@ namespace dynamicgraph {
       extern PyObject* getTime(PyObject* self, PyObject* args);
       extern PyObject* setTime(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
+      extern PyObject* getClassName(PyObject* self, PyObject* args);
       extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* displayDependencies(PyObject* self, PyObject* args);
       extern PyObject* getValue(PyObject* self, PyObject* args);
@@ -151,6 +152,8 @@ static PyMethodDef dynamicGraphMethods[] = {
    METH_VARARGS, "Set time of  a SignalBase"},
   {"signal_base_get_name", dynamicgraph::python::signalBase::getName,
    METH_VARARGS, "Get the name of a signal"},
+  {"signal_base_get_class_name", dynamicgraph::python::signalBase::getClassName,
+   METH_VARARGS, "Get the class name of a signal"},
   {"signal_base_display", dynamicgraph::python::signalBase::display,
    METH_VARARGS, "Print the signal in a string"},
   {"signal_base_display_dependencies", dynamicgraph::python::signalBase::displayDependencies,
