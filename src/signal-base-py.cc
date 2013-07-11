@@ -319,6 +319,51 @@ namespace dynamicgraph {
 	} CATCH_ALL_EXCEPTIONS ();
 	return Py_BuildValue("");
       }
-    }
-  }
-}
+
+      PyObject* isPlugged (PyObject*, PyObject* args)
+      {
+	void * pointer = NULL;
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args,"O", &object))
+	  return NULL;
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* signal = (SignalBase<int>*)pointer;
+	bool plugged = false;
+	try {
+	  plugged = signal->isPluged();
+	} CATCH_ALL_EXCEPTIONS ();
+	if (plugged) return PyBool_FromLong(1); else return PyBool_FromLong(0);
+
+      }
+
+      PyObject* getPlugged (PyObject*, PyObject* args)
+      {
+	void * pointer = NULL;
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args,"O", &object))
+	  return NULL;
+	if (!PyCObject_Check(object))
+	  return NULL;
+
+	pointer = PyCObject_AsVoidPtr(object);
+	SignalBase<int>* signal = (SignalBase<int>*)pointer;
+	SignalBase<int>* otherSignal = 0;
+	try {
+	  bool plugged = signal->isPluged ();
+	  otherSignal = signal->getPluged();
+	  if (!plugged || otherSignal == 0) {
+	    std::string msg = std::string ("Signal ") + signal->getName()
+	      + std::string (" is not plugged.");
+	    throw std::runtime_error (msg);
+	  }
+	} CATCH_ALL_EXCEPTIONS ();
+	// Return the pointer to the signal without destructor since the signal
+	// is not owned by the calling object.
+	return PyCObject_FromVoidPtr((void*)otherSignal, NULL);
+      }
+    } // namespace signalBase
+  } // namespace python
+} // namespace dynamicgraph

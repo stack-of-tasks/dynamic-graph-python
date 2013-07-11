@@ -40,6 +40,8 @@ namespace dynamicgraph {
       extern PyObject* setValue(PyObject* self, PyObject* args);
       extern PyObject* recompute(PyObject* self, PyObject* args);
       extern PyObject* unplug(PyObject* self, PyObject* args);
+      extern PyObject* isPlugged(PyObject* self, PyObject* args);
+      extern PyObject* getPlugged(PyObject* self, PyObject* args);
     }
     namespace entity {
       extern PyObject* create(PyObject* self, PyObject* args);
@@ -166,6 +168,10 @@ static PyMethodDef dynamicGraphMethods[] = {
    METH_VARARGS, "Recompute the signal at given time"},
   {"signal_base_unplug", dynamicgraph::python::signalBase::unplug,
    METH_VARARGS, "Unplug the signal"},
+  {"signal_base_isPlugged", dynamicgraph::python::signalBase::isPlugged,
+   METH_VARARGS, "Whether the signal is plugged"},
+  {"signal_base_getPlugged", dynamicgraph::python::signalBase::getPlugged,
+   METH_VARARGS, "To which signal the signal is plugged"},
   // Entity
   {"create_entity", dynamicgraph::python::entity::create, METH_VARARGS,
    "create an Entity C++ object"},

@@ -225,6 +225,13 @@ class SignalBase (object) :
         """
         return wrap.signal_base_get_name(self.obj)
 
+    @property
+    def name (self) :
+        """
+        Get name of signal
+        """
+        return wrap.signal_base_get_name(self.obj)
+
     def getClassName(self):
         """
         Get class name of signal
@@ -241,6 +248,16 @@ class SignalBase (object) :
         Unplug a PTR signal.
         """
         return wrap.signal_base_unplug(self.obj)
+    def isPlugged(self):
+        """
+        Return whether a signal is plugged.
+        """
+        return wrap.signal_base_isPlugged(self.obj)
+    def getPlugged(self):
+        """
+        Return the plugged signal.
+        """
+        return SignalBase (obj = wrap.signal_base_getPlugged(self.obj))
 
     def __str__(self):
         """
