@@ -164,8 +164,11 @@ class SignalBase (object) :
         else :
             raise RuntimeError(
                 "A pointer is required to create SignalBase object.")
-        self.name=self.getName()
-        self.className=self.getClassName()
+
+        if (obj==None):
+          self.className=self.getClassName()
+          self.name=self.getName()
+ 
     @property
     def time(self) :
         """
