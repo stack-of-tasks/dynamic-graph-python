@@ -32,9 +32,9 @@ def stringToTuple (vector) :
 def tupleToString (vector) :
     """
     Transform a tuple of numbers into a string of format
-    '[n](x_1, x_2, ..., x_n)'
+    '[n,1](x_1, x_2, ..., x_n)'
     """
-    string = '[%d]('%len (vector)
+    string = '[%d,1]('%len (vector)
     for x in vector[:-1]:
         string += '%f,'%x
     string += '%f)'%vector[-1]
