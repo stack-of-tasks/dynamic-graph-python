@@ -171,7 +171,7 @@ namespace dynamicgraph {
 	      throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				     "matrix");
 	    }
-	    fillMatrixRow(m, iRow, row);
+	    fillMatrixRow(m, static_cast<unsigned> (iRow), row);
 	  }
 	  return Value(m);
 	  break;
