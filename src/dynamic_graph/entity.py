@@ -112,10 +112,13 @@ class Entity (object) :
         Print the list of signals into standard output: temporary.
         """
         signals = self.signals()
-        display ("--- <" +  self.name + "> signal list: ")
-        for s in signals[:-1]:
-            display("    |-- <" + str(s))
-        display("    `-- <" + str(signals[-1]))
+        if len(signals) == 0:
+          display ("--- <" +  self.name + "> has no signal")
+        else:
+          display ("--- <" +  self.name + "> signal list: ")
+          for s in signals[:-1]:
+              display("    |-- <" + str(s))
+          display("    `-- <" + str(signals[-1]))
 
     def signals(self) :
         """
