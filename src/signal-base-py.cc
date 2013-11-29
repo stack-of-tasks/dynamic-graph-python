@@ -333,7 +333,7 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 	bool plugged = false;
 	try {
-	  plugged = signal->isPluged();
+	  plugged = signal->isPlugged();
 	} CATCH_ALL_EXCEPTIONS ();
 	if (plugged) return PyBool_FromLong(1); else return PyBool_FromLong(0);
 
@@ -352,7 +352,7 @@ namespace dynamicgraph {
 	SignalBase<int>* signal = (SignalBase<int>*)pointer;
 	SignalBase<int>* otherSignal = 0;
 	try {
-	  bool plugged = signal->isPluged ();
+	  bool plugged = signal->isPlugged ();
 	  otherSignal = signal->getPluged();
 	  if (!plugged || otherSignal == 0) {
 	    std::string msg = std::string ("Signal ") + signal->getName()
