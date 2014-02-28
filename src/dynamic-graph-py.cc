@@ -48,6 +48,7 @@ namespace dynamicgraph {
       extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
+      extern PyObject* hasSignal(PyObject* self, PyObject* args);
       extern PyObject* getSignal(PyObject* self, PyObject* args);
       extern PyObject* listSignals(PyObject* self, PyObject* args);
       extern PyObject* executeCommand(PyObject* self, PyObject* args);
@@ -179,6 +180,8 @@ static PyMethodDef dynamicGraphMethods[] = {
    "print an Entity C++ object"},
   {"entity_get_name", dynamicgraph::python::entity::getName, METH_VARARGS,
    "get the name of an Entity"},
+  {"entity_has_signal", dynamicgraph::python::entity::hasSignal, METH_VARARGS,
+   "return True if the entity has a signal with the given name"},
   {"entity_get_signal", dynamicgraph::python::entity::getSignal, METH_VARARGS,
    "get signal by name from an Entity"},
   {"entity_list_signals", dynamicgraph::python::entity::listSignals,
