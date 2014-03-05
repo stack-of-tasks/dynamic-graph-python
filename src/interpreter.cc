@@ -61,6 +61,8 @@ bool HandleErr(std::string & err,
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
     if (ptraceback == NULL) {
       ptraceback = Py_None;
+      // increase the Py_None count, to avoid a crash at the tuple destruction
+      Py_INCREF(ptraceback);
     }
     PyObject* args = PyTuple_New(3);
     PyTuple_SET_ITEM(args, 0, ptype);
@@ -73,12 +75,15 @@ bool HandleErr(std::string & err,
     for (Py_ssize_t i=0; i<size; ++i)
       stringRes += std::string
           (PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+    Py_DecRef(pyerr);
+
 
     pyerr  = PyString_FromString(stringRes.c_str());
     err = PyString_AsString(pyerr);
     dgDEBUG(15) << "err: " << err << std::endl;
+    Py_DecRef(pyerr);
 
-    // Here if there is a syntax error and 
+    // Here if there is a syntax error and
     // and the interpreter input is set to Py_eval_input,
     // it is maybe a statement instead of an expression.
     // Therefore we indicate to re-evaluate the command.
@@ -91,7 +96,9 @@ bool HandleErr(std::string & err,
     else
       lres=true;
 
-    PyErr_Clear();    
+    Py_CLEAR(args);
+
+    PyErr_Clear();
   } else {
     dgDEBUG(15) << "no object generated but no error occured." << std::endl;
   }
@@ -106,6 +113,7 @@ bool HandleErr(std::string & err,
   { dgDEBUG(15) << std::endl; }
   else { dgDEBUG(15) << "No exception." << std::endl; }
   dgDEBUGOUT(15);
+  Py_DecRef(stdout_obj);
   return lres;
 }
 
@@ -195,19 +203,22 @@ void Interpreter::python( const std::string& command, std::string& res,
     std::cout << "Output:" << out << std::endl;
   if (err.size()!=0)
     std::cout << "Error:" << err << std::endl;
-  result = PyObject_Repr(result);
+  PyObject* result2 = PyObject_Repr(result);
   // If python cannot build a string representation of result
   // then results is equal to NULL. This will trigger a SEGV
-  if (result!=NULL)
+  if (result2!=NULL)
   {
     dgDEBUG(15) << "For command :" << command << std::endl;
-    res = PyString_AsString(result);
+    res = PyString_AsString(result2);
     dgDEBUG(15) << "Result is: " << res <<std::endl;
     dgDEBUG(15) << "Out is: " << out <<std::endl;
     dgDEBUG(15) << "Err is :" << err << std::endl;
   }
-  else 
+  else
   { dgDEBUG(15) << "Result is empty" << std::endl; }
+  Py_DecRef(stdout_obj);
+  Py_DecRef(result2);
+  Py_DecRef(result);
   return;
 }
 

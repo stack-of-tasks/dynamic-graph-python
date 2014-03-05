@@ -26,6 +26,12 @@
 #include "convert-dg-to-py.hh"
 #include "exception.hh"
 
+// Ignore "dereferencing type-punned pointer will break strict-aliasing rules"
+// warnings on gcc caused by Py_RETURN_TRUE and Py_RETURN_FALSE.
+#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
+# pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
+
 using dynamicgraph::Entity;
 using dynamicgraph::SignalBase;
 using dynamicgraph::command::Command;
