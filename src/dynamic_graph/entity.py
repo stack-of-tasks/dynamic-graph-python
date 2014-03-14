@@ -107,6 +107,12 @@ class Entity (object) :
         signalPt = wrap.entity_get_signal(self.obj, name)
         return signal_base.SignalBase(name = "", obj = signalPt)
 
+    def hasSignal(self, name) :
+        """
+        Indicates if a signal with the given name exists in the entity
+        """
+        return wrap.entity_has_signal(self.obj, name)
+
     def displaySignals(self) :
         """
         Print the list of signals into standard output: temporary.

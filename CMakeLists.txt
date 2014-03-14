@@ -39,7 +39,7 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES}
 SETUP_PROJECT()
 
 # Trigger dependency to dynamic-graph.
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0")
+ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.5-6")
 
 # Add dependency toward dynamic graph library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")

@@ -113,7 +113,40 @@ namespace dynamicgraph {
       }
 
       /**
-	 \brief Get a signal by name
+         \brief Check if the entity has a signal with the given name
+      */
+      PyObject * hasSignal(PyObject* /*self*/, PyObject* args)
+      {
+        char *name = NULL;
+        PyObject* object = NULL;
+        void* pointer = NULL;
+
+	if (!PyArg_ParseTuple(args, "Os", &object, &name))
+	  Py_RETURN_FALSE;
+
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
+	  Py_RETURN_FALSE;
+	}
+
+	pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	bool hasSignal = false;
+	try {
+	  hasSignal = entity->hasSignal(std::string(name));
+	} CATCH_ALL_EXCEPTIONS();
+
+	if (hasSignal)
+	  Py_RETURN_TRUE;
+	else
+	  Py_RETURN_FALSE;
+      }
+
+
+      /**
+         \brief Get a signal by name
       */
       PyObject* getSignal(PyObject* /*self*/, PyObject* args)
       {
