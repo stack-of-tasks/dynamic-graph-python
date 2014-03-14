@@ -230,8 +230,8 @@ PyObject* Interpreter::globals()
 void Interpreter::runPythonFile( std::string filename )
 {
   PyObject* pymainContext = globals_;
-  PyRun_File(fopen( filename.c_str(),"r" ), filename.c_str(),
-             Py_file_input, pymainContext,pymainContext);
+  PyRun_FileExFlags(fopen( filename.c_str(),"r" ), filename.c_str(),
+             Py_file_input, pymainContext,pymainContext, true, NULL);
   if (PyErr_Occurred())
   {
     std::cout << "Error occures..." << std::endl;
