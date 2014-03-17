@@ -51,6 +51,7 @@ namespace dynamicgraph {
       /// \brief Method to exectue a python script.
       /// \param filename the filename
       void runPythonFile( std::string filename );
+      void runPythonFile( std::string filename, std::string& err);
       void runMain( void );
 
       /// \brief Process input stream to send relevant blocks to python
