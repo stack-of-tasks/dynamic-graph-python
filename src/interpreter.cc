@@ -125,7 +125,8 @@ bool HandleErr(std::string & err,
 }
 
 
-Interpreter::Interpreter()
+Interpreter::Interpreter():
+  mutex_(new boost::interprocess::interprocess_mutex() )
 {
   // load python dynamic library
   // this is silly, but required to be able to import dl module.
@@ -170,6 +171,7 @@ std::string Interpreter::python( const std::string& command )
 void Interpreter::python( const std::string& command, std::string& res,
                           std::string& out, std::string& err)
 {
+  while(! mutex_->try_lock() ){}
   res = "";
   out = "";
   err = "";
@@ -228,6 +230,8 @@ void Interpreter::python( const std::string& command, std::string& res,
   Py_DecRef(stdout_obj);
   Py_DecRef(result2);
   Py_DecRef(result);
+
+  mutex_->unlock();
   return;
 }
 
@@ -245,6 +249,7 @@ void Interpreter::runPythonFile( std::string filename )
 
 void Interpreter::runPythonFile( std::string filename, std::string& err)
 {
+  while(! mutex_->try_lock() ){}
   err = "";
   PyObject* pymainContext = globals_;
   PyObject* run = PyRun_FileExFlags(fopen( filename.c_str(),"r" ), filename.c_str(),
@@ -298,6 +303,7 @@ void Interpreter::runPythonFile( std::string filename, std::string& err)
     std::cerr << err;
   }
   Py_DecRef(run);
+  mutex_->unlock();
 }
 
 void Interpreter::runMain( void )
