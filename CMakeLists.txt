@@ -48,9 +48,6 @@ PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 SET(BOOST_COMPONENTS python filesystem system thread program_options unit_test_framework)
 SEARCH_FOR_BOOST()
 
-# Make sure Boost.Filesystem v2 is used.
-ADD_DEFINITIONS(-DBOOST_FILESYSTEM_VERSION=2)
-
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(doc)
