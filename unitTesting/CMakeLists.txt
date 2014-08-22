@@ -38,9 +38,11 @@ TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-graph-python)
 ADD_TEST(${EXECUTABLE_NAME}  ${EXECUTABLE_NAME})
 
 ADD_CUSTOM_COMMAND(TARGET interpreter-test-runfile POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python_ok.py
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-ok.py
   ${CMAKE_BINARY_DIR}/unitTesting
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python_error.py
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-name_error.py
+  ${CMAKE_BINARY_DIR}/unitTesting
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-syntax_error.py
   ${CMAKE_BINARY_DIR}/unitTesting
 )
 

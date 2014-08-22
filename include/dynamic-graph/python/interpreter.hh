@@ -41,7 +41,7 @@ namespace dynamicgraph {
       /// \brief Method to start python interperter.
       /// \param command string to execute
       /// Method deprecated, you *SHOULD* handle error messages.
-      std::string python( const std::string& command ) DYNAMIC_GRAPH_PYTHON_DEPRECATED;
+      DYNAMIC_GRAPH_PYTHON_DEPRECATED std::string python( const std::string& command );
 
       /// \brief Method to start python interperter.
       /// \param command string to execute, result, stdout, stderr strings

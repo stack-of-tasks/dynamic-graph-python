@@ -4,6 +4,25 @@
 
 #include "dynamic-graph/python/interpreter.hh"
 
+bool testFile(const std::string & filename, 
+             const std::string & expectedOutput,
+             int numTest)
+{
+  std::string err = "";
+  dynamicgraph::python::Interpreter interp;
+  for (int i=0; i<numTest; ++i)
+  {
+    interp.runPythonFile(filename, err);
+    if (err != expectedOutput)
+    {
+      std::cerr << "At iteration " << i << ", the output was not the one expected:" << std::endl;
+      std::cerr << " expected: " << expectedOutput << std::endl;
+      std::cerr << " err:      " << err << std::endl;
+      return false;
+    }
+  }  
+  return true;
+}
 
 int main(int argc, char ** argv)
 {
@@ -14,35 +33,18 @@ int main(int argc, char ** argv)
   if (argc > 1)
     numTest = atoi(argv[1]);
 
-  std::string empty_err = "";
-  dynamicgraph::python::Interpreter interp;
-
-  for (int i=0; i<numTest; ++i)
-  {
-    interp.runPythonFile("test_python_ok.py", empty_err);
-    if (empty_err != "")
-    {
-      std::cerr << "At iteration " << i << ", the error was not empty:" << std::endl;
-      std::cerr << " err " << empty_err << std::endl;
-      return -1;
-    }
-  }
-
-  // check that the error remains the same, despite of the number of executions
-  std::string old_err;
-  interp.runPythonFile("test_python_error.py", old_err);
-  std::string new_err = old_err;
-  for (int i=0; i<numTest; ++i)
-  {
-    interp.runPythonFile("test_python_error.py", new_err);
-    if (old_err != new_err)
-    {
-      std::cerr << "At iteration " << i << ", the error changed:" << std::endl;
-      std::cerr << " old " << old_err << std::endl;
-      std::cerr << " new " << new_err << std::endl;
-      return -1;
-    }
-  }
-
-  return 0;
+  bool res = true;
+  res = testFile("test_python-ok.py", "", numTest) && res;
+  res = testFile("unexistant_file.py", 
+		 "unexistant_file.py cannot be open",
+		 numTest) && res;
+  res = testFile("test_python-name_error.py", 
+		 std::string("<type 'exceptions.NameError'>: name 're' is not defined:")+
+		 "   File \"test_python-name_error.py\", line 6, in <module>\n" +
+		 "    pathList = re.split(':', pkgConfigPath)\n", numTest) && res;
+  res = testFile("test_python-syntax_error.py", 
+		 std::string("<type 'exceptions.SyntaxError'>: ('invalid syntax', ")+
+		 "('test_python-syntax_error.py', 1, 11, "+
+		 "'hello world\\n'))", numTest) && res;
+  return (res?0:1);
 }
