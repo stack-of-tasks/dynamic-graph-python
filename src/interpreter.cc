@@ -23,8 +23,11 @@
 #include <boost/python/object.hpp>
 #include <boost/python/handle.hpp>
 #include <boost/python/extract.hpp>
+#include <boost/python/str.hpp>
+#include <boost/python/import.hpp>
 
 using namespace boost::python;
+namespace py=boost::python;
 
 std::ofstream dg_debugfile( "/tmp/dynamic-graph-traces.txt", std::ios::trunc&std::ios::out );
 
@@ -53,6 +56,10 @@ static const std::string pythonPrefix[5] = {
 namespace dynamicgraph {
 namespace python {
 
+// Parse a python exception and return the corresponding error message
+// http://thejosephturner.com/blog/post/embedding-python-in-c-applications-with-boostpython-part-2/
+std::string parse_python_exception();
+
 bool HandleErr(std::string & err,
                PyObject * traceback_format_exception,
                PyObject * globals_,
@@ -63,7 +70,6 @@ bool HandleErr(std::string & err,
   bool lres=false;
 
   if (PyErr_Occurred()) {
-
     PyObject *ptype, *pvalue, *ptraceback, *pyerr;
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
     if (ptraceback == NULL) {
@@ -242,60 +248,24 @@ void Interpreter::runPythonFile( std::string filename )
   runPythonFile(filename, err);
 }
 
-
 void Interpreter::runPythonFile( std::string filename, std::string& err)
 {
+  FILE* pFile = fopen( filename.c_str(),"r" );
+  if (pFile==0x0)
+  {
+    err = filename + " cannot be open";
+    return;
+  }
+
   err = "";
   PyObject* pymainContext = globals_;
-  PyObject* run = PyRun_FileExFlags(fopen( filename.c_str(),"r" ), filename.c_str(),
+  PyObject* run = PyRun_FileExFlags(pFile, filename.c_str(),
              Py_file_input, pymainContext,pymainContext, true, NULL);
+
   if (PyErr_Occurred())
   {
-    PyObject *ptype, *pvalue, *ptraceback;
-    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-
-    handle<> hTraceback(ptraceback);
-    object traceback(hTraceback);
-
-    //Extract error message
-    std::string strErrorMessage = extract<std::string>(pvalue);
-    std::ostringstream errstream;
-
-    //TODO does not work for now for a single command.
-    do
-      {
-	//Extract line number (top entry of call stack)
-	// if you want to extract another levels of call stack
-	// also process traceback.attr("tb_next") recurently
-	long lineno = extract<long> (traceback.attr("tb_lineno"));
-	std::string filename = extract<std::string>
-	  (traceback.attr("tb_frame").attr("f_code").attr("co_filename"));
-	std::string funcname = extract<std::string>
-	  (traceback.attr("tb_frame").attr("f_code").attr("co_name"));
-	errstream << " File \"" << filename  <<"\", line "
-		  << lineno << ", in "<< funcname << std::endl;
-
-	// get the corresponding line.
-	std::ostringstream cmd;
-	cmd << "linecache.getline('"<<filename<<"', "<<lineno <<")";
-	PyObject* line_obj = PyRun_String(cmd.str().c_str(),
-					  Py_eval_input, globals_, globals_);
-	std::string line = PyString_AsString(line_obj);
-	Py_DecRef(line_obj);
-
-	// remove the spaces at the beginning of the line.
-	size_t index = line.find_first_not_of (" \t");
-	errstream << "  " << line.substr(index, line.size()-index);
-	
-	// go to the next line.
-	traceback = traceback.attr("tb_next");
-      }
-    while (traceback);
-
-    // recreate the error message
-    errstream << strErrorMessage << std::endl;
-    err =errstream.str();
-    std::cerr << err;
+    err = parse_python_exception();
+    std::cerr << err << std::endl;;
   }
   Py_DecRef(run);
 }
@@ -322,6 +292,50 @@ std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
   command += std::string(line);
 #endif
   return command;
+}
+
+std::string parse_python_exception()
+{
+  PyObject *type_ptr = NULL, *value_ptr = NULL, *traceback_ptr = NULL;
+  PyErr_Fetch(&type_ptr, &value_ptr, &traceback_ptr);
+  std::string ret("Unfetchable Python error");
+
+  if(type_ptr != NULL)
+  {
+    py::handle<> h_type(type_ptr);
+    py::str type_pstr(h_type);
+    py::extract<std::string> e_type_pstr(type_pstr);
+    if(e_type_pstr.check())
+      ret = e_type_pstr();
+    else
+      ret = "Unknown exception type";
+  }
+
+  if(value_ptr != NULL)
+  {
+    py::handle<> h_val(value_ptr);
+    py::str a(h_val);
+    py::extract<std::string> returned(a);
+    if(returned.check())
+      ret +=  ": " + returned();
+    else
+      ret += std::string(": Unparseable Python error: ");
+  }
+
+  if(traceback_ptr != NULL)
+  {
+    py::handle<> h_tb(traceback_ptr);
+    py::object tb(py::import("traceback"));
+    py::object fmt_tb(tb.attr("format_tb"));
+    py::object tb_list(fmt_tb(h_tb));
+    py::object tb_str(py::str("\n").join(tb_list));
+    py::extract<std::string> returned(tb_str);
+    if(returned.check())
+      ret += ": " + returned();
+    else
+      ret += std::string(": Unparseable Python traceback");
+  }
+  return ret;
 }
 } //namespace python
 } // namespace dynamicgraph
