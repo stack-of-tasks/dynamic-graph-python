@@ -15,6 +15,11 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+IF(UNIX)
+  # Disable -Werror on Unix for now.
+  SET(CXX_DISABLE_WERROR True)
+ENDIF(UNIX)
+
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/pthread.cmake)
