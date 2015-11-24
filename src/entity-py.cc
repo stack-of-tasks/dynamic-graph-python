@@ -22,6 +22,7 @@
 #include <dynamic-graph/command.h>
 #include <dynamic-graph/value.h>
 #include <dynamic-graph/pool.h>
+#include <dynamic-graph/linear-algebra.h>
 
 #include "convert-dg-to-py.hh"
 #include "exception.hh"
@@ -214,11 +215,9 @@ namespace dynamicgraph {
 	PyObject* argTuple = NULL;
 	char* commandName = NULL;
 	void* pointer = NULL;
-
 	if (!PyArg_ParseTuple(args, "OsO", &object, &commandName, &argTuple)) {
 	  return NULL;
 	}
-
 	// Retrieve the entity instance
 	if (!PyCObject_Check(object)) {
 	  PyErr_SetString(PyExc_TypeError, "first argument is not an object");
@@ -226,17 +225,14 @@ namespace dynamicgraph {
 	}
 	pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
-
 	// Retrieve the argument tuple
 	if (!PyTuple_Check(argTuple)) {
 	  PyErr_SetString(PyExc_TypeError, "third argument is not a tuple");
 	  return NULL;
 	}
 	Py_ssize_t size = PyTuple_Size(argTuple);
-
 	std::map<const std::string, Command*> commandMap =
 	  entity->getNewStyleCommandMap();
-
 	if (commandMap.count(std::string(commandName)) != 1) {
 	  std::ostringstream oss;
 	  oss << "'" << entity->getName() << "' entity has no command '"
@@ -255,7 +251,6 @@ namespace dynamicgraph {
 	    PyErr_SetString(dgpyError, ss.str().c_str());
 	    return NULL;
 	  }
-
 	std::vector<Value> valueVector;
 	for (Py_ssize_t iParam=0; iParam<size; iParam++) {
 	  PyObject* PyValue = PyTuple_GetItem(argTuple, iParam);

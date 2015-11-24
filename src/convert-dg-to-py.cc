@@ -33,11 +33,11 @@ namespace dynamicgraph {
 
       void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
       {
-	if (PyTuple_Size(tuple) != (int)m.nbCols()) {
+	if (PyTuple_Size(tuple) != (int)m.cols()) {
 	  throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				 "lines of matrix have different sizes.");
 	}
-	for (unsigned int iCol=0; iCol < m.nbCols(); iCol++) {
+	for (int iCol=0; iCol < m.cols(); iCol++) {
 	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
 	  if (PyFloat_Check(pyDouble))
 	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
@@ -185,7 +185,7 @@ namespace dynamicgraph {
       PyObject* vectorToPython(const Vector& vector)
       {
 	PyObject* tuple = PyTuple_New(vector.size());
-	for (unsigned int index = 0; index < vector.size(); index++) {
+	for (int index = 0; index < vector.size() ; index++) {
 	  PyObject* pyDouble = PyFloat_FromDouble(vector(index));
 	  PyTuple_SET_ITEM(tuple, index, pyDouble);
 	}
@@ -194,10 +194,10 @@ namespace dynamicgraph {
 
       PyObject* matrixToPython(const Matrix& matrix)
       {
-	PyObject* tuple = PyTuple_New(matrix.nbRows());
-	for (unsigned int iRow = 0; iRow < matrix.nbRows(); iRow++) {
-	  PyObject* row = PyTuple_New(matrix.nbCols());
-	  for (unsigned iCol=0; iCol < matrix.nbCols(); iCol++) {
+	PyObject* tuple = PyTuple_New(matrix.rows());
+	for (int iRow = 0; iRow < matrix.rows(); iRow++) {
+	  PyObject* row = PyTuple_New(matrix.cols());
+	  for (int iCol=0; iCol < matrix.cols(); iCol++) {
 	    PyObject* pyDouble = PyFloat_FromDouble(matrix(iRow, iCol));
 	    PyTuple_SET_ITEM(row, iCol, pyDouble);
 	  }
@@ -217,7 +217,6 @@ namespace dynamicgraph {
 	std::string stringValue;
 	Vector vectorValue;
 	Matrix matrixValue;
-
 	switch(value.type()) {
 	case (Value::BOOL) :
 	  boolValue = value.value();
