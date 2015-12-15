@@ -190,26 +190,26 @@ class SignalBase (object) :
     def value(self) :
         """
         Setter and getter for the value of a signal
-
+        
         Binds C++ SignalBase<int>::get() and set() methods. Values are passed
         through string streams.
         A string is interpreted as respectively:
-            * a matrix (tuple of tuple) if string fits '[n,m]((x_11,x_12,...,x_1m),...,(x_n1,x_n2,...,x_nm))' format where n and m are integers, x_ij are floating point numbers,
-            * a tuple if string fits '[n](x_1, x_2, ..., x_n)' format,
-            * an integer,
-            * a floating point number.
-
+        * a matrix (tuple of tuple) if string fits '[n,m]((x_11,x_12,...,x_1m),...,(x_n1,x_n2,...,x_nm))' format where n and m are integers, x_ij are floating point numbers,
+        * a tuple if string fits '[n](x_1, x_2, ..., x_n)' format,
+        * an integer,
+        * a floating point number.
+        
         If string fits none of the above formats, no conversion is performed.
-
+        
         For instance, is s binds a signal of type vector,
-            >>> s.value = (2.5, .1, 1e2)
+        >>> s.value = (2.5, .1, 1e2)
         will call SignalBase<int>::set("[3](2.5,0.1,100.0)") and
-            >>> s.value
-            (2.5, 0.1, 100.0)
+        >>> s.value
+        (2.5, 0.1, 100.0)
         """
         string = wrap.signal_base_get_value(self.obj)
         return stringToObject(string)
-
+    
     @value.setter
     def value(self, val) :
         """
