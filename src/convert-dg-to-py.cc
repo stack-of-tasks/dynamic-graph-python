@@ -49,6 +49,24 @@ namespace dynamicgraph {
 				   "a floating point number.");
 	}
       }
+      void fillMatrixRow(Eigen::Matrix4d& m, unsigned iRow, PyObject* tuple)
+      {
+	if (PyTuple_Size(tuple) != (int)m.cols()) {
+	  throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
+				 "lines of matrix have different sizes.");
+	}
+	for (int iCol=0; iCol < m.cols(); iCol++) {
+	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
+	  if (PyFloat_Check(pyDouble))
+	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
+	  else if(PyInt_Check(pyDouble))
+	    m(iRow, iCol) = (int)PyInt_AS_LONG(pyDouble)+0.0;
+	  else
+	    throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
+				   "element of matrix should be "
+				   "a floating point number.");
+	}
+      }
 
       command::Value pythonToValue(PyObject* pyObject,
 				   const command::Value::Type& valueType)
@@ -62,6 +80,7 @@ namespace dynamicgraph {
 	std::string svalue;
 	Vector v;
 	Matrix m;
+	Eigen::Matrix4d m4;
 	Py_ssize_t nCols;
 	Py_ssize_t size;
 	PyObject* row;
@@ -175,6 +194,36 @@ namespace dynamicgraph {
 	  }
 	  return Value(m);
 	  break;
+	case (Value::MATRIX4D) :
+	  // Check that argument is a tuple
+	  if (!PyTuple_Check(pyObject)) {
+	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
+				   "matrix4d");
+	  }
+	  nRows = PyTuple_Size(pyObject);
+	  if (nRows == 0) {
+	    return Value(Eigen::Matrix4d());
+	  }
+	  row = PyTuple_GetItem(pyObject, 0);
+	  if (!PyTuple_Check(row)) {
+	    throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
+				   "matrix4d");
+	  }
+	  nCols = PyTuple_Size(row);
+
+	  m4.resize(nRows, nCols);
+	  fillMatrixRow(m4, 0, row);
+
+	  for (Py_ssize_t iRow=1; iRow<nRows; iRow++) {
+	    row = PyTuple_GetItem(pyObject, iRow);
+	    if (!PyTuple_Check(row)) {
+	      throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
+				     "matrix");
+	    }
+	    fillMatrixRow(m4, static_cast<unsigned> (iRow), row);
+	  }
+	  return Value(m4);
+	  break;
 	default:
 	  std::cerr << "Only int, double and string are supported."
 		    << std::endl;
@@ -206,6 +255,20 @@ namespace dynamicgraph {
 	return tuple;
       }
 
+      PyObject* matrix4dToPython(const Eigen::Matrix4d& matrix)
+      {
+	PyObject* tuple = PyTuple_New(matrix.rows());
+	for (int iRow = 0; iRow < matrix.rows(); iRow++) {
+	  PyObject* row = PyTuple_New(matrix.cols());
+	  for (int iCol=0; iCol < matrix.cols(); iCol++) {
+	    PyObject* pyDouble = PyFloat_FromDouble(matrix(iRow, iCol));
+	    PyTuple_SET_ITEM(row, iCol, pyDouble);
+	  }
+	  PyTuple_SET_ITEM(tuple, iRow, row);
+	}
+	return tuple;
+      }
+
       PyObject* valueToPython(const command::Value& value)
       {
 	using command::Value;
@@ -217,6 +280,7 @@ namespace dynamicgraph {
 	std::string stringValue;
 	Vector vectorValue;
 	Matrix matrixValue;
+	Eigen::Matrix4d matrix4dValue;
 	switch(value.type()) {
 	case (Value::BOOL) :
 	  boolValue = value.value();
@@ -245,6 +309,9 @@ namespace dynamicgraph {
 	case (Value::MATRIX) :
 	  matrixValue = value.value();
 	  return matrixToPython(matrixValue);
+	case (Value::MATRIX4D) :
+	  matrix4dValue = value.value();
+	  return matrix4dToPython(matrix4dValue);
 	default:
 	  return Py_BuildValue("");
 	}
