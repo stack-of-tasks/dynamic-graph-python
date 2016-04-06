@@ -203,7 +203,34 @@ namespace dynamicgraph {
 		throw;
 	    }
 	  }
-
+	  
+	  { // --- HOMOGENEOUS MATRIX SIGNALS --------------------
+	    // Two cases: the signal embeds directly a matrix, or embeds
+	    // an object deriving from matrix.In the first case,
+	    // the signal is directly cast into sig<matrix>.
+	    // In the second case, the derived object can be access as a matrix
+	    // using the signal-ptr<matrix> type.
+	    
+	    //TODO: See if matrix homogeneous can be properly put in linear-algebra.h
+	    typedef Eigen::Transform<double,3, Eigen::Affine> MatrixHomogeneous;
+	    Signal<MatrixHomogeneous,int> * sigmat
+	      = dynamic_cast< Signal<MatrixHomogeneous,int>* >( signal );
+	    if( NULL!= sigmat ) {
+	      return matrixToPython( sigmat->accessCopy().matrix() );
+	    }
+	    
+	    SignalPtr<Eigen::Transform<double,3, Eigen::Affine>,int> sigptr(NULL,"matrix-caster");
+	    try {
+	      sigptr.plug(signal);
+	      return matrixToPython( sigptr.accessCopy().matrix() );
+	    }
+	    catch( dynamicgraph::ExceptionSignal& ex ) {
+	      if( ex.getCode() !=
+		  dynamicgraph::ExceptionSignal::PLUG_IMPOSSIBLE )
+	      throw;
+	    }
+	  }
+	  
 	  Signal<double,int> * sigdouble
 	    = dynamic_cast< Signal<double,int>* >( signal );
 	  if( NULL!= sigdouble )
@@ -211,17 +238,17 @@ namespace dynamicgraph {
 	      return Py_BuildValue("d", sigdouble->accessCopy() );
 	    }
 	} CATCH_ALL_EXCEPTIONS ();
-
+	
 	/* Non specific signal: use a generic way. */
 	std::ostringstream value;
 	try {
 	  signal->get(value);
 	} CATCH_ALL_EXCEPTIONS ();
-
+	
 	std::string valueString = value.str();
 	return Py_BuildValue("s", valueString.c_str());
       }
-
+      
       PyObject* getName(PyObject* /*self*/, PyObject* args)
       {
 	void* pointer = NULL;
