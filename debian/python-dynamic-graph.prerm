@@ -1,0 +1,17 @@
+#!/bin/sh
+# prerm script for python-dynamic-graph
+#
+# see: dh_installdeb(1)
+
+set -e
+
+if which pyclean >/dev/null 2>&1; then
+    pyclean -p python-dynamic-graph
+else
+    dpkg -L python-dynamic-graph | grep \.py$ | while read file
+    do
+	rm -f "${file}"[co] >/dev/null
+    done
+fi
+
+#DEBHELPER#

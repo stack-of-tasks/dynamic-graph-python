@@ -1,0 +1,17 @@
+python-dynamic-graph (3.0.0-0ubuntu1ppa0~precise3) precise; urgency=low
+
+  * Update package dependencies
+
+ -- Rohan Budhiraja <budhiraja.rohan@gmail.com>  Fri, 27 May 2016 18:51:23 +0200
+
+python-dynamic-graph (3.0.0-0ubuntu1ppa0~precise2) precise; urgency=low
+
+  * Update package dependencies
+
+ -- Rohan Budhiraja <budhiraja.rohan@gmail.com>  Fri, 27 May 2016 18:41:23 +0200
+
+python-dynamic-graph (3.0.0-0ubuntu1ppa0~precise1) precise; urgency=low
+
+  * Initial release
+
+ -- Rohan Budhiraja <budhiraja.rohan@gmail.com>  Wed, 04 May 2016 14:34:08 +0200
