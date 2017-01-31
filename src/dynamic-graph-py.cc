@@ -59,6 +59,7 @@ namespace dynamicgraph {
 
     namespace factory {
       extern PyObject* getEntityClassList(PyObject* self, PyObject* args);
+      extern PyObject* getEntityMap(PyObject* self, PyObject* args);
     }
     namespace signalCaster {
       extern PyObject* getSignalTypeList(PyObject* self, PyObject* args);

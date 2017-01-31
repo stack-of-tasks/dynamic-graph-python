@@ -51,6 +51,7 @@ namespace dynamicgraph {
 
 	return Py_BuildValue("O", classTuple);
       }
+
       
     } // namespace factory
   } // namespace python
