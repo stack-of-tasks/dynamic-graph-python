@@ -97,6 +97,10 @@ class Entity (object) :
     def name(self) :
         return wrap.entity_get_name(self.obj)
 
+    @property
+    def className(self) :
+        return wrap.entity_get_class_name(self.obj)
+
     def __str__(self) :
         return wrap.display_entity(self.obj)
 
