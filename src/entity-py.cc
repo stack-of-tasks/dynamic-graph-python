@@ -114,6 +114,32 @@ namespace dynamicgraph {
       }
 
       /**
+	 \brief Get class name of entity
+      */
+      PyObject* getClassName(PyObject* /*self*/, PyObject* args)
+      {
+	PyObject* object = NULL;
+	void* pointer = NULL;
+	std::string name;
+
+	if (!PyArg_ParseTuple(args, "O", &object))
+	  return NULL;
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
+	  return NULL;
+	}
+
+	pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	try {
+	 name = entity->getClassName();
+	} CATCH_ALL_EXCEPTIONS();
+	return Py_BuildValue("s", name.c_str());
+      }
+
+      /**
          \brief Check if the entity has a signal with the given name
       */
       PyObject * hasSignal(PyObject* /*self*/, PyObject* args)
