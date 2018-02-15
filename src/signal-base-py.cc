@@ -25,6 +25,7 @@
 
 #include "convert-dg-to-py.hh"
 #include "exception.hh"
+#include "signal-wrapper.hh"
 
 using dynamicgraph::SignalBase;
 
@@ -54,6 +55,58 @@ namespace dynamicgraph {
 
 	// Return the pointer
 	return PyCObject_FromVoidPtr((void*)obj, destroy);
+      }
+
+      template <class T> void* createSignalWrapperTpl (const char* name, PyObject* o, std::string& error)
+      {
+        typedef SignalWrapper<T, int> SignalWrapper_t;
+        if (!SignalWrapper_t::checkCallable (o, error)) {
+          return NULL;
+        }
+
+        SignalWrapper_t* obj = new SignalWrapper_t(name, o);
+        return (void*) obj;
+      }
+
+#define SIGNAL_WRAPPER_TYPE(IF, Enum, Type)                             \
+        IF (command::Value::typeName(command::Value::Enum)              \
+            .compare(type) == 0) {                                      \
+          obj = createSignalWrapperTpl<Type> (name, object, error);     \
+        }
+
+      /**
+	 \brief Create an instance of SignalWrapper
+      */
+      PyObject* createSignalWrapper(PyObject* /*self*/, PyObject* args)
+      {
+	char *name = NULL;
+	char *type = NULL;
+	PyObject* object = NULL;
+
+	if (!PyArg_ParseTuple(args, "ssO", &name, &type, &object))
+	  return NULL;
+
+        void* obj = NULL;
+        std::string error;
+        SIGNAL_WRAPPER_TYPE(     if, BOOL     ,bool)
+        // SIGNAL_WRAPPER_TYPE(else if, UNSIGNED ,bool)
+        SIGNAL_WRAPPER_TYPE(else if, INT      ,int   )
+        SIGNAL_WRAPPER_TYPE(else if, FLOAT    ,float )
+        SIGNAL_WRAPPER_TYPE(else if, DOUBLE   ,double)
+        // SIGNAL_WRAPPER_TYPE(else if, STRING   ,bool)
+        SIGNAL_WRAPPER_TYPE(else if, VECTOR   ,Vector)
+        // SIGNAL_WRAPPER_TYPE(else if, MATRIX   ,bool)
+        // SIGNAL_WRAPPER_TYPE(else if, MATRIX4D ,bool)
+        else {
+          error = "Type not understood";
+        }
+
+        if (obj == NULL) {
+          PyErr_SetString(dgpyError, error.c_str());
+          return NULL;
+        }
+	// Return the pointer
+	return PyCObject_FromVoidPtr(obj, destroy);
       }
 
       /**

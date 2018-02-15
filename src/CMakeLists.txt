@@ -73,6 +73,7 @@ ADD_LIBRARY(${PYTHON_MODULE}
 	factory-py.cc
 	pool-py.cc
 	signal-caster-py.cc
+	signal-wrapper.cc
 )
 
 # Remove prefix lib
