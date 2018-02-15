@@ -18,6 +18,7 @@
 
 #include <dynamic-graph/linear-algebra.h>
 #include <dynamic-graph/signal.h>
+#include <dynamic-graph/entity.h>
 
 namespace dynamicgraph {
   namespace python {
@@ -31,6 +32,19 @@ namespace dynamicgraph {
       // void convert (PyObject* o, Eigen::MatrixXd& v);
       // void convert (PyObject* o, Eigen::Matrix4d& v);
     }
+
+    class PythonSignalContainer : public Entity
+    {
+      DYNAMIC_GRAPH_ENTITY_DECL();
+
+      public:
+        PythonSignalContainer (const std::string& name) : Entity (name) {};
+
+        void signalRegistration (const SignalArray<int>& signals)
+        {
+          Entity::signalRegistration (signals);
+        }
+    };
 
     template <class T, class Time>
     class SignalWrapper : public Signal<T, Time>
