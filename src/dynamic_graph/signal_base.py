@@ -270,4 +270,7 @@ class SignalBase (object) :
         """
         return(wrap.signal_base_display_dependencies(self.obj,iter))
 
-
+class SignalWrapper (SignalBase):
+    def __init__ (self, name, type, func):
+        super(SignalWrapper, self).__init__ (name,
+                wrap.create_signal_wrapper (name, type, func))
