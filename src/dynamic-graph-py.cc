@@ -23,6 +23,7 @@
 #include <dynamic-graph/signal-base.h>
 
 #include "exception.hh"
+#include "signal-wrapper.hh"
 
 namespace dynamicgraph {
   namespace python {
@@ -30,6 +31,7 @@ namespace dynamicgraph {
     // Declare functions defined in other source files
     namespace signalBase {
       extern PyObject* create(PyObject* self, PyObject* args);
+      extern PyObject* createSignalWrapper(PyObject* self, PyObject* args);
       extern PyObject* getTime(PyObject* self, PyObject* args);
       extern PyObject* setTime(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
@@ -151,6 +153,8 @@ static PyMethodDef dynamicGraphMethods[] = {
   // Signals
   {"create_signal_base", dynamicgraph::python::signalBase::create, METH_VARARGS,
    "create a SignalBase C++ object"},
+  {"create_signal_wrapper", dynamicgraph::python::signalBase::createSignalWrapper, METH_VARARGS,
+   "create a SignalWrapper C++ object"},
   {"signal_base_get_time", dynamicgraph::python::signalBase::getTime,
    METH_VARARGS, "Get time of  a SignalBase"},
   {"signal_base_set_time", dynamicgraph::python::signalBase::setTime,
