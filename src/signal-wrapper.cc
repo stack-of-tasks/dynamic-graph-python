@@ -14,9 +14,10 @@
 // received a copy of the GNU Lesser General Public License along with
 // dynamic-graph-python. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Python.h>
-
 #include <signal-wrapper.hh>
+
+#include <Python.h>
+#include <dynamic-graph/factory.h>
 
 namespace dynamicgraph {
   namespace python {
@@ -32,6 +33,8 @@ namespace dynamicgraph {
           convert(PyTuple_GetItem(o,i), v[i]);
       }
     }
+
+    DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonSignalContainer, "PythonSignalContainer");
 
     template <class T, class Time>
     bool SignalWrapper<T,Time>::checkCallable (PyObject* c, std::string& error)

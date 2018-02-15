@@ -22,6 +22,8 @@
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-caster.h>
 #include <dynamic-graph/linear-algebra.h>
+#include <dynamic-graph/pool.h>
+#include <dynamic-graph/factory.h>
 
 #include "convert-dg-to-py.hh"
 #include "exception.hh"
@@ -57,7 +59,7 @@ namespace dynamicgraph {
 	return PyCObject_FromVoidPtr((void*)obj, destroy);
       }
 
-      template <class T> void* createSignalWrapperTpl (const char* name, PyObject* o, std::string& error)
+      template <class T> SignalWrapper<T, int>* createSignalWrapperTpl (const char* name, PyObject* o, std::string& error)
       {
         typedef SignalWrapper<T, int> SignalWrapper_t;
         if (!SignalWrapper_t::checkCallable (o, error)) {
@@ -65,7 +67,33 @@ namespace dynamicgraph {
         }
 
         SignalWrapper_t* obj = new SignalWrapper_t(name, o);
-        return (void*) obj;
+        return obj;
+      }
+
+      PythonSignalContainer* getPythonSignalContainer ()
+      {
+        const std::string instanceName = "python_signals";
+        const std::string className = "PythonSignalContainer";
+        Entity* obj;
+        if( PoolStorage::getInstance()->existEntity(instanceName, obj))
+        {
+          if( obj->getClassName()!=className ) {
+            std::string msg ("Found an object named "
+                + std::string(instanceName)
+                + ",\n""but this object is of type "
+                + std::string(obj->getClassName())
+                + " and not "
+                + std::string(className));
+            PyErr_SetString(dgpyError, msg.c_str());
+            return NULL;
+          }
+        } else {
+          try {
+            obj = FactoryStorage::getInstance()->newEntity
+              (std::string(className), std::string(instanceName));
+          } CATCH_ALL_EXCEPTIONS();
+        }
+        return dynamic_cast<PythonSignalContainer*>(obj);
       }
 
 #define SIGNAL_WRAPPER_TYPE(IF, Enum, Type)                             \
@@ -79,6 +107,10 @@ namespace dynamicgraph {
       */
       PyObject* createSignalWrapper(PyObject* /*self*/, PyObject* args)
       {
+        PythonSignalContainer* psc = getPythonSignalContainer();
+        if (psc == NULL)
+          return NULL;
+
 	char *name = NULL;
 	char *type = NULL;
 	PyObject* object = NULL;
@@ -86,7 +118,7 @@ namespace dynamicgraph {
 	if (!PyArg_ParseTuple(args, "ssO", &name, &type, &object))
 	  return NULL;
 
-        void* obj = NULL;
+        SignalBase<int>* obj = NULL;
         std::string error;
         SIGNAL_WRAPPER_TYPE(     if, BOOL     ,bool)
         // SIGNAL_WRAPPER_TYPE(else if, UNSIGNED ,bool)
@@ -105,8 +137,11 @@ namespace dynamicgraph {
           PyErr_SetString(dgpyError, error.c_str());
           return NULL;
         }
+        // Register signal into the python signal container
+        psc->signalRegistration(*obj);
+
 	// Return the pointer
-	return PyCObject_FromVoidPtr(obj, destroy);
+	return PyCObject_FromVoidPtr((void*)obj, destroy);
       }
 
       /**
