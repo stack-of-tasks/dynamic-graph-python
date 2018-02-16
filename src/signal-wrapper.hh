@@ -57,23 +57,16 @@ namespace dynamicgraph {
         SignalWrapper (std::string name, PyObject* _callable) : 
           parent_t (name)
           , callable (_callable)
-          // , argsTuple (NULL)
-          // , argTime (NULL)
-          // , argValue (NULL)
         {
           typedef boost::function2<T&,T&,Time> function_t;
           Py_INCREF(callable);
           function_t f = boost::bind (&SignalWrapper::call, this, _1, _2);
           this->setFunction (f);
-
-          // argsTuple = PyTuple_New(1);
-          // argTime = Py
         }
 
         virtual ~SignalWrapper ()
         {
           Py_DECREF(callable);
-          // Py_DECREF(args);
         };
 
       private:
@@ -90,9 +83,6 @@ namespace dynamicgraph {
           return value;
         }
         PyObject* callable;
-        // PyObject* argsTuple;
-        // PyObject* argTime;
-        // PyObject* argValue;
     };
 
   } // namespace dynamicgraph
