@@ -18,6 +18,7 @@
 
 #include <Python.h>
 #include <dynamic-graph/factory.h>
+#include <dynamic-graph/command-bind.h>
 
 namespace dynamicgraph {
   namespace python {
@@ -37,11 +38,26 @@ namespace dynamicgraph {
     PythonSignalContainer::PythonSignalContainer(const std::string& name)
       : Entity (name)
     {
+      std::string docstring;
+
+      docstring = "    \n"
+        "    Remove a signal\n"
+        "    \n"
+        "      Input:\n"
+        "        - name of the signal\n"
+        "    \n";
+      addCommand("rmSignal",
+	     command::makeCommandVoid1(*this,&PythonSignalContainer::rmSignal,docstring));
     }
 
     void PythonSignalContainer::signalRegistration (const SignalArray<int>& signals)
     {
       Entity::signalRegistration (signals);
+    }
+
+    void PythonSignalContainer::rmSignal (const std::string& name)
+    {
+      Entity::signalDeregistration (name);
     }
 
     DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonSignalContainer, "PythonSignalContainer");

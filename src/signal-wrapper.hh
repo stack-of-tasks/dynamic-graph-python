@@ -41,6 +41,8 @@ namespace dynamicgraph {
         PythonSignalContainer (const std::string& name);
 
         void signalRegistration (const SignalArray<int>& signals);
+
+        void rmSignal (const std::string& name);
     };
 
     template <class T, class Time>
