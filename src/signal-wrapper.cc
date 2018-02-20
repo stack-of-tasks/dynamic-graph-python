@@ -34,6 +34,16 @@ namespace dynamicgraph {
       }
     }
 
+    PythonSignalContainer::PythonSignalContainer(const std::string& name)
+      : Entity (name)
+    {
+    }
+
+    void PythonSignalContainer::signalRegistration (const SignalArray<int>& signals)
+    {
+      Entity::signalRegistration (signals);
+    }
+
     DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonSignalContainer, "PythonSignalContainer");
 
     template <class T, class Time>
