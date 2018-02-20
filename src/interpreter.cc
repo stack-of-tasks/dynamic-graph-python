@@ -139,6 +139,7 @@ Interpreter::Interpreter()
   dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 #endif
   Py_Initialize();
+  PyEval_InitThreads();
   mainmod_ = PyImport_AddModule("__main__");
   Py_INCREF(mainmod_);
   globals_ = PyModule_GetDict(mainmod_);
@@ -155,10 +156,14 @@ Interpreter::Interpreter()
       (PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
   assert(PyCallable_Check(traceback_format_exception_));
   Py_INCREF(traceback_format_exception_);
+
+  // Allow threads
+  _pyState = PyEval_SaveThread();
 }
 
 Interpreter::~Interpreter()
 {
+  PyEval_RestoreThread(_pyState);
   //Py_DECREF(mainmod_);
   //Py_DECREF(globals_);
   //Py_DECREF(traceback_format_exception_);
@@ -179,6 +184,8 @@ void Interpreter::python( const std::string& command, std::string& res,
   res = "";
   out = "";
   err = "";
+
+  PyEval_RestoreThread(_pyState);
 
   std::cout << command.c_str() << std::endl;
   PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
@@ -234,6 +241,9 @@ void Interpreter::python( const std::string& command, std::string& res,
   Py_DecRef(stdout_obj);
   Py_DecRef(result2);
   Py_DecRef(result);
+
+  _pyState = PyEval_SaveThread();
+
   return;
 }
 
@@ -257,6 +267,8 @@ void Interpreter::runPythonFile( std::string filename, std::string& err)
     return;
   }
 
+  PyEval_RestoreThread(_pyState);
+
   err = "";
   PyObject* pymainContext = globals_;
   PyObject* run = PyRun_FileExFlags(pFile, filename.c_str(),
@@ -268,12 +280,16 @@ void Interpreter::runPythonFile( std::string filename, std::string& err)
     std::cerr << err << std::endl;;
   }
   Py_DecRef(run);
+
+  _pyState = PyEval_SaveThread();
 }
 
 void Interpreter::runMain( void )
 {
   const char * argv [] = { "dg-embedded-pysh" };
+  PyEval_RestoreThread(_pyState);
   Py_Main(1,const_cast<char**>(argv));
+  _pyState = PyEval_SaveThread();
 }
 
 std::string Interpreter::processStream(std::istream& stream, std::ostream& os)

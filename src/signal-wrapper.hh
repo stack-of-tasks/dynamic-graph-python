@@ -72,6 +72,11 @@ namespace dynamicgraph {
       private:
         T& call (T& value, Time t)
         {
+          PyGILState_STATE gstate;
+          gstate = PyGILState_Ensure();
+          if (PyGILState_GetThisThreadState() == NULL) {
+            dgDEBUG(10) << "python thread not initialized" << std::endl;
+          }
           char format[] = "i";
           PyObject* obj = PyObject_CallFunction(callable, format, t);
           if (obj == NULL)
@@ -80,6 +85,7 @@ namespace dynamicgraph {
             signalWrapper::convert (obj, value);
             Py_DECREF(obj);
           }
+          PyGILState_Release (gstate);
           return value;
         }
         PyObject* callable;

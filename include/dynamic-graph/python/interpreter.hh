@@ -62,6 +62,8 @@ namespace dynamicgraph {
       PyObject* globals();
 
     private:
+      /// The Pythone thread state
+      PyThreadState *_pyState;
       /// Pointer to the dictionary of global variables
       PyObject* globals_;
       /// Pointer to the dictionary of local variables
