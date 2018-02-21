@@ -78,9 +78,9 @@ namespace dynamicgraph {
           }
           char format[] = "i";
           PyObject* obj = PyObject_CallFunction(callable, format, t);
-          if (obj == NULL)
-            std::cerr << "Could not call callable" << std::endl;
-          else {
+          if (obj == NULL) {
+            dgERROR << "Could not call callable" << std::endl;
+          } else {
             signalWrapper::convert (obj, value);
             Py_DECREF(obj);
           }
