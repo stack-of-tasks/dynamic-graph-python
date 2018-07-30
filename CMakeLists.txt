@@ -25,7 +25,7 @@ include(cmake/python.cmake)
 
 SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
-SET(PROJECT_URL "http://github.com/jrl-umi3218/dynamic-graph-python")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
 
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 # Headers list.
