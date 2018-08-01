@@ -1,12 +1,9 @@
-# 
-#  Copyright 
-# 
+#
+#  Copyright
+#
 
 INCLUDE(CTest)
 
-set(Python_ADDITIONAL_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
-INCLUDE(../cmake/python.cmake)
-FINDPYTHON()
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
