@@ -21,10 +21,11 @@ INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/pthread.cmake)
 INCLUDE(cmake/cpack.cmake)
 include(cmake/header.cmake)
+include(cmake/python.cmake)
 
 SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
-SET(PROJECT_URL "http://github.com/jrl-umi3218/dynamic-graph-python")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
 
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 # Headers list.
@@ -38,6 +39,8 @@ SET(${PROJECT_NAME}_HEADERS
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 
 SETUP_PROJECT()
+
+FINDPYTHON()
 
 # Trigger dependency to dynamic-graph.
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
