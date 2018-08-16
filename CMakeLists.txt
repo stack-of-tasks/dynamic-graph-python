@@ -27,6 +27,8 @@ SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
 SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
 
+SET(DOXYGEN_USE_MATHJAX YES)
+
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 # Headers list.
 SET(${PROJECT_NAME}_HEADERS
