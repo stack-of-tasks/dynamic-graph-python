@@ -185,6 +185,13 @@ void Interpreter::python( const std::string& command, std::string& res,
   out = "";
   err = "";
 
+  // Check if the command is not a python comment or empty.
+  std::string::size_type iFirstNonWhite = command.find_first_not_of (" \t");
+  // Empty command
+  if (iFirstNonWhite == std::string::npos) return;
+  // Command is a comment. Ignore it.
+  if (command[iFirstNonWhite] == '#') return;
+
   PyEval_RestoreThread(_pyState);
 
   std::cout << command.c_str() << std::endl;
