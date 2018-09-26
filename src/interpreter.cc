@@ -26,7 +26,6 @@
 #include <boost/python/str.hpp>
 #include <boost/python/import.hpp>
 
-using namespace boost::python;
 namespace py=boost::python;
 
 std::ofstream dg_debugfile( "/tmp/dynamic-graph-traces.txt", std::ios::trunc&std::ios::out );
@@ -164,10 +163,44 @@ Interpreter::Interpreter()
 Interpreter::~Interpreter()
 {
   PyEval_RestoreThread(_pyState);
-  //Py_DECREF(mainmod_);
-  //Py_DECREF(globals_);
-  //Py_DECREF(traceback_format_exception_);
-  Py_Finalize();
+
+  // Ideally, we should call Py_Finalize but this is not really supported by
+  // Python.
+  // Instead, we merelly remove variables.
+  // Code was taken here: https://github.com/numpy/numpy/issues/8097#issuecomment-356683953
+  {
+    PyObject * poAttrList = PyObject_Dir(mainmod_);
+    PyObject * poAttrIter = PyObject_GetIter(poAttrList);
+    PyObject * poAttrName;
+
+    while ((poAttrName = PyIter_Next(poAttrIter)) != NULL)
+    {
+      std::string oAttrName (PyString_AS_STRING(poAttrName));
+
+      // Make sure we don't delete any private objects.
+      if (oAttrName.compare(                 0,2,"__")!=0 ||
+          oAttrName.compare(oAttrName.size()-2,2,"__")!=0)
+      {
+        PyObject * poAttr = PyObject_GetAttr(mainmod_, poAttrName);
+
+        // Make sure we don't delete any module objects.
+        if (poAttr && poAttr->ob_type != mainmod_->ob_type)
+          PyObject_SetAttr(mainmod_, poAttrName, NULL);
+
+        Py_DecRef(poAttr);
+      }
+
+      Py_DecRef(poAttrName);
+    }
+
+    Py_DecRef(poAttrIter);
+    Py_DecRef(poAttrList);
+  }
+
+  Py_DECREF(mainmod_);
+  Py_DECREF(globals_);
+  Py_DECREF(traceback_format_exception_);
+  //Py_Finalize();
 }
 
 std::string Interpreter::python( const std::string& command )
