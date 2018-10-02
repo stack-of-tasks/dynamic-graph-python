@@ -24,6 +24,28 @@ bool testFile(const std::string & filename,
   return true;
 }
 
+bool testInterpreterDestructor(const std::string & filename, 
+             const std::string & expectedOutput)
+{
+  std::string err = "";
+  {
+    dynamicgraph::python::Interpreter interp;
+    interp.runPythonFile(filename, err);
+  }
+  {
+    dynamicgraph::python::Interpreter interp;
+    interp.runPythonFile(filename, err);
+    if (err != expectedOutput)
+    {
+      std::cerr << "The output was not the one expected:" << std::endl;
+      std::cerr << " expected: " << expectedOutput << std::endl;
+      std::cerr << " err:      " << err << std::endl;
+      return false;
+    }
+  }  
+  return true;
+}
+
 int main(int argc, char ** argv)
 {
   // execute numerous time the same file.
@@ -34,17 +56,23 @@ int main(int argc, char ** argv)
     numTest = atoi(argv[1]);
 
   bool res = true;
-  res = testFile("test_python-ok.py", "", numTest) && res;
-  res = testFile("unexistant_file.py", 
-		 "unexistant_file.py cannot be open",
-		 numTest) && res;
+  // This test succeeds only because it is launched before "test_python-ok.py"
+  // because re as been imported in a previous test and it is not
+  // safe to delete imported module...
   res = testFile("test_python-name_error.py", 
 		 std::string("<type 'exceptions.NameError'>: name 're' is not defined:")+
 		 "   File \"test_python-name_error.py\", line 6, in <module>\n" +
 		 "    pathList = re.split(':', pkgConfigPath)\n", numTest) && res;
+
+  res = testFile("test_python-ok.py", "", numTest) && res;
+  res = testFile("unexistant_file.py", 
+		 "unexistant_file.py cannot be open",
+		 numTest) && res;
   res = testFile("test_python-syntax_error.py", 
 		 std::string("<type 'exceptions.SyntaxError'>: ('invalid syntax', ")+
 		 "('test_python-syntax_error.py', 1, 11, "+
 		 "'hello world\\n'))", numTest) && res;
+  res = testInterpreterDestructor ("test_python-restart_interpreter.py",
+                                   "") && res;
   return (res?0:1);
 }
