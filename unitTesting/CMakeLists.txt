@@ -43,5 +43,8 @@ ADD_CUSTOM_COMMAND(TARGET interpreter-test-runfile POST_BUILD
   ${CMAKE_BINARY_DIR}/unitTesting
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-syntax_error.py
   ${CMAKE_BINARY_DIR}/unitTesting
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-restart_interpreter.py
+  ${CMAKE_BINARY_DIR}/unitTesting
+
 )
 
