@@ -1,5 +1,3 @@
-# this causes troubles when Py_Finalize is called in Interpreter destructor.
-import dynamic_graph.sot.core
 # numpy causes troubles when Py_Finalize is called in Interpreter destructor.
 import numpy
 
