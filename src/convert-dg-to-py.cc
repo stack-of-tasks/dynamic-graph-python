@@ -31,14 +31,14 @@ namespace dynamicgraph {
     namespace convert {
 
 
-      void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
+      void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* sequence)
       {
-	if (PyTuple_Size(tuple) != (int)m.cols()) {
+	if (PySequence_Size(sequence) != (int)m.cols()) {
 	  throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				 "lines of matrix have different sizes.");
 	}
 	for (int iCol=0; iCol < m.cols(); iCol++) {
-	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
+	  PyObject* pyDouble = PySequence_GetItem(sequence, iCol);
 	  if (PyFloat_Check(pyDouble))
 	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
 	  else if(PyInt_Check(pyDouble))
@@ -49,14 +49,14 @@ namespace dynamicgraph {
 				   "a floating point number.");
 	}
       }
-      void fillMatrixRow(Eigen::Matrix4d& m, unsigned iRow, PyObject* tuple)
+      void fillMatrixRow(Eigen::Matrix4d& m, unsigned iRow, PyObject* sequence)
       {
-	if (PyTuple_Size(tuple) != (int)m.cols()) {
+	if (PySequence_Size(sequence) != (int)m.cols()) {
 	  throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				 "lines of matrix have different sizes.");
 	}
 	for (int iCol=0; iCol < m.cols(); iCol++) {
-	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
+	  PyObject* pyDouble = PySequence_GetItem(sequence, iCol);
 	  if (PyFloat_Check(pyDouble))
 	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
 	  else if(PyInt_Check(pyDouble))
