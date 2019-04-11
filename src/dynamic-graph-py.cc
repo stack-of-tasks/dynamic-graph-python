@@ -58,6 +58,8 @@ namespace dynamicgraph {
       extern PyObject* listCommands(PyObject* self, PyObject* args);
       extern PyObject* getCommandDocstring(PyObject* self, PyObject* args);
       extern PyObject* getDocString(PyObject* self, PyObject* args);
+      extern PyObject* setLoggerVerbosityLevel(PyObject*self, PyObject *args);
+      extern PyObject* getLoggerVerbosityLevel(PyObject *self, PyObject *args);
     }
 
     namespace factory {
@@ -227,6 +229,14 @@ static PyMethodDef dynamicGraphMethods[] = {
    dynamicgraph::python::pool::getEntityList,
    METH_VARARGS,
    "return the list of instanciated entities"},
+  {"entity_set_logger_verbosity",
+   dynamicgraph::python::entity::setLoggerVerbosityLevel,
+   METH_VARARGS,
+   "set the verbosity level of the entity"},
+  {"entity_get_logger_verbosity",
+   dynamicgraph::python::entity::getLoggerVerbosityLevel,
+   METH_VARARGS,
+   "get the verbosity level of the entity"},  
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
