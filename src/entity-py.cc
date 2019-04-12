@@ -1,4 +1,3 @@
-
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 //
 // This file is part of dynamic-graph-python.
@@ -415,6 +414,58 @@ namespace dynamicgraph {
 	return Py_BuildValue("s", oss.str().c_str());
       }
 
+      /**
+	 \brief Set verbosity Level
+      */
+      PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject*  args )
+      {
+
+	PyObject* object = NULL;
+	PyObject* objectVerbosityLevel = NULL;
+	if (!PyArg_ParseTuple(args, "OO", &object,&objectVerbosityLevel))
+	  return NULL;
+
+	// Retrieve the entity instance
+	  if (!PyCObject_Check(object)) {
+	    PyErr_SetString(PyExc_TypeError,
+			    "First argument should be an object");
+	    return NULL;
+	  }
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	// Retrieve object verbosity level
+	PyObject* valueOfVerbosityLevel = PyObject_GetAttrString(objectVerbosityLevel, "value");
+	long verbosityLevel = PyLong_AsLong(valueOfVerbosityLevel);//*((int*) lpointer);
+
+	try {
+	  switch(verbosityLevel)
+	    {
+	    case 0: entity->setLoggerVerbosityLevel(VERBOSITY_ALL);
+	      break;
+	    case 1: entity->setLoggerVerbosityLevel(VERBOSITY_INFO_WARNING_ERROR);
+	      break;
+	    case 2: entity->setLoggerVerbosityLevel(VERBOSITY_WARNING_ERROR);
+	      break;
+	    case 3: entity->setLoggerVerbosityLevel(VERBOSITY_ERROR);
+	      break;
+	    default: entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
+	      break;
+	    }
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
+	} catch (const char* s) {
+	    PyErr_SetString(dgpyError, s);
+	    return NULL;
+	} catch (...) {
+	    PyErr_SetString(dgpyError, "Unknown exception");
+	    return NULL;
+	}
+
+	return Py_BuildValue("");
+      }
 
       /**
 	 \brief Get verbosity Level
@@ -431,7 +482,7 @@ namespace dynamicgraph {
 			  "first argument is not an object");
 	  return NULL;
 	}
-	
+
 	void *pointer = PyCObject_AsVoidPtr(object);
 	Entity* entity = (Entity*)pointer;
 
@@ -444,58 +495,6 @@ namespace dynamicgraph {
 	return Py_BuildValue("i",ares);
       }
 
-            /**
-	 \brief Set verbosity Level
-      */
-      PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject*  /* args */)
-      {
-#if 0	
-	PyObject* object = NULL;
-	PyObject* objectVerbosityLevel = NULL;
-	if (!PyArg_ParseTuple(args, "OO", &object,&objectVerbosityLevel))
-	  return NULL;
-	
-	// Retrieve the entity instance
-	  if (!PyCObject_Check(object)) {
-	    PyErr_SetString(PyExc_TypeError,
-			    "First argument should be an object");
-	    return NULL;
-	  }
-	
-	void *pointer = PyCObject_AsVoidPtr(object);
-	Entity* entity = (Entity*)pointer;
-	
-	// Retrieve object verbosity level
-	PyObject* valueOfVerbosityLevel = PyObject_GetAttrString(objectVerbosityLevel, "value");
-	long verbosityLevel = PyLong_AsLong(valueOfVerbosityLevel);//*((int*) lpointer);
-	
-	try {
-	  switch(verbosityLevel)
-	    {
-	    case 0: entity->setLoggerVerbosityLevel(VERBOSITY_ALL);
-	      break;
-	    case 1: entity->setLoggerVerbosityLevel(VERBOSITY_INFO_WARNING_ERROR);
-	      break;
-	    case 2: entity->setLoggerVerbosityLevel(VERBOSITY_WARNING_ERROR);
-	      break;
-	    case 3: entity->setLoggerVerbosityLevel(VERBOSITY_ERROR);
-	      break;
-	    default: entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
-	      break;
-	    }	  
-	} catch (const std::exception& exc) {							
-	  PyErr_SetString(dgpyError, exc.what());		
-	  return NULL;					
-	} catch (const char* s) {							
-	    PyErr_SetString(dgpyError, s);			
-	    return NULL;					
-	} catch (...) {					
-	    PyErr_SetString(dgpyError, "Unknown exception");	
-	    return NULL;						
-	}
-#endif
-	return NULL;
-      }
 
     }
   }

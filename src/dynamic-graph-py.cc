@@ -170,7 +170,7 @@ static PyMethodDef dynamicGraphMethods[] = {
   {"signal_base_display_dependencies", dynamicgraph::python::signalBase::displayDependencies,
    METH_VARARGS, "Print the signal dependencies in a string"},
   {"signal_base_get_value", dynamicgraph::python::signalBase::getValue,
-   METH_VARARGS, "Read the value of a signal"}, 
+   METH_VARARGS, "Read the value of a signal"},
   {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
    METH_VARARGS, "Set the value of a signal"},
   {"signal_base_recompute", dynamicgraph::python::signalBase::recompute,
@@ -236,7 +236,7 @@ static PyMethodDef dynamicGraphMethods[] = {
   {"entity_get_logger_verbosity",
    dynamicgraph::python::entity::getLoggerVerbosityLevel,
    METH_VARARGS,
-   "get the verbosity level of the entity"},  
+   "get the verbosity level of the entity"},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

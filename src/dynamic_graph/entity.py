@@ -256,12 +256,11 @@ class Entity (object) :
         for cmd in cmdList:
             self.boundNewCommand( cmd )
 
-    def setLoggerVerbosityLevel(self, verbosity):
+    def setLoggerVerbosityLevel(self,verbosity):
         """ 
         Specify for the entity the verbosity level
         """
-        #return
-        wrap.entity_set_logger_verbosity(self.obj,verbosity)
+        return wrap.entity_set_logger_verbosity(self.obj, verbosity)
 
     def getLoggerVerbosityLevel(self):
         """ 
