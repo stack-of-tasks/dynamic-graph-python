@@ -63,13 +63,13 @@ def updateEntityClasses(dictionary):
 
 from enum import Enum
 class VerbosityLevel(Enum):
-    """ 
+    """
     Enum class for setVerbosityLevel
     """
     VERBOSITY_ALL =0
     VERBOSITY_INFO_WARNING_ERROR = 1
     VERBOSITY_WARNING_ERROR = 2
-    VERBOSITY_ERROR = 3 
+    VERBOSITY_ERROR = 3
     VERBOSITY_NONE = 4
 
 class Entity (object) :
@@ -84,7 +84,7 @@ class Entity (object) :
     entities = dict ()
 
 
-    
+
     def __init__(self, className, instanceName):
         """
         Constructor: if not called by a child class, create and store a pointer
@@ -257,13 +257,13 @@ class Entity (object) :
             self.boundNewCommand( cmd )
 
     def setLoggerVerbosityLevel(self,verbosity):
-        """ 
+        """
         Specify for the entity the verbosity level
         """
         return wrap.entity_set_logger_verbosity(self.obj, verbosity)
 
     def getLoggerVerbosityLevel(self):
-        """ 
+        """
         Returns the entity's verbosity level
         """
         r=wrap.entity_get_logger_verbosity(self.obj)
@@ -276,3 +276,27 @@ class Entity (object) :
         elif r==3:
             return VerbosityLevel.VERBOSITY_ERROR
         return VerbosityLevel.VERBOSITY_NONE
+
+    def setTimeSample(self,timeSample):
+        """
+        Specify for the entity the time at which call is counted.
+        """
+        return wrap.entity_set_time_sample(self.obj, timeSample)
+
+    def getTimeSample(self):
+        """
+        Returns for the entity the time at which call is counted.
+        """
+        return wrap.entity_get_time_sample(self.obj)
+
+    def setStreamPrintPeriod(self,streamPrintPeriod):
+        """
+        Specify for the entity the period at which debugging information is printed
+        """
+        return wrap.entity_set_stream_print_period(self.obj, streamPrintPeriod)
+
+    def getStreamPrintPeriod(self):
+        """
+        Returns for the entity the period at which debugging information is printed
+        """
+        return wrap.entity_get_stream_print_period(self.obj)

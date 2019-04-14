@@ -54,16 +54,17 @@ INSTALL(TARGETS ${LIBRARY_NAME}
 SET(PYTHON_MODULE wrap)
 
 ADD_LIBRARY(${PYTHON_MODULE}
-	MODULE
-	exception-python.cc
-	convert-dg-to-py.cc
-	dynamic-graph-py.cc
-	signal-base-py.cc
-	entity-py.cc
-	factory-py.cc
-	pool-py.cc
-	signal-caster-py.cc
-	signal-wrapper.cc
+  MODULE
+  convert-dg-to-py.cc
+  debug-py.cc
+  dynamic-graph-py.cc
+  entity-py.cc
+  exception-python.cc
+  factory-py.cc
+  pool-py.cc
+  signal-base-py.cc
+  signal-caster-py.cc
+  signal-wrapper.cc
 )
 
 # Remove prefix lib
@@ -117,5 +118,3 @@ ELSE(WIN32)
 SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer-real-time${CMAKE_SHARED_LIBRARY_SUFFIX})
 ENDIF(WIN32)
 DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" ${TRACERREALTIME_PLUGIN} tracer_real_time-wrap)
-
-

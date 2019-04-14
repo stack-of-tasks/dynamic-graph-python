@@ -60,6 +60,10 @@ namespace dynamicgraph {
       extern PyObject* getDocString(PyObject* self, PyObject* args);
       extern PyObject* setLoggerVerbosityLevel(PyObject*self, PyObject *args);
       extern PyObject* getLoggerVerbosityLevel(PyObject *self, PyObject *args);
+      extern PyObject* setTimeSample(PyObject*self, PyObject *args);
+      extern PyObject* getTimeSample(PyObject *self, PyObject *args);
+      extern PyObject* setStreamPrintPeriod(PyObject*self, PyObject *args);
+      extern PyObject* getStreamPrintPeriod(PyObject *self, PyObject *args);
     }
 
     namespace factory {
@@ -71,6 +75,15 @@ namespace dynamicgraph {
     namespace pool {
       extern PyObject* writeGraph (PyObject* self, PyObject* args);
       extern PyObject* getEntityList(PyObject* self, PyObject* args);
+    }
+    namespace debug {
+      extern PyObject* addLoggerFileOutputStream(PyObject* self, PyObject* args);
+      extern PyObject* addLoggerCoutOutputStream(PyObject* self, PyObject* args);
+      extern PyObject* closeLoggerFileOutputStream(PyObject* self, PyObject* args);
+      extern PyObject* realTimeLoggerSpinOnce(PyObject* self, PyObject* args);
+      extern PyObject* realTimeLoggerDestroy(PyObject* self, PyObject* args);
+      extern PyObject* realTimeLoggerInstance(PyObject* self, PyObject* args);
+
     }
 
     PyObject* dgpyError;
@@ -237,6 +250,46 @@ static PyMethodDef dynamicGraphMethods[] = {
    dynamicgraph::python::entity::getLoggerVerbosityLevel,
    METH_VARARGS,
    "get the verbosity level of the entity"},
+  {"addLoggerFileOutputStream",
+   dynamicgraph::python::debug::addLoggerFileOutputStream,
+   METH_VARARGS,
+   "add a output file stream to the logger by filename"},
+  {"addLoggerCoutOutputStream",
+   dynamicgraph::python::debug::addLoggerCoutOutputStream,
+   METH_VARARGS,
+   "add std::cout as output stream to the logger"},
+  {"closeLoggerFileOutputStream",
+   dynamicgraph::python::debug::closeLoggerFileOutputStream,
+   METH_VARARGS,
+   "close all the loggers file output streams."},
+  {"entity_set_time_sample",
+   dynamicgraph::python::entity::setTimeSample,
+   METH_VARARGS,
+   "set the time sample for printing debugging information"},
+  {"entity_get_time_sample",
+   dynamicgraph::python::entity::getTimeSample,
+   METH_VARARGS,
+   "get the time sample for printing debugging information"},
+  {"entity_set_stream_print_period",
+   dynamicgraph::python::entity::setStreamPrintPeriod,
+   METH_VARARGS,
+   "set the period at which debugging information are printed"},
+  {"entity_get_stream_print_period",
+   dynamicgraph::python::entity::getStreamPrintPeriod,
+   METH_VARARGS,
+   "get the period at which debugging information are printed"},
+  {"real_time_logger_destroy",
+   dynamicgraph::python::debug::realTimeLoggerDestroy,
+   METH_VARARGS,
+   "Destroy the real time logger."},
+  {"real_time_logger_spin_once",
+   dynamicgraph::python::debug::realTimeLoggerSpinOnce,
+   METH_VARARGS,
+   "Destroy the real time logger."},
+  {"real_time_logger_instance",
+   dynamicgraph::python::debug::realTimeLoggerInstance,
+   METH_VARARGS,
+   "Starts the real time logger."},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

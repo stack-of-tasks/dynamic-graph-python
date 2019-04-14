@@ -36,6 +36,7 @@ namespace dynamicgraph
 			 "CustomEntity("+name+")::input(double)::out_double")
 
     {
+      addSignal();
     }
 
     void addSignal()
@@ -53,6 +54,18 @@ namespace dynamicgraph
     {
       const double &aDouble = m_sigdSIN(inTime);
       res = aDouble;
+      std::ostringstream oss;
+      oss << "start update " << res;
+      sendMsg(oss.str().c_str(),MSG_TYPE_ERROR);
+      sendMsg("This is a message of level MSG_TYPE_DEBUG",MSG_TYPE_DEBUG);
+      sendMsg("This is a message of level MSG_TYPE_INFO",MSG_TYPE_INFO);
+      sendMsg("This is a message of level MSG_TYPE_WARNING",MSG_TYPE_WARNING);
+      sendMsg("This is a message of level MSG_TYPE_ERROR",MSG_TYPE_ERROR);
+      sendMsg("This is a message of level MSG_TYPE_DEBUG_STREAM",MSG_TYPE_DEBUG_STREAM);
+      sendMsg("This is a message of level MSG_TYPE_INFO_STREAM",MSG_TYPE_INFO_STREAM);
+      sendMsg("This is a message of level MSG_TYPE_WARNING_STREAM",MSG_TYPE_WARNING_STREAM);
+      sendMsg("This is a message of level MSG_TYPE_ERROR_STREAM",MSG_TYPE_ERROR_STREAM);
+      sendMsg("end update",MSG_TYPE_ERROR);
       return res;
     }
 
