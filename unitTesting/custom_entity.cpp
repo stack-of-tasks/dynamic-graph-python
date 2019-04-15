@@ -57,15 +57,24 @@ namespace dynamicgraph
       std::ostringstream oss;
       oss << "start update " << res;
       sendMsg(oss.str().c_str(),MSG_TYPE_ERROR);
-      sendMsg("This is a message of level MSG_TYPE_DEBUG",MSG_TYPE_DEBUG);
-      sendMsg("This is a message of level MSG_TYPE_INFO",MSG_TYPE_INFO);
-      sendMsg("This is a message of level MSG_TYPE_WARNING",MSG_TYPE_WARNING);
-      sendMsg("This is a message of level MSG_TYPE_ERROR",MSG_TYPE_ERROR);
-      sendMsg("This is a message of level MSG_TYPE_DEBUG_STREAM",MSG_TYPE_DEBUG_STREAM);
-      sendMsg("This is a message of level MSG_TYPE_INFO_STREAM",MSG_TYPE_INFO_STREAM);
-      sendMsg("This is a message of level MSG_TYPE_WARNING_STREAM",MSG_TYPE_WARNING_STREAM);
-      sendMsg("This is a message of level MSG_TYPE_ERROR_STREAM",MSG_TYPE_ERROR_STREAM);
-      sendMsg("end update",MSG_TYPE_ERROR);
+      sendMsg("This is a message of level MSG_TYPE_DEBUG",
+	      MSG_TYPE_DEBUG,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_INFO",
+	      MSG_TYPE_INFO,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_WARNING",
+	      MSG_TYPE_WARNING,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_ERROR",
+	      MSG_TYPE_ERROR,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_DEBUG_STREAM",
+	      MSG_TYPE_DEBUG_STREAM,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_INFO_STREAM",
+	      MSG_TYPE_INFO_STREAM,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_WARNING_STREAM",
+	      MSG_TYPE_WARNING_STREAM,__FILE__,__LINE__);
+      sendMsg("This is a message of level MSG_TYPE_ERROR_STREAM",
+	      MSG_TYPE_ERROR_STREAM,__FILE__,__LINE__);
+      sendMsg("end update",
+	      MSG_TYPE_ERROR,__FILE__,__LINE__);
       return res;
     }
 
