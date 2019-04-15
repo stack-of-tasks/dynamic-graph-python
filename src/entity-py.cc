@@ -450,6 +450,8 @@ namespace dynamicgraph {
 	      break;
 	    case 3: entity->setLoggerVerbosityLevel(VERBOSITY_ERROR);
 	      break;
+	    case 4:  entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
+	      break;
 	    default: entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
 	      break;
 	    }
