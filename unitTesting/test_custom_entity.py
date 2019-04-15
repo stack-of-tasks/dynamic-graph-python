@@ -15,7 +15,6 @@ from dynamic_graph import addLoggerFileOutputStream, addLoggerCoutOutputStream, 
 from dynamic_graph import real_time_logger_instance, real_time_logger_spin_once, real_time_logger_destroy
 
 # Starts the real time logger instance
-real_time_logger_instance()
 
 aCustomEntity = CustomEntity("a_custom_entity")
 
@@ -34,6 +33,7 @@ for i in range(0,5):
     aCustomEntity.out_double.recompute(i)
     real_time_logger_spin_once()
     print(i)
+time.sleep(1)
 
 aCustomEntity.setLoggerVerbosityLevel(VerbosityLevel.VERBOSITY_WARNING_ERROR)
 print(aCustomEntity.getLoggerVerbosityLevel())
@@ -41,6 +41,7 @@ for i in range(5,10):
     aCustomEntity.in_double.value=i
     aCustomEntity.out_double.recompute(i)
     real_time_logger_spin_once()
+time.sleep(1)
 
 aCustomEntity.setLoggerVerbosityLevel(VerbosityLevel.VERBOSITY_ERROR)
 print(aCustomEntity.getLoggerVerbosityLevel())
@@ -48,15 +49,16 @@ for i in range(10,15):
     aCustomEntity.in_double.value=i
     aCustomEntity.out_double.recompute(i)
     real_time_logger_spin_once()
-
+time.sleep(1)
 addLoggerCoutOutputStream()
-
+time.sleep(1)
 aCustomEntity.setLoggerVerbosityLevel(VerbosityLevel.VERBOSITY_NONE)
 print(aCustomEntity.getLoggerVerbosityLevel())
 for i in range(15,20):
     aCustomEntity.in_double.value=i
     aCustomEntity.out_double.recompute(i)
     real_time_logger_spin_once()
+time.sleep(1)
 
 aCustomEntity.setLoggerVerbosityLevel(VerbosityLevel.VERBOSITY_ALL)
 print(aCustomEntity.getLoggerVerbosityLevel())
@@ -71,3 +73,4 @@ real_time_logger_destroy()
 
 # Close all the output stream
 closeLoggerFileOutputStream()
+
