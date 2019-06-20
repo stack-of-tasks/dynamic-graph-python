@@ -24,6 +24,7 @@ namespace dynamicgraph {
 
     extern PyObject* dgpyError;
     namespace pool {
+
       PyObject* writeGraph (PyObject* /*self*/, PyObject* args)
       {
 	char* filename;
@@ -52,16 +53,16 @@ namespace dynamicgraph {
 	  Py_ssize_t classNumber = listOfEntities.size();
 	  // Build a tuple object
 	  PyObject* classTuple = PyTuple_New(classNumber);
-	  
+
 	  Py_ssize_t iEntity = 0;
-	  for (PoolStorage::Entities::const_iterator entity_it = 
+	  for (PoolStorage::Entities::const_iterator entity_it =
 		 listOfEntities.begin();
 	       entity_it != listOfEntities.end();
 	       ++entity_it)
 	    {
 	      const std::string & aname = entity_it->second->getName();
-	      
-	      PyObject* className = 
+
+	      PyObject* className =
 		Py_BuildValue("s", aname.c_str());
 	      PyTuple_SetItem(classTuple, iEntity, className);
 	      iEntity++;
@@ -72,5 +73,5 @@ namespace dynamicgraph {
       }
 
     } // python
-  } // dynamicgraph
-} // namespace pool
+  } // namespace pool
+} // dynamicgraph

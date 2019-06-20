@@ -26,7 +26,6 @@
 #include <boost/python/str.hpp>
 #include <boost/python/import.hpp>
 
-using namespace boost::python;
 namespace py=boost::python;
 
 std::ofstream dg_debugfile( "/tmp/dynamic-graph-traces.txt", std::ios::trunc&std::ios::out );
@@ -139,6 +138,7 @@ Interpreter::Interpreter()
   dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 #endif
   Py_Initialize();
+  PyEval_InitThreads();
   mainmod_ = PyImport_AddModule("__main__");
   Py_INCREF(mainmod_);
   globals_ = PyModule_GetDict(mainmod_);
@@ -155,14 +155,52 @@ Interpreter::Interpreter()
       (PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
   assert(PyCallable_Check(traceback_format_exception_));
   Py_INCREF(traceback_format_exception_);
+
+  // Allow threads
+  _pyState = PyEval_SaveThread();
 }
 
 Interpreter::~Interpreter()
 {
-  //Py_DECREF(mainmod_);
-  //Py_DECREF(globals_);
-  //Py_DECREF(traceback_format_exception_);
-  Py_Finalize();
+  PyEval_RestoreThread(_pyState);
+
+  // Ideally, we should call Py_Finalize but this is not really supported by
+  // Python.
+  // Instead, we merelly remove variables.
+  // Code was taken here: https://github.com/numpy/numpy/issues/8097#issuecomment-356683953
+  {
+    PyObject * poAttrList = PyObject_Dir(mainmod_);
+    PyObject * poAttrIter = PyObject_GetIter(poAttrList);
+    PyObject * poAttrName;
+
+    while ((poAttrName = PyIter_Next(poAttrIter)) != NULL)
+    {
+      std::string oAttrName (PyString_AS_STRING(poAttrName));
+
+      // Make sure we don't delete any private objects.
+      if (oAttrName.compare(                 0,2,"__")!=0 ||
+          oAttrName.compare(oAttrName.size()-2,2,"__")!=0)
+      {
+        PyObject * poAttr = PyObject_GetAttr(mainmod_, poAttrName);
+
+        // Make sure we don't delete any module objects.
+        if (poAttr && poAttr->ob_type != mainmod_->ob_type)
+          PyObject_SetAttr(mainmod_, poAttrName, NULL);
+
+        Py_DecRef(poAttr);
+      }
+
+      Py_DecRef(poAttrName);
+    }
+
+    Py_DecRef(poAttrIter);
+    Py_DecRef(poAttrList);
+  }
+
+  Py_DECREF(mainmod_);
+  Py_DECREF(globals_);
+  Py_DECREF(traceback_format_exception_);
+  //Py_Finalize();
 }
 
 std::string Interpreter::python( const std::string& command )
@@ -179,6 +217,15 @@ void Interpreter::python( const std::string& command, std::string& res,
   res = "";
   out = "";
   err = "";
+
+  // Check if the command is not a python comment or empty.
+  std::string::size_type iFirstNonWhite = command.find_first_not_of (" \t");
+  // Empty command
+  if (iFirstNonWhite == std::string::npos) return;
+  // Command is a comment. Ignore it.
+  if (command[iFirstNonWhite] == '#') return;
+
+  PyEval_RestoreThread(_pyState);
 
   std::cout << command.c_str() << std::endl;
   PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
@@ -234,6 +281,9 @@ void Interpreter::python( const std::string& command, std::string& res,
   Py_DecRef(stdout_obj);
   Py_DecRef(result2);
   Py_DecRef(result);
+
+  _pyState = PyEval_SaveThread();
+
   return;
 }
 
@@ -257,6 +307,8 @@ void Interpreter::runPythonFile( std::string filename, std::string& err)
     return;
   }
 
+  PyEval_RestoreThread(_pyState);
+
   err = "";
   PyObject* pymainContext = globals_;
   PyObject* run = PyRun_FileExFlags(pFile, filename.c_str(),
@@ -268,12 +320,16 @@ void Interpreter::runPythonFile( std::string filename, std::string& err)
     std::cerr << err << std::endl;;
   }
   Py_DecRef(run);
+
+  _pyState = PyEval_SaveThread();
 }
 
 void Interpreter::runMain( void )
 {
   const char * argv [] = { "dg-embedded-pysh" };
+  PyEval_RestoreThread(_pyState);
   Py_Main(1,const_cast<char**>(argv));
+  _pyState = PyEval_SaveThread();
 }
 
 std::string Interpreter::processStream(std::istream& stream, std::ostream& os)

@@ -23,6 +23,7 @@
 #include <dynamic-graph/signal-base.h>
 
 #include "exception.hh"
+#include "signal-wrapper.hh"
 
 namespace dynamicgraph {
   namespace python {
@@ -30,6 +31,7 @@ namespace dynamicgraph {
     // Declare functions defined in other source files
     namespace signalBase {
       extern PyObject* create(PyObject* self, PyObject* args);
+      extern PyObject* createSignalWrapper(PyObject* self, PyObject* args);
       extern PyObject* getTime(PyObject* self, PyObject* args);
       extern PyObject* setTime(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
@@ -48,6 +50,7 @@ namespace dynamicgraph {
       extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* display(PyObject* self, PyObject* args);
       extern PyObject* getName(PyObject* self, PyObject* args);
+      extern PyObject* getClassName(PyObject* self, PyObject* args);
       extern PyObject* hasSignal(PyObject* self, PyObject* args);
       extern PyObject* getSignal(PyObject* self, PyObject* args);
       extern PyObject* listSignals(PyObject* self, PyObject* args);
@@ -55,6 +58,12 @@ namespace dynamicgraph {
       extern PyObject* listCommands(PyObject* self, PyObject* args);
       extern PyObject* getCommandDocstring(PyObject* self, PyObject* args);
       extern PyObject* getDocString(PyObject* self, PyObject* args);
+      extern PyObject* setLoggerVerbosityLevel(PyObject*self, PyObject *args);
+      extern PyObject* getLoggerVerbosityLevel(PyObject *self, PyObject *args);
+      extern PyObject* setTimeSample(PyObject*self, PyObject *args);
+      extern PyObject* getTimeSample(PyObject *self, PyObject *args);
+      extern PyObject* setStreamPrintPeriod(PyObject*self, PyObject *args);
+      extern PyObject* getStreamPrintPeriod(PyObject *self, PyObject *args);
     }
 
     namespace factory {
@@ -66,6 +75,14 @@ namespace dynamicgraph {
     namespace pool {
       extern PyObject* writeGraph (PyObject* self, PyObject* args);
       extern PyObject* getEntityList(PyObject* self, PyObject* args);
+    }
+    namespace debug {
+      extern PyObject* addLoggerFileOutputStream(PyObject* self, PyObject* args);
+      extern PyObject* addLoggerCoutOutputStream(PyObject* self, PyObject* args);
+      extern PyObject* closeLoggerFileOutputStream(PyObject* self, PyObject* args);
+      extern PyObject* realTimeLoggerSpinOnce(PyObject* self, PyObject* args);
+      extern PyObject* realTimeLoggerDestroy(PyObject* self, PyObject* args);
+      extern PyObject* realTimeLoggerInstance(PyObject* self, PyObject* args);
     }
 
     PyObject* dgpyError;
@@ -150,6 +167,8 @@ static PyMethodDef dynamicGraphMethods[] = {
   // Signals
   {"create_signal_base", dynamicgraph::python::signalBase::create, METH_VARARGS,
    "create a SignalBase C++ object"},
+  {"create_signal_wrapper", dynamicgraph::python::signalBase::createSignalWrapper, METH_VARARGS,
+   "create a SignalWrapper C++ object"},
   {"signal_base_get_time", dynamicgraph::python::signalBase::getTime,
    METH_VARARGS, "Get time of  a SignalBase"},
   {"signal_base_set_time", dynamicgraph::python::signalBase::setTime,
@@ -163,7 +182,7 @@ static PyMethodDef dynamicGraphMethods[] = {
   {"signal_base_display_dependencies", dynamicgraph::python::signalBase::displayDependencies,
    METH_VARARGS, "Print the signal dependencies in a string"},
   {"signal_base_get_value", dynamicgraph::python::signalBase::getValue,
-   METH_VARARGS, "Read the value of a signal"}, 
+   METH_VARARGS, "Read the value of a signal"},
   {"signal_base_set_value", dynamicgraph::python::signalBase::setValue,
    METH_VARARGS, "Set the value of a signal"},
   {"signal_base_recompute", dynamicgraph::python::signalBase::recompute,
@@ -181,6 +200,8 @@ static PyMethodDef dynamicGraphMethods[] = {
    "print an Entity C++ object"},
   {"entity_get_name", dynamicgraph::python::entity::getName, METH_VARARGS,
    "get the name of an Entity"},
+  {"entity_get_class_name", dynamicgraph::python::entity::getClassName, METH_VARARGS,
+   "get the class name of an Entity"},
   {"entity_has_signal", dynamicgraph::python::entity::hasSignal, METH_VARARGS,
    "return True if the entity has a signal with the given name"},
   {"entity_get_signal", dynamicgraph::python::entity::getSignal, METH_VARARGS,
@@ -220,6 +241,54 @@ static PyMethodDef dynamicGraphMethods[] = {
    dynamicgraph::python::pool::getEntityList,
    METH_VARARGS,
    "return the list of instanciated entities"},
+  {"entity_set_logger_verbosity",
+   dynamicgraph::python::entity::setLoggerVerbosityLevel,
+   METH_VARARGS,
+   "set the verbosity level of the entity"},
+  {"entity_get_logger_verbosity",
+   dynamicgraph::python::entity::getLoggerVerbosityLevel,
+   METH_VARARGS,
+   "get the verbosity level of the entity"},
+  {"addLoggerFileOutputStream",
+   dynamicgraph::python::debug::addLoggerFileOutputStream,
+   METH_VARARGS,
+   "add a output file stream to the logger by filename"},
+  {"addLoggerCoutOutputStream",
+   dynamicgraph::python::debug::addLoggerCoutOutputStream,
+   METH_VARARGS,
+   "add std::cout as output stream to the logger"},
+  {"closeLoggerFileOutputStream",
+   dynamicgraph::python::debug::closeLoggerFileOutputStream,
+   METH_VARARGS,
+   "close all the loggers file output streams."},
+  {"entity_set_time_sample",
+   dynamicgraph::python::entity::setTimeSample,
+   METH_VARARGS,
+   "set the time sample for printing debugging information"},
+  {"entity_get_time_sample",
+   dynamicgraph::python::entity::getTimeSample,
+   METH_VARARGS,
+   "get the time sample for printing debugging information"},
+  {"entity_set_stream_print_period",
+   dynamicgraph::python::entity::setStreamPrintPeriod,
+   METH_VARARGS,
+   "set the period at which debugging information are printed"},
+  {"entity_get_stream_print_period",
+   dynamicgraph::python::entity::getStreamPrintPeriod,
+   METH_VARARGS,
+   "get the period at which debugging information are printed"},
+  {"real_time_logger_destroy",
+   dynamicgraph::python::debug::realTimeLoggerDestroy,
+   METH_VARARGS,
+   "Destroy the real time logger."},
+  {"real_time_logger_spin_once",
+   dynamicgraph::python::debug::realTimeLoggerSpinOnce,
+   METH_VARARGS,
+   "Destroy the real time logger."},
+  {"real_time_logger_instance",
+   dynamicgraph::python::debug::realTimeLoggerInstance,
+   METH_VARARGS,
+   "Starts the real time logger."},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

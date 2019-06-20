@@ -114,6 +114,32 @@ namespace dynamicgraph {
       }
 
       /**
+	 \brief Get class name of entity
+      */
+      PyObject* getClassName(PyObject* /*self*/, PyObject* args)
+      {
+	PyObject* object = NULL;
+	void* pointer = NULL;
+	std::string name;
+
+	if (!PyArg_ParseTuple(args, "O", &object))
+	  return NULL;
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "function takes a PyCObject as argument");
+	  return NULL;
+	}
+
+	pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	try {
+	 name = entity->getClassName();
+	} CATCH_ALL_EXCEPTIONS();
+	return Py_BuildValue("s", name.c_str());
+      }
+
+      /**
          \brief Check if the entity has a signal with the given name
       */
       PyObject * hasSignal(PyObject* /*self*/, PyObject* args)
@@ -387,6 +413,221 @@ namespace dynamicgraph {
 	/* Return the resulting string. */
 	return Py_BuildValue("s", oss.str().c_str());
       }
+
+      /**
+	 \brief Set verbosity Level
+      */
+      PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject*  args )
+      {
+
+	PyObject* object = NULL;
+	PyObject* objectVerbosityLevel = NULL;
+	if (!PyArg_ParseTuple(args, "OO", &object,&objectVerbosityLevel))
+	  return NULL;
+
+	// Retrieve the entity instance
+	  if (!PyCObject_Check(object)) {
+	    PyErr_SetString(PyExc_TypeError,
+			    "First argument should be an object");
+	    return NULL;
+	  }
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	// Retrieve object verbosity level
+	PyObject* valueOfVerbosityLevel = PyObject_GetAttrString(objectVerbosityLevel, "value");
+	long verbosityLevel = PyLong_AsLong(valueOfVerbosityLevel);
+
+	try {
+	  switch(verbosityLevel)
+	    {
+	    case 0: entity->setLoggerVerbosityLevel(VERBOSITY_ALL);
+	      break;
+	    case 1: entity->setLoggerVerbosityLevel(VERBOSITY_INFO_WARNING_ERROR);
+	      break;
+	    case 2: entity->setLoggerVerbosityLevel(VERBOSITY_WARNING_ERROR);
+	      break;
+	    case 3: entity->setLoggerVerbosityLevel(VERBOSITY_ERROR);
+	      break;
+	    case 4:  entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
+	      break;
+	    default: entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
+	      break;
+	    }
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
+	} catch (const char* s) {
+	  PyErr_SetString(dgpyError, s);
+	  return NULL;
+	} catch (...) {
+	  PyErr_SetString(dgpyError, "Unknown exception");
+	  return NULL;
+	}
+
+	return Py_BuildValue("");
+      }
+
+      /**
+	 \brief Get verbosity Level
+      */
+      PyObject* getLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args)
+      {
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args, "O", &object))
+	  return NULL;
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "first argument is not an object");
+	  return NULL;
+	}
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	LoggerVerbosity alv ;
+	try {
+	  alv = entity->getLoggerVerbosityLevel();
+	} CATCH_ALL_EXCEPTIONS();
+
+	int ares= (int)alv;
+	return Py_BuildValue("i",ares);
+      }
+
+      /**
+	 \brief Get stream print period
+      */
+      PyObject* getStreamPrintPeriod(PyObject* /*self*/, PyObject* args)
+      {
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args, "O", &object))
+	  return NULL;
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "first argument is not an object");
+	  return NULL;
+	}
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	double r ;
+	try {
+	  r = entity->getStreamPrintPeriod();
+	} CATCH_ALL_EXCEPTIONS();
+
+	return Py_BuildValue("d",r);
+      }
+
+      /**
+	 \brief Set print period
+      */
+      PyObject* setStreamPrintPeriod(PyObject* /*self*/, PyObject*  args )
+      {
+
+	PyObject* object = NULL;
+	double streamPrintPeriod=0;
+	if (!PyArg_ParseTuple(args, "Od", &object,&streamPrintPeriod))
+	  return NULL;
+
+	// Retrieve the entity instance
+	  if (!PyCObject_Check(object)) {
+	    PyErr_SetString(PyExc_TypeError,
+			    "First argument should be an object");
+	    return NULL;
+	  }
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	try {
+	  entity->setStreamPrintPeriod(streamPrintPeriod);
+
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
+	} catch (const char* s) {
+	  PyErr_SetString(dgpyError, s);
+	  return NULL;
+	} catch (...) {
+	  PyErr_SetString(dgpyError, "Unknown exception");
+	  return NULL;
+	}
+
+	return Py_BuildValue("");
+      }
+
+      /**
+	 \brief Get stream print period
+      */
+      PyObject* getTimeSample(PyObject* /*self*/, PyObject* args)
+      {
+	PyObject* object = NULL;
+	if (!PyArg_ParseTuple(args, "O", &object))
+	  return NULL;
+
+	// Retrieve the entity instance
+	if (!PyCObject_Check(object)) {
+	  PyErr_SetString(PyExc_TypeError,
+			  "first argument is not an object");
+	  return NULL;
+	}
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	double r ;
+	try {
+	  r = entity->getTimeSample();
+	} CATCH_ALL_EXCEPTIONS();
+
+	return Py_BuildValue("d",r);
+      }
+
+      /**
+	 \brief Set time sample
+      */
+      PyObject* setTimeSample(PyObject* /*self*/, PyObject*  args )
+      {
+
+	PyObject* object = NULL;
+	double timeSample;
+	if (!PyArg_ParseTuple(args, "Od", &object,&timeSample))
+	  return NULL;
+
+	// Retrieve the entity instance
+	  if (!PyCObject_Check(object)) {
+	    PyErr_SetString(PyExc_TypeError,
+			    "First argument should be an object");
+	    return NULL;
+	  }
+
+	void *pointer = PyCObject_AsVoidPtr(object);
+	Entity* entity = (Entity*)pointer;
+
+	try {
+	  entity->setTimeSample(timeSample);
+
+	} catch (const std::exception& exc) {
+	  PyErr_SetString(dgpyError, exc.what());
+	  return NULL;
+	} catch (const char* s) {
+	  PyErr_SetString(dgpyError, s);
+	  return NULL;
+	} catch (...) {
+	  PyErr_SetString(dgpyError, "Unknown exception");
+	  return NULL;
+	}
+
+	return Py_BuildValue("");
+      }
+
+
     }
   }
 }

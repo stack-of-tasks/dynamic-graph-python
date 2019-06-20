@@ -16,14 +16,10 @@
 #
 # Python
 #
-set(Python_ADDITIONAL_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
-INCLUDE(../cmake/python.cmake)
-FINDPYTHON()
 
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} ${PYTHON_LIBRARY_DIRS})
 
-INCLUDE(../cmake/python.cmake)
 #
 #
 #  Python interpreter
@@ -36,6 +32,7 @@ ADD_LIBRARY(${LIBRARY_NAME}
 
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME}
   ${PYTHON_LIBRARY})
+TARGET_LINK_BOOST_PYTHON(${LIBRARY_NAME})
 
 IF(UNIX)
   TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
@@ -46,14 +43,7 @@ SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
 
 INSTALL(TARGETS ${LIBRARY_NAME}
-  DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-SET(EXECUTABLE_NAME dg-python)
-ADD_EXECUTABLE(${EXECUTABLE_NAME} dg-python.cc)
-TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
-  ${LIBRARY_NAME}
-  )
-INSTALL(TARGETS dg-python DESTINATION ${CMAKE_INSTALL_BINDIR})
+  DESTINATION lib)
 
 #
 #
@@ -64,15 +54,17 @@ INSTALL(TARGETS dg-python DESTINATION ${CMAKE_INSTALL_BINDIR})
 SET(PYTHON_MODULE wrap)
 
 ADD_LIBRARY(${PYTHON_MODULE}
-	MODULE
-	exception-python.cc
-	convert-dg-to-py.cc
-	dynamic-graph-py.cc
-	signal-base-py.cc
-	entity-py.cc
-	factory-py.cc
-	pool-py.cc
-	signal-caster-py.cc
+  MODULE
+  convert-dg-to-py.cc
+  debug-py.cc
+  dynamic-graph-py.cc
+  entity-py.cc
+  exception-python.cc
+  factory-py.cc
+  pool-py.cc
+  signal-base-py.cc
+  signal-caster-py.cc
+  signal-wrapper.cc
 )
 
 # Remove prefix lib
@@ -83,8 +75,8 @@ PKG_CONFIG_USE_DEPENDENCY(${PYTHON_MODULE} dynamic-graph)
 #TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PYTHON_LIBRARY})
 
 CONFIG_FILES(link-to-python.hh)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH}
-  ${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 #
 # Installation
@@ -126,5 +118,3 @@ ELSE(WIN32)
 SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer-real-time${CMAKE_SHARED_LIBRARY_SUFFIX})
 ENDIF(WIN32)
 DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" ${TRACERREALTIME_PLUGIN} tracer_real_time-wrap)
-
-

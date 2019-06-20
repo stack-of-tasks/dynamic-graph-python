@@ -31,14 +31,14 @@ namespace dynamicgraph {
     namespace convert {
 
 
-      void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* tuple)
+      void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* sequence)
       {
-	if (PyTuple_Size(tuple) != (int)m.cols()) {
+	if (PySequence_Size(sequence) != (int)m.cols()) {
 	  throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				 "lines of matrix have different sizes.");
 	}
 	for (int iCol=0; iCol < m.cols(); iCol++) {
-	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
+	  PyObject* pyDouble = PySequence_GetItem(sequence, iCol);
 	  if (PyFloat_Check(pyDouble))
 	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
 	  else if(PyInt_Check(pyDouble))
@@ -49,14 +49,14 @@ namespace dynamicgraph {
 				   "a floating point number.");
 	}
       }
-      void fillMatrixRow(Eigen::Matrix4d& m, unsigned iRow, PyObject* tuple)
+      void fillMatrixRow(Eigen::Matrix4d& m, unsigned iRow, PyObject* sequence)
       {
-	if (PyTuple_Size(tuple) != (int)m.cols()) {
+	if (PySequence_Size(sequence) != (int)m.cols()) {
 	  throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				 "lines of matrix have different sizes.");
 	}
 	for (int iCol=0; iCol < m.cols(); iCol++) {
-	  PyObject* pyDouble = PyTuple_GetItem(tuple, iCol);
+	  PyObject* pyDouble = PySequence_GetItem(sequence, iCol);
 	  if (PyFloat_Check(pyDouble))
 	    m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
 	  else if(PyInt_Check(pyDouble))
@@ -145,14 +145,14 @@ namespace dynamicgraph {
 	  break;
 	case (Value::VECTOR) :
 	  // Check that argument is a tuple
-	  if (!PyTuple_Check(pyObject)) {
+	  if (!PySequence_Check(pyObject)) {
 	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
 				   "vector");
 	  }
-	  size = PyTuple_Size(pyObject);
+	  size = PySequence_Size(pyObject);
 	  v.resize(size);
 	  for (Py_ssize_t i=0; i<size; i++) {
-	    PyObject* pyDouble = PyTuple_GetItem(pyObject, i);
+	    PyObject* pyDouble = PySequence_GetItem(pyObject, i);
 	    if (PyFloat_Check(pyDouble))
 	      v(i) = PyFloat_AsDouble(pyDouble);
 	    else if(PyInt_Check(pyDouble))
@@ -166,27 +166,27 @@ namespace dynamicgraph {
 	  break;
 	case (Value::MATRIX) :
 	  // Check that argument is a tuple
-	  if (!PyTuple_Check(pyObject)) {
+	  if (!PySequence_Check(pyObject)) {
 	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
 				   "matrix");
 	  }
-	  nRows = PyTuple_Size(pyObject);
+	  nRows = PySequence_Size(pyObject);
 	  if (nRows == 0) {
 	    return Value(Matrix());
 	  }
-	  row = PyTuple_GetItem(pyObject, 0);
-	  if (!PyTuple_Check(row)) {
+	  row = PySequence_GetItem(pyObject, 0);
+	  if (!PySequence_Check(row)) {
 	    throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				   "matrix");
 	  }
-	  nCols = PyTuple_Size(row);
+	  nCols = PySequence_Size(row);
 
 	  m.resize((unsigned int)nRows, (unsigned int)nCols);
 	  fillMatrixRow(m, 0, row);
 
 	  for (Py_ssize_t iRow=1; iRow<nRows; iRow++) {
-	    row = PyTuple_GetItem(pyObject, iRow);
-	    if (!PyTuple_Check(row)) {
+	    row = PySequence_GetItem(pyObject, iRow);
+	    if (!PySequence_Check(row)) {
 	      throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				     "matrix");
 	    }
@@ -196,27 +196,27 @@ namespace dynamicgraph {
 	  break;
 	case (Value::MATRIX4D) :
 	  // Check that argument is a tuple
-	  if (!PyTuple_Check(pyObject)) {
+	  if (!PySequence_Check(pyObject)) {
 	    throw ExceptionPython(ExceptionPython::VALUE_PARSING,
 				   "matrix4d");
 	  }
-	  nRows = PyTuple_Size(pyObject);
+	  nRows = PySequence_Size(pyObject);
 	  if (nRows == 0) {
 	    return Value(Eigen::Matrix4d());
 	  }
-	  row = PyTuple_GetItem(pyObject, 0);
-	  if (!PyTuple_Check(row)) {
+	  row = PySequence_GetItem(pyObject, 0);
+	  if (!PySequence_Check(row)) {
 	    throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				   "matrix4d");
 	  }
-	  nCols = PyTuple_Size(row);
+	  nCols = PySequence_Size(row);
 
 	  m4.resize(nRows, nCols);
 	  fillMatrixRow(m4, 0, row);
 
 	  for (Py_ssize_t iRow=1; iRow<nRows; iRow++) {
-	    row = PyTuple_GetItem(pyObject, iRow);
-	    if (!PyTuple_Check(row)) {
+	    row = PySequence_GetItem(pyObject, iRow);
+	    if (!PySequence_Check(row)) {
 	      throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
 				     "matrix");
 	    }
@@ -321,3 +321,4 @@ namespace dynamicgraph {
     } // namespace dynamicgraph
   } // namespace python
 } // namespace convert
+

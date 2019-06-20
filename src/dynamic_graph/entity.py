@@ -61,6 +61,17 @@ def updateEntityClasses(dictionary):
 # --- ENTITY -------------------------------------------------------------------
 # --- ENTITY -------------------------------------------------------------------
 
+from enum import Enum
+class VerbosityLevel(Enum):
+    """
+    Enum class for setVerbosityLevel
+    """
+    VERBOSITY_ALL =0
+    VERBOSITY_INFO_WARNING_ERROR = 1
+    VERBOSITY_WARNING_ERROR = 2
+    VERBOSITY_ERROR = 3
+    VERBOSITY_NONE = 4
+
 class Entity (object) :
     """
     This class binds dynamicgraph::Entity C++ class
@@ -71,6 +82,8 @@ class Entity (object) :
     Store list of entities created via python
     """
     entities = dict ()
+
+
 
     def __init__(self, className, instanceName):
         """
@@ -96,6 +109,10 @@ class Entity (object) :
     @property
     def name(self) :
         return wrap.entity_get_name(self.obj)
+
+    @property
+    def className(self) :
+        return wrap.entity_get_class_name(self.obj)
 
     def __str__(self) :
         return wrap.display_entity(self.obj)
@@ -187,6 +204,7 @@ class Entity (object) :
                             "It is not advised to set a new attribute of the same name.")
         object.__setattr__(self, name, value)
 
+
     # --- COMMANDS BINDER -----------------------------------------------------
     # List of all the entity classes from the c++ factory, that have been bound
     # bind the py factory.
@@ -237,3 +255,48 @@ class Entity (object) :
         cmdList = filter(lambda x: not x in self.__class__.__dict__, cmdList)
         for cmd in cmdList:
             self.boundNewCommand( cmd )
+
+    def setLoggerVerbosityLevel(self,verbosity):
+        """
+        Specify for the entity the verbosity level
+        """
+        return wrap.entity_set_logger_verbosity(self.obj, verbosity)
+
+    def getLoggerVerbosityLevel(self):
+        """
+        Returns the entity's verbosity level
+        """
+        r=wrap.entity_get_logger_verbosity(self.obj)
+        if r==0:
+            return VerbosityLevel.VERBOSITY_ALL
+        elif r==1:
+            return VerbosityLevel.VERBOSITY_INFO_WARNING_ERROR
+        elif r==2:
+            return VerbosityLevel.VERBOSITY_WARNING_ERROR
+        elif r==3:
+            return VerbosityLevel.VERBOSITY_ERROR
+        return VerbosityLevel.VERBOSITY_NONE
+
+    def setTimeSample(self,timeSample):
+        """
+        Specify for the entity the time at which call is counted.
+        """
+        return wrap.entity_set_time_sample(self.obj, timeSample)
+
+    def getTimeSample(self):
+        """
+        Returns for the entity the time at which call is counted.
+        """
+        return wrap.entity_get_time_sample(self.obj)
+
+    def setStreamPrintPeriod(self,streamPrintPeriod):
+        """
+        Specify for the entity the period at which debugging information is printed
+        """
+        return wrap.entity_set_stream_print_period(self.obj, streamPrintPeriod)
+
+    def getStreamPrintPeriod(self):
+        """
+        Returns for the entity the period at which debugging information is printed
+        """
+        return wrap.entity_get_stream_print_period(self.obj)
