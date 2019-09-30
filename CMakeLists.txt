@@ -11,21 +11,12 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/pthread.cmake)
-INCLUDE(cmake/cpack.cmake)
-include(cmake/header.cmake)
 include(cmake/python.cmake)
-
+INCLUDE(cmake/sphinx.cmake)
 
 SET(DOXYGEN_USE_MATHJAX YES)
 
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
-# Headers list.
-SET(${PROJECT_NAME}_HEADERS
-  include/dynamic-graph/python/interpreter.hh
-  include/dynamic-graph/python/api.hh
-  include/dynamic-graph/python/exception-python.hh
-
-)
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 
