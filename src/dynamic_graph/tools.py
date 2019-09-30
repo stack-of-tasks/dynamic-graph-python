@@ -16,7 +16,8 @@
 
 from __future__ import print_function
 
-def addTrace(robot, trace, entityName, signalName, autoRecompute = True):
+
+def addTrace(robot, trace, entityName, signalName, autoRecompute=True):
     """
     Add a signal to a tracer and recompute it automatically if necessary.
     """

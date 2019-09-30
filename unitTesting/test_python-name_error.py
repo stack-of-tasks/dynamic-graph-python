@@ -1,3 +1,4 @@
+# flake8: noqa
 import sys, os
 
 pkgConfigPath = os.environ.get("PKG_CONFIG_PATH")
