@@ -5,8 +5,10 @@
 """
 import re
 
-import entity
-import wrap
+from .wrap import (create_signal_wrapper, signal_base_display, signal_base_display_dependencies,
+                   signal_base_get_class_name, signal_base_get_name, signal_base_get_time, signal_base_get_value,
+                   signal_base_getPlugged, signal_base_isPlugged, signal_base_recompute, signal_base_set_time,
+                   signal_base_set_value, signal_base_unplug)
 
 
 def stringToTuple(vector):
@@ -110,7 +112,7 @@ def objectToString(obj):
             else:
                 # vector
                 return tupleToString(obj)
-    elif isinstance(obj, entity.Entity):
+    elif hasattr(obj, 'name'):
         return obj.name
     else:
         return str(obj)
@@ -176,7 +178,7 @@ class SignalBase(object):
         """
         Get time of signal
         """
-        return wrap.signal_base_get_time(self.obj)
+        return signal_base_get_time(self.obj)
 
     @time.setter
     def time(self, val):
@@ -186,7 +188,7 @@ class SignalBase(object):
           Input:
             - an integer
         """
-        return wrap.signal_base_set_time(self.obj, val)
+        return signal_base_set_time(self.obj, val)
 
     @property
     def value(self):
@@ -210,7 +212,7 @@ class SignalBase(object):
         >>> s.value
         (2.5, 0.1, 100.0)
         """
-        string = wrap.signal_base_get_value(self.obj)
+        string = signal_base_get_value(self.obj)
         return stringToObject(string)
 
     @value.setter
@@ -220,64 +222,64 @@ class SignalBase(object):
         If the signal is plugged, it will be unplugged
         """
         string = objectToString(val)
-        return wrap.signal_base_set_value(self.obj, string)
+        return signal_base_set_value(self.obj, string)
 
     def getName(self):
         """
         Get name of signal
         """
-        return wrap.signal_base_get_name(self.obj)
+        return signal_base_get_name(self.obj)
 
     @property
     def name(self):
         """
         Get name of signal
         """
-        return wrap.signal_base_get_name(self.obj)
+        return signal_base_get_name(self.obj)
 
     def getClassName(self):
         """
         Get class name of signal
         """
-        return wrap.signal_base_get_class_name(self.obj)
+        return signal_base_get_class_name(self.obj)
 
     def recompute(self, time):
         """
         Force signal to recompute the value at given time.
         """
-        return wrap.signal_base_recompute(self.obj, time)
+        return signal_base_recompute(self.obj, time)
 
     def unplug(self):
         """
         Unplug a PTR signal.
         """
-        return wrap.signal_base_unplug(self.obj)
+        return signal_base_unplug(self.obj)
 
     def isPlugged(self):
         """
         Return whether a signal is plugged.
         """
-        return wrap.signal_base_isPlugged(self.obj)
+        return signal_base_isPlugged(self.obj)
 
     def getPlugged(self):
         """
         Return the plugged signal.
         """
-        return SignalBase(obj=wrap.signal_base_getPlugged(self.obj))
+        return SignalBase(obj=signal_base_getPlugged(self.obj))
 
     def __str__(self):
         """
         Print signal in a string
         """
-        return wrap.signal_base_display(self.obj)
+        return signal_base_display(self.obj)
 
     def displayDependencies(self, iter):
         """
         Print signal dependencies in a string
         """
-        return (wrap.signal_base_display_dependencies(self.obj, iter))
+        return (signal_base_display_dependencies(self.obj, iter))
 
 
 class SignalWrapper(SignalBase):
     def __init__(self, name, type, func):
-        super(SignalWrapper, self).__init__(name, wrap.create_signal_wrapper(name, type, func))
+        super(SignalWrapper, self).__init__(name, create_signal_wrapper(name, type, func))

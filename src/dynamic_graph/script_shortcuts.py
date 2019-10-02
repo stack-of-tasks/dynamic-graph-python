@@ -11,9 +11,9 @@
 # Changing prompt
 import sys
 
-from dynamic_graph.entity import Entity
-from dynamic_graph.signal_base import SignalBase
-from matlab import matlab
+from .entity import Entity
+from .matlab import matlab
+from .signal_base import SignalBase
 
 
 # Enables shortcut "name"
