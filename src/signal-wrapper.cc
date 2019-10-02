@@ -11,7 +11,7 @@ namespace dynamicgraph {
 namespace python {
 namespace signalWrapper {
 void convert(PyObject* o, bool& v) { v = (o == Py_True); }
-void convert(PyObject* o, int& v) { v = (int)PyInt_AS_LONG(o); }
+void convert(PyObject* o, int& v) { v = (int)PyLong_AsLong(o); }
 void convert(PyObject* o, float& v) { v = (float)PyFloat_AS_DOUBLE(o); }
 void convert(PyObject* o, double& v) { v = PyFloat_AS_DOUBLE(o); }
 void convert(PyObject* o, Vector& v) {
@@ -45,7 +45,7 @@ template <class T, class Time>
 bool SignalWrapper<T, Time>::checkCallable(PyObject* c, std::string& error) {
   if (PyCallable_Check(c) == 0) {
     PyObject* str = PyObject_Str(c);
-    error = PyString_AsString(str);
+    error = PyUnicode_AS_DATA(str);
     error += " is not callable";
     Py_DECREF(str);
     return false;
