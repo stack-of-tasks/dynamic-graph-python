@@ -72,7 +72,9 @@ extern PyObject* realTimeLoggerDestroy(PyObject* self, PyObject* args);
 extern PyObject* realTimeLoggerInstance(PyObject* self, PyObject* args);
 }  // namespace debug
 
-PyObject* dgpyError;
+struct module_state {
+  PyObject* dgpyError;
+};
 
 /**
    \brief plug a signal into another one.
@@ -140,6 +142,25 @@ PyObject* enableTrace(PyObject* /*self*/, PyObject* args) {
   }
   return Py_BuildValue("");
 }
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct dynamicgraph::python::module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&dynamicgraph::python::_state)
+static struct dynamicgraph::python::module_state _state;
+#endif
+
+static PyObject *
+#if PY_MAJOR_VERSION >= 3
+  error_out(PyObject* m, PyObject*) {
+    struct module_state *st = GETSTATE(m);
+#else
+  error_out(PyObject*, PyObject*) {
+    struct module_state *st = &dynamicgraph::python::_state;
+#endif
+    PyErr_SetString(st->dgpyError, "something bad happened");
+    return NULL;
+  }
+
 }  // namespace python
 }  // namespace dynamicgraph
 
@@ -219,18 +240,53 @@ static PyMethodDef dynamicGraphMethods[] = {
      "Destroy the real time logger."},
     {"real_time_logger_instance", dynamicgraph::python::debug::realTimeLoggerInstance, METH_VARARGS,
      "Starts the real time logger."},
+    {"error_out", (PyCFunction)dynamicgraph::python::error_out, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
-PyMODINIT_FUNC initwrap(void) {
-  PyObject* m;
+#if PY_MAJOR_VERSION >= 3
 
-  m = Py_InitModule("wrap", dynamicGraphMethods);
-  if (m == NULL) return;
+static struct PyModuleDef moduledef = {
+  PyModuleDef_HEAD_INIT,
+  "dynamic_graph",
+  NULL,
+  sizeof(struct dynamicgraph::python::module_state),
+  dynamicGraphMethods,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
 
-  std::string msg("dynamic_graph.error");
+#define INITERROR return NULL
 
-  dynamicgraph::python::dgpyError = PyErr_NewException(const_cast<char*>(msg.c_str()), NULL, NULL);
-  Py_INCREF(dynamicgraph::python::dgpyError);
-  PyModule_AddObject(m, "error", dynamicgraph::python::dgpyError);
+  PyMODINIT_FUNC
+PyInit_dynamic_graph(void)
+
+#else
+#define INITERROR return
+
+  void
+initdynamic_graph(void)
+#endif
+{
+#if PY_MAJOR_VERSION >= 3
+  PyObject *module = PyModule_Create(&moduledef);
+#else
+  PyObject *module = Py_InitModule("dynamic_graph", dynamicGraphMethods);
+#endif
+
+  if (module == NULL)
+    INITERROR;
+  struct dynamicgraph::python::module_state *st = GETSTATE(module);
+
+  st->dgpyError = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
+  if (st->dgpyError == NULL) {
+    Py_DECREF(module);
+    INITERROR;
+  }
+
+#if PY_MAJOR_VERSION >= 3
+  return module;
+#endif
 }
