@@ -5,15 +5,22 @@ Author: Florent Lamiraux
 
 import sys
 
-import DLFCN
-import entity  # noqa
-import signal_base  # noqa
+from . import entity  # noqa
+from . import signal_base  # noqa
+
+try:
+    from DLFCN import RTLD_NOW, RTLD_GLOBAL
+except ModuleNotFoundError:  # Python 3
+    from os import RTLD_NOW, RTLD_GLOBAL
+
+flags = sys.getdlopenflags()
 
 # Import C++ symbols in a global scope
 # This is necessary for signal compiled in different modules to be compatible
-flags = sys.getdlopenflags()
-sys.setdlopenflags(DLFCN.RTLD_NOW | DLFCN.RTLD_GLOBAL)
-from wrap import *  # noqa
+
+sys.setdlopenflags(RTLD_NOW | RTLD_GLOBAL)
+from .wrap import *  # noqa
+
 # Recover previous flags
 sys.setdlopenflags(flags)
 

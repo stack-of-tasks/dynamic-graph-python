@@ -3,12 +3,11 @@
 
   Author: Florent Lamiraux, Nicolas Mansard
 """
-import new
+import types
 from enum import Enum
 
-import signal_base
-import wrap
-from attrpath import setattrpath
+from . import signal_base, wrap
+from .attrpath import setattrpath
 
 if 'display' not in globals().keys():
 
@@ -248,7 +247,7 @@ class Entity(object):
         docstring = wrap.entity_get_command_docstring(self.obj, cmdName)
         cmd = Entity.createCommandBind(cmdName, docstring)
         # Limitation (todo): does not handle for path attribute name (see setattrpath).
-        setattr(self, cmdName, new.instancemethod(cmd, self, self.__class__))
+        setattr(self, cmdName, types.MethodType(cmd, self))
 
     def boundAllNewCommands(self):
         """
