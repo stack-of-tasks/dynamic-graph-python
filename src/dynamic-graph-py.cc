@@ -98,16 +98,21 @@ PyObject* error_out(
 }  // namespace python
 }  // namespace dynamicgraph
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if PY_MAJOR_VERSION >= 3
-  PyMODINIT_FUNC PyInit_dynamic_graph(void)
+  PyMODINIT_FUNC PyInit_wrap(void)
 #else
-  void initdynamic_graph(void)
+  void initwrap(void)
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
   PyObject *module = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
 #else
-  PyObject *module = Py_InitModule("dynamic_graph", dynamicgraph::python::dynamicGraphMethods);
+  PyObject *module = Py_InitModule("wrap", dynamicgraph::python::dynamicGraphMethods);
 #endif
 
   if (module == NULL)
@@ -124,3 +129,7 @@ PyObject* error_out(
   return module;
 #endif
 }
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
