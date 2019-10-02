@@ -11,7 +11,6 @@
 namespace dynamicgraph {
 namespace python {
 
-extern PyObject* dgpyError;
 namespace pool {
 
 PyObject* writeGraph(PyObject* /*self*/, PyObject* args) {

@@ -22,7 +22,6 @@ using dynamicgraph::SignalBase;
 namespace dynamicgraph {
 namespace python {
 
-extern PyObject* dgpyError;
 using namespace convert;
 
 namespace signalBase {
@@ -65,7 +64,7 @@ PythonSignalContainer* getPythonSignalContainer() {
                       ",\n"
                       "but this object is of type " +
                       std::string(obj->getClassName()) + " and not " + std::string(className));
-      PyErr_SetString(dgpyError, msg.c_str());
+      PyErr_SetString(DGPYERROR, msg.c_str());
       return NULL;
     }
   } else {
@@ -111,7 +110,7 @@ PyObject* createSignalWrapper(PyObject* /*self*/, PyObject* args) {
   }
 
   if (obj == NULL) {
-    PyErr_SetString(dgpyError, error.c_str());
+    PyErr_SetString(DGPYERROR, error.c_str());
     return NULL;
   }
   // Register signal into the python signal container
@@ -148,7 +147,7 @@ PyObject* setTime(PyObject* /*self*/, PyObject* args) {
   int time;
   if (!PyArg_ParseTuple(args, "Oi", &object, &time)) return NULL;
   if (!PyCapsule_CheckExact(object)) {
-    PyErr_SetString(dgpyError, "object should be a C object");
+    PyErr_SetString(DGPYERROR, "object should be a C object");
     return NULL;
   }
 

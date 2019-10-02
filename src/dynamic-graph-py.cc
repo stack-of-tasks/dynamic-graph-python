@@ -105,7 +105,7 @@ PyObject* error_out(
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
-  PyObject *module = PyModule_Create(&dynamicgraph::python::moduledef);
+  PyObject *module = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
 #else
   PyObject *module = Py_InitModule("dynamic_graph", dynamicgraph::python::dynamicGraphMethods);
 #endif
@@ -114,7 +114,7 @@ PyObject* error_out(
     INITERROR;
   struct dynamicgraph::python::module_state *st = GETSTATE(module);
 
-  st->dgpyError = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
+  DGPYERROR = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
   if (st->dgpyError == NULL) {
     Py_DECREF(module);
     INITERROR;

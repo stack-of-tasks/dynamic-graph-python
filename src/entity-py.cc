@@ -31,7 +31,6 @@ using dynamicgraph::command::Value;
 namespace dynamicgraph {
 namespace python {
 
-extern PyObject* dgpyError;
 using namespace convert;
 
 namespace entity {
@@ -53,7 +52,7 @@ PyObject* create(PyObject* /*self*/, PyObject* args) {
                       ",\n"
                       "but this object is of type " +
                       std::string(obj->getClassName()) + " and not " + std::string(className));
-      PyErr_SetString(dgpyError, msg.c_str());
+      PyErr_SetString(DGPYERROR, msg.c_str());
       return NULL;
     }
   } else /* If not, create a new object. */
@@ -238,7 +237,7 @@ PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
   if ((unsigned)size != typeVector.size()) {
     std::stringstream ss;
     ss << "command takes " << typeVector.size() << " parameters, " << size << " given.";
-    PyErr_SetString(dgpyError, ss.str().c_str());
+    PyErr_SetString(DGPYERROR, ss.str().c_str());
     return NULL;
   }
   std::vector<Value> valueVector;
@@ -251,10 +250,10 @@ PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
     } catch (const std::exception& exc) {
       std::stringstream ss;
       ss << "while parsing argument " << iParam + 1 << ": expecting " << exc.what() << ".";
-      PyErr_SetString(dgpyError, ss.str().c_str());
+      PyErr_SetString(DGPYERROR, ss.str().c_str());
       return NULL;
     } catch (...) {
-      PyErr_SetString(dgpyError, "Unknown exception");
+      PyErr_SetString(DGPYERROR, "Unknown exception");
       return NULL;
     }
   }
@@ -303,7 +302,7 @@ PyObject* getCommandDocstring(PyObject* /*self*/, PyObject* args) {
 
   // Retrieve the entity instance
   if (!PyCapsule_CheckExact(object)) {
-    PyErr_SetString(dgpyError, "first argument is not an object");
+    PyErr_SetString(DGPYERROR, "first argument is not an object");
     return NULL;
   }
   void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
@@ -332,7 +331,7 @@ PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
 
   // Retrieve the entity instance
   if (!PyCapsule_CheckExact(object)) {
-    PyErr_SetString(dgpyError, "first argument is not an object");
+    PyErr_SetString(DGPYERROR, "first argument is not an object");
     return NULL;
   }
   void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
@@ -340,10 +339,10 @@ PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
   try {
     return Py_BuildValue("s", entity->getDocString().c_str());
   } catch (const std::exception& exc) {
-    PyErr_SetString(dgpyError, exc.what());
+    PyErr_SetString(DGPYERROR, exc.what());
     return NULL;
   } catch (...) {
-    PyErr_SetString(dgpyError, "Unknown exception");
+    PyErr_SetString(DGPYERROR, "Unknown exception");
     return NULL;
   }
   return NULL;
@@ -353,7 +352,7 @@ PyObject* display(PyObject* /*self*/, PyObject* args) {
   /* Retrieve the entity instance. */
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object) || (!PyCapsule_CheckExact(object))) {
-    PyErr_SetString(dgpyError, "first argument is not an object");
+    PyErr_SetString(DGPYERROR, "first argument is not an object");
     return NULL;
   }
   void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
@@ -410,13 +409,13 @@ PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
         break;
     }
   } catch (const std::exception& exc) {
-    PyErr_SetString(dgpyError, exc.what());
+    PyErr_SetString(DGPYERROR, exc.what());
     return NULL;
   } catch (const char* s) {
-    PyErr_SetString(dgpyError, s);
+    PyErr_SetString(DGPYERROR, s);
     return NULL;
   } catch (...) {
-    PyErr_SetString(dgpyError, "Unknown exception");
+    PyErr_SetString(DGPYERROR, "Unknown exception");
     return NULL;
   }
 
@@ -495,13 +494,13 @@ PyObject* setStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
     entity->setStreamPrintPeriod(streamPrintPeriod);
 
   } catch (const std::exception& exc) {
-    PyErr_SetString(dgpyError, exc.what());
+    PyErr_SetString(DGPYERROR, exc.what());
     return NULL;
   } catch (const char* s) {
-    PyErr_SetString(dgpyError, s);
+    PyErr_SetString(DGPYERROR, s);
     return NULL;
   } catch (...) {
-    PyErr_SetString(dgpyError, "Unknown exception");
+    PyErr_SetString(DGPYERROR, "Unknown exception");
     return NULL;
   }
 
@@ -554,13 +553,13 @@ PyObject* setTimeSample(PyObject* /*self*/, PyObject* args) {
     entity->setTimeSample(timeSample);
 
   } catch (const std::exception& exc) {
-    PyErr_SetString(dgpyError, exc.what());
+    PyErr_SetString(DGPYERROR, exc.what());
     return NULL;
   } catch (const char* s) {
-    PyErr_SetString(dgpyError, s);
+    PyErr_SetString(DGPYERROR, s);
     return NULL;
   } catch (...) {
-    PyErr_SetString(dgpyError, "Unknown exception");
+    PyErr_SetString(DGPYERROR, "Unknown exception");
     return NULL;
   }
 
