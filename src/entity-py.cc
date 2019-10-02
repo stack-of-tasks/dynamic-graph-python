@@ -63,8 +63,8 @@ PyObject* create(PyObject* /*self*/, PyObject* args) {
     CATCH_ALL_EXCEPTIONS();
   }
 
-  // Return the pointer as a PyCObject
-  return PyCObject_FromVoidPtr((void*)obj, NULL);
+  // Return the pointer as a PyCapsule
+  return PyCapsule_New((void*)obj, "dynamic_graph.Entity", NULL);
 }
 
 /**
@@ -76,12 +76,12 @@ PyObject* getName(PyObject* /*self*/, PyObject* args) {
   std::string name;
 
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     return NULL;
   }
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   try {
@@ -100,12 +100,12 @@ PyObject* getClassName(PyObject* /*self*/, PyObject* args) {
   std::string name;
 
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     return NULL;
   }
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   try {
@@ -125,12 +125,12 @@ PyObject* hasSignal(PyObject* /*self*/, PyObject* args) {
 
   if (!PyArg_ParseTuple(args, "Os", &object, &name)) Py_RETURN_FALSE;
 
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     Py_RETURN_FALSE;
   }
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   bool hasSignal = false;
@@ -155,12 +155,12 @@ PyObject* getSignal(PyObject* /*self*/, PyObject* args) {
 
   if (!PyArg_ParseTuple(args, "Os", &object, &name)) return NULL;
 
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     return NULL;
   }
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   SignalBase<int>* signal = NULL;
@@ -171,7 +171,7 @@ PyObject* getSignal(PyObject* /*self*/, PyObject* args) {
 
   // Return the pointer to the signal without destructor since the signal
   // is not owned by the calling object but by the Entity.
-  return PyCObject_FromVoidPtr((void*)signal, NULL);
+  return PyCapsule_New((void*)signal, "dynamic_graph.Signal", NULL);
 }
 
 PyObject* listSignals(PyObject* /*self*/, PyObject* args) {
@@ -180,9 +180,9 @@ PyObject* listSignals(PyObject* /*self*/, PyObject* args) {
 
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   try {
@@ -193,7 +193,7 @@ PyObject* listSignals(PyObject* /*self*/, PyObject* args) {
 
     for (Entity::SignalMap::iterator it = signalMap.begin(); it != signalMap.end(); it++) {
       SignalBase<int>* signal = it->second;
-      PyObject* pySignal = PyCObject_FromVoidPtr((void*)signal, NULL);
+      PyObject* pySignal = PyCapsule_New((void*)signal, "dynamic_graph.Signal", NULL);
       PyTuple_SET_ITEM(result, count, pySignal);
       count++;
     }
@@ -212,11 +212,11 @@ PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
     return NULL;
   }
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "first argument is not an object");
     return NULL;
   }
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
   // Retrieve the argument tuple
   if (!PyTuple_Check(argTuple)) {
@@ -273,11 +273,11 @@ PyObject* listCommands(PyObject* /*self*/, PyObject* args) {
   }
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     return NULL;
   }
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
   typedef std::map<const std::string, command::Command*> CommandMap;
   CommandMap map = entity->getNewStyleCommandMap();
@@ -301,11 +301,11 @@ PyObject* getCommandDocstring(PyObject* /*self*/, PyObject* args) {
   }
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(dgpyError, "first argument is not an object");
     return NULL;
   }
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
   typedef std::map<const std::string, command::Command*> commandMap_t;
   typedef std::map<const std::string, command::Command*>::iterator iterator_t;
@@ -330,11 +330,11 @@ PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
   }
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(dgpyError, "first argument is not an object");
     return NULL;
   }
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
   try {
     return Py_BuildValue("s", entity->getDocString().c_str());
@@ -351,11 +351,11 @@ PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
 PyObject* display(PyObject* /*self*/, PyObject* args) {
   /* Retrieve the entity instance. */
   PyObject* object = NULL;
-  if (!PyArg_ParseTuple(args, "O", &object) || (!PyCObject_Check(object))) {
+  if (!PyArg_ParseTuple(args, "O", &object) || (!PyCapsule_CheckExact(object))) {
     PyErr_SetString(dgpyError, "first argument is not an object");
     return NULL;
   }
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   /* Run the display function. */
@@ -375,12 +375,12 @@ PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
   if (!PyArg_ParseTuple(args, "OO", &object, &objectVerbosityLevel)) return NULL;
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "First argument should be an object");
     return NULL;
   }
 
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   // Retrieve object verbosity level
@@ -430,12 +430,12 @@ PyObject* getLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "first argument is not an object");
     return NULL;
   }
 
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   LoggerVerbosity alv;
@@ -456,12 +456,12 @@ PyObject* getStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "first argument is not an object");
     return NULL;
   }
 
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   double r;
@@ -482,12 +482,12 @@ PyObject* setStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
   if (!PyArg_ParseTuple(args, "Od", &object, &streamPrintPeriod)) return NULL;
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "First argument should be an object");
     return NULL;
   }
 
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   try {
@@ -515,12 +515,12 @@ PyObject* getTimeSample(PyObject* /*self*/, PyObject* args) {
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "first argument is not an object");
     return NULL;
   }
 
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   double r;
@@ -541,12 +541,12 @@ PyObject* setTimeSample(PyObject* /*self*/, PyObject* args) {
   if (!PyArg_ParseTuple(args, "Od", &object, &timeSample)) return NULL;
 
   // Retrieve the entity instance
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(PyExc_TypeError, "First argument should be an object");
     return NULL;
   }
 
-  void* pointer = PyCObject_AsVoidPtr(object);
+  void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   Entity* entity = (Entity*)pointer;
 
   try {
