@@ -105,7 +105,7 @@ PyObject* error_out(
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
-  PyObject *module = PyModule_Create(&dynamicgraph::python::moduledef);
+  PyObject *module = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
 #else
   PyObject *module = Py_InitModule("dynamic_graph", dynamicgraph::python::dynamicGraphMethods);
 #endif

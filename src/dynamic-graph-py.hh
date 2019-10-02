@@ -171,7 +171,7 @@ static PyMethodDef dynamicGraphMethods[] = {
 
 #if PY_MAJOR_VERSION >= 3
 __attribute__((unused))
-static struct PyModuleDef moduledef = {
+static struct PyModuleDef dynamicGraphModuleDef = {
   PyModuleDef_HEAD_INIT,
   "dynamic_graph",
   NULL,
@@ -183,11 +183,13 @@ static struct PyModuleDef moduledef = {
   NULL
 };
 #define GETSTATE(m) ((struct dynamicgraph::python::module_state*)PyModule_GetState(m))
+#define DGPYERROR GETSTATE(PyState_FindModule(&dynamicGraphModuleDef))->dgpyError
 #define INITERROR return NULL
 #else
 __attribute__((unused))
   static struct module_state _state;
 #define GETSTATE(m) (&dynamicgraph::python::_state)
+#define DGPYERROR dynamicgraph::python::_state.dgpyError
 #define INITERROR return
 #endif
 
