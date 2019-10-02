@@ -15,6 +15,7 @@
 #include "exception.hh"
 
 #include <boost/shared_ptr.hpp>
+#include "dynamic-graph-py.hh"
 
 typedef boost::shared_ptr<std::ofstream> ofstreamShrPtr;
 

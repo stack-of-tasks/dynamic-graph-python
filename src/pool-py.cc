@@ -6,6 +6,8 @@
 #include <vector>
 #include "exception.hh"
 
+#include "dynamic-graph-py.hh"
+
 namespace dynamicgraph {
 namespace python {
 

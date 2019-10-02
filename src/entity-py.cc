@@ -11,6 +11,7 @@
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/linear-algebra.h>
 
+#include "dynamic-graph-py.hh"
 #include "convert-dg-to-py.hh"
 #include "exception.hh"
 
