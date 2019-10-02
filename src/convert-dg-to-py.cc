@@ -23,8 +23,8 @@ void fillMatrixRow(Matrix& m, unsigned iRow, PyObject* sequence) {
     PyObject* pyDouble = PySequence_GetItem(sequence, iCol);
     if (PyFloat_Check(pyDouble))
       m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
-    else if (PyInt_Check(pyDouble))
-      m(iRow, iCol) = (int)PyInt_AS_LONG(pyDouble) + 0.0;
+    else if (PyLong_Check(pyDouble))
+      m(iRow, iCol) = (int)PyLong_AsLong(pyDouble) + 0.0;
     else
       throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
                             "element of matrix should be "
@@ -39,8 +39,8 @@ void fillMatrixRow(Eigen::Matrix4d& m, unsigned iRow, PyObject* sequence) {
     PyObject* pyDouble = PySequence_GetItem(sequence, iCol);
     if (PyFloat_Check(pyDouble))
       m(iRow, iCol) = PyFloat_AsDouble(pyDouble);
-    else if (PyInt_Check(pyDouble))
-      m(iRow, iCol) = (int)PyInt_AS_LONG(pyDouble) + 0.0;
+    else if (PyLong_Check(pyDouble))
+      m(iRow, iCol) = (int)PyLong_AsLong(pyDouble) + 0.0;
     else
       throw ExceptionPython(ExceptionPython::MATRIX_PARSING,
                             "element of matrix should be "
@@ -73,25 +73,25 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
       return Value(bvalue);
       break;
     case (Value::UNSIGNED):
-      if (!PyInt_Check(pyObject)) {
+      if (!PyLong_Check(pyObject)) {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "unsigned int");
       }
-      uvalue = (unsigned int)PyInt_AsUnsignedLongMask(pyObject);
+      uvalue = (unsigned int)PyLong_AsUnsignedLongMask(pyObject);
       return Value(uvalue);
       break;
     case (Value::INT):
-      if (!PyInt_Check(pyObject)) {
+      if (!PyLong_Check(pyObject)) {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "int");
       }
-      ivalue = (int)PyInt_AS_LONG(pyObject);
+      ivalue = (int)PyLong_AsLong(pyObject);
       return Value(ivalue);
       break;
     case (Value::FLOAT):
       if (PyFloat_Check(pyObject)) {
         fvalue = (float)PyFloat_AsDouble(pyObject);
         return Value(fvalue);
-      } else if (PyInt_Check(pyObject)) {
-        fvalue = (float)PyInt_AS_LONG(pyObject);
+      } else if (PyLong_Check(pyObject)) {
+        fvalue = (float)PyLong_AsLong(pyObject);
         return Value(fvalue);
       } else {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "float");
@@ -101,18 +101,18 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
       if (PyFloat_Check(pyObject)) {
         dvalue = PyFloat_AsDouble(pyObject);
         return Value(dvalue);
-      } else if (PyInt_Check(pyObject)) {
-        dvalue = (double)PyInt_AS_LONG(pyObject);
+      } else if (PyLong_Check(pyObject)) {
+        dvalue = (double)PyLong_AsLong(pyObject);
         return Value(dvalue);
       } else {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "double");
       }
       break;
     case (Value::STRING):
-      if (!PyString_Check(pyObject)) {
+      if (!PyUnicode_Check(pyObject)) {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "string");
       }
-      svalue = PyString_AsString(pyObject);
+      svalue = PyUnicode_AS_DATA(pyObject);
       return Value(svalue);
       break;
     case (Value::VECTOR):
@@ -126,8 +126,8 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
         PyObject* pyDouble = PySequence_GetItem(pyObject, i);
         if (PyFloat_Check(pyDouble))
           v(i) = PyFloat_AsDouble(pyDouble);
-        else if (PyInt_Check(pyDouble))
-          v(i) = (int)PyInt_AS_LONG(pyDouble) + 0.0;
+        else if (PyLong_Check(pyDouble))
+          v(i) = (int)PyLong_AsLong(pyDouble) + 0.0;
         else
           throw ExceptionPython(ExceptionPython::VECTOR_PARSING,
                                 "element of vector should be a floating "

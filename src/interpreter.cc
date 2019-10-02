@@ -65,11 +65,11 @@ bool HandleErr(std::string& err, PyObject* traceback_format_exception, PyObject*
     assert(PyList_Check(pyerr));
     Py_ssize_t size = PyList_GET_SIZE(pyerr);
     std::string stringRes;
-    for (Py_ssize_t i = 0; i < size; ++i) stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+    for (Py_ssize_t i = 0; i < size; ++i) stringRes += std::string(PyUnicode_AS_DATA(PyList_GET_ITEM(pyerr, i)));
     Py_DecRef(pyerr);
 
-    pyerr = PyString_FromString(stringRes.c_str());
-    err = PyString_AsString(pyerr);
+    pyerr = PyUnicode_FromString(stringRes.c_str());
+    err = PyUnicode_AS_DATA(pyerr);
     dgDEBUG(15) << "err: " << err << std::endl;
     Py_DecRef(pyerr);
 
@@ -92,7 +92,7 @@ bool HandleErr(std::string& err, PyObject* traceback_format_exception, PyObject*
   PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()", Py_eval_input, globals_, globals_);
   std::string out("");
 
-  out = PyString_AsString(stdout_obj);
+  out = PyUnicode_AS_DATA(stdout_obj);
   // Local display for the robot (in debug mode or for the logs)
   if (out.length() != 0) {
     dgDEBUG(15) << std::endl;
@@ -146,7 +146,7 @@ Interpreter::~Interpreter() {
     PyObject* poAttrName;
 
     while ((poAttrName = PyIter_Next(poAttrIter)) != NULL) {
-      std::string oAttrName(PyString_AS_STRING(poAttrName));
+      std::string oAttrName(PyUnicode_AS_DATA(poAttrName));
 
       // Make sure we don't delete any private objects.
       if (oAttrName.compare(0, 2, "__") != 0 || oAttrName.compare(oAttrName.size() - 2, 2, "__") != 0) {
@@ -214,7 +214,7 @@ void Interpreter::python(const std::string& command, std::string& res, std::stri
 
   PyObject* stdout_obj = 0;
   stdout_obj = PyRun_String("stdout_catcher.fetch()", Py_eval_input, globals_, globals_);
-  out = PyString_AsString(stdout_obj);
+  out = PyUnicode_AS_DATA(stdout_obj);
   // Local display for the robot (in debug mode or for the logs)
   if (out.size() != 0) std::cout << "Output:" << out << std::endl;
   if (err.size() != 0) std::cout << "Error:" << err << std::endl;
@@ -223,7 +223,7 @@ void Interpreter::python(const std::string& command, std::string& res, std::stri
   // then results is equal to NULL. This will trigger a SEGV
   if (result2 != NULL) {
     dgDEBUG(15) << "For command :" << command << std::endl;
-    res = PyString_AsString(result2);
+    res = PyUnicode_AS_DATA(result2);
     dgDEBUG(15) << "Result is: " << res << std::endl;
     dgDEBUG(15) << "Out is: " << out << std::endl;
     dgDEBUG(15) << "Err is :" << err << std::endl;
