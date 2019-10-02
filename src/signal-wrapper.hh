@@ -1,6 +1,9 @@
 // Copyright (c) 2018, Joseph Mirabel
 // Authors: Joseph Mirabel (joseph.mirabel@laas.fr)
 
+#ifndef DGPY_SIGNAL_WRAPPER
+#define DGPY_SIGNAL_WRAPPER
+
 #include <Python.h>
 
 #include <dynamic-graph/linear-algebra.h>
@@ -70,3 +73,4 @@ class SignalWrapper : public Signal<T, Time> {
 
 }  // namespace python
 }  // namespace dynamicgraph
+#endif

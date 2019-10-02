@@ -6,6 +6,8 @@
 
 #include <dynamic-graph/signal-caster.h>
 
+#include "dynamic-graph-py.hh"
+
 namespace dynamicgraph {
 namespace python {
 
