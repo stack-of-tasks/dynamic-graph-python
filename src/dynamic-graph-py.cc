@@ -85,22 +85,22 @@ PyObject* plug(PyObject* /*self*/, PyObject* args) {
 
   if (!PyArg_ParseTuple(args, "OO", &objOut, &objIn)) return NULL;
 
-  if (!PyCObject_Check(objOut)) {
+  if (!PyCapsule_CheckExact(objOut)) {
     PyErr_SetString(PyExc_TypeError,
                     "first argument should be a pointer to"
                     " signalBase<int>.");
     return NULL;
   }
-  if (!PyCObject_Check(objIn)) {
+  if (!PyCapsule_CheckExact(objIn)) {
     PyErr_SetString(PyExc_TypeError,
                     "second argument should be a pointer to"
                     " signalBase<int>.");
     return NULL;
   }
 
-  pObjIn = PyCObject_AsVoidPtr(objIn);
+  pObjIn = PyCapsule_GetPointer(objIn, "dynamic_graph.Signal");
   SignalBase<int>* signalIn = (SignalBase<int>*)pObjIn;
-  pObjOut = PyCObject_AsVoidPtr(objOut);
+  pObjOut = PyCapsule_GetPointer(objOut, "dynamic_graph.Signal");
   SignalBase<int>* signalOut = (SignalBase<int>*)pObjOut;
   std::ostringstream os;
 

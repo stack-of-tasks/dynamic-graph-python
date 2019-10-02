@@ -26,7 +26,7 @@ using namespace convert;
 
 namespace signalBase {
 
-static void destroy(void* self);
+static void destroy(PyObject* self);
 
 /**
    \brief Create an instance of SignalBase
@@ -40,7 +40,7 @@ PyObject* create(PyObject* /*self*/, PyObject* args) {
   obj = new SignalBase<int>(std::string(name));
 
   // Return the pointer
-  return PyCObject_FromVoidPtr((void*)obj, destroy);
+  return PyCapsule_New((void*)obj, "dynamic_graph.Signal", destroy);
 }
 
 template <class T>
@@ -117,13 +117,13 @@ PyObject* createSignalWrapper(PyObject* /*self*/, PyObject* args) {
   psc->signalRegistration(*obj);
 
   // Return the pointer
-  return PyCObject_FromVoidPtr((void*)obj, destroy);
+  return PyCapsule_New((void*)obj, "dynamic_graph.SignalWrapper", destroy);
 }
 
 /**
    \brief Destroy an instance of InvertedPendulum
 */
-static void destroy(void* self) {
+static void destroy(PyObject* self) {
   SignalBase<int>* obj = (SignalBase<int>*)self;
   delete obj;
 }
@@ -132,9 +132,9 @@ PyObject* getTime(PyObject* /*self*/, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* obj = (SignalBase<int>*)pointer;
 
   int time = obj->getTime();
@@ -146,12 +146,12 @@ PyObject* setTime(PyObject* /*self*/, PyObject* args) {
   PyObject* object = NULL;
   int time;
   if (!PyArg_ParseTuple(args, "Oi", &object, &time)) return NULL;
-  if (!PyCObject_Check(object)) {
+  if (!PyCapsule_CheckExact(object)) {
     PyErr_SetString(dgpyError, "object should be a C object");
     return NULL;
   }
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* obj = (SignalBase<int>*)pointer;
 
   obj->setTime(time);
@@ -162,9 +162,9 @@ PyObject* display(PyObject* /*self*/, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* obj = (SignalBase<int>*)pointer;
 
   std::ostringstream oss;
@@ -181,9 +181,9 @@ PyObject* displayDependencies(PyObject* /*self*/, PyObject* args) {
   PyObject* object = NULL;
   int time;
   if (!PyArg_ParseTuple(args, "OI", &object, &time)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* obj = (SignalBase<int>*)pointer;
 
   std::ostringstream oss;
@@ -198,9 +198,9 @@ PyObject* getValue(PyObject* /*self*/, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
   try {
@@ -292,9 +292,9 @@ PyObject* getName(PyObject* /*self*/, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
   std::string name;
@@ -310,9 +310,9 @@ PyObject* getClassName(PyObject* /*self*/, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
 
   std::string name;
@@ -330,9 +330,9 @@ PyObject* setValue(PyObject* /*self*/, PyObject* args) {
   char* valueString = NULL;
 
   if (!PyArg_ParseTuple(args, "Os", &object, &valueString)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
   std::ostringstream os;
   os << valueString;
@@ -350,9 +350,9 @@ PyObject* recompute(PyObject* /*self*/, PyObject* args) {
   PyObject* object = NULL;
   unsigned int time;
   if (!PyArg_ParseTuple(args, "OI", &object, &time)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
   try {
     signal->recompute(time);
@@ -365,9 +365,9 @@ PyObject* unplug(PyObject* /*self*/, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
   try {
     signal->unplug();
@@ -380,9 +380,9 @@ PyObject* isPlugged(PyObject*, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
   bool plugged = false;
   try {
@@ -399,9 +399,9 @@ PyObject* getPlugged(PyObject*, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
-  if (!PyCObject_Check(object)) return NULL;
+  if (!PyCapsule_CheckExact(object)) return NULL;
 
-  pointer = PyCObject_AsVoidPtr(object);
+  pointer = PyCapsule_GetPointer(object, "dynamic_graph.Signal");
   SignalBase<int>* signal = (SignalBase<int>*)pointer;
   SignalBase<int>* otherSignal = 0;
   try {
@@ -415,7 +415,7 @@ PyObject* getPlugged(PyObject*, PyObject* args) {
   CATCH_ALL_EXCEPTIONS();
   // Return the pointer to the signal without destructor since the signal
   // is not owned by the calling object.
-  return PyCObject_FromVoidPtr((void*)otherSignal, NULL);
+  return PyCapsule_New((void*)otherSignal, "dynamic_graph.Signal", NULL);
 }
 }  // namespace signalBase
 }  // namespace python
