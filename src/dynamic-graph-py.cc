@@ -89,35 +89,33 @@ PyObject* error_out(
 #else
     PyObject*, PyObject*
 #endif
-    ) {
-    struct module_state *st = GETSTATE(m);
-    PyErr_SetString(st->dgpyError, "something bad happened");
-    return NULL;
-  }
+) {
+  struct module_state* st = GETSTATE(m);
+  PyErr_SetString(st->dgpyError, "something bad happened");
+  return NULL;
+}
 
 }  // namespace python
 }  // namespace dynamicgraph
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #if PY_MAJOR_VERSION >= 3
-  PyMODINIT_FUNC PyInit_wrap(void)
+PyMODINIT_FUNC PyInit_wrap(void)
 #else
-  void initwrap(void)
+void initwrap(void)
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
-  PyObject *module = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
+  PyObject* module = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
 #else
-  PyObject *module = Py_InitModule("wrap", dynamicgraph::python::dynamicGraphMethods);
+  PyObject* module = Py_InitModule("wrap", dynamicgraph::python::dynamicGraphMethods);
 #endif
 
-  if (module == NULL)
-    INITERROR;
-  struct dynamicgraph::python::module_state *st = GETSTATE(module);
+  if (module == NULL) INITERROR;
+  struct dynamicgraph::python::module_state* st = GETSTATE(module);
 
   st->dgpyError = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
   if (st->dgpyError == NULL) {
