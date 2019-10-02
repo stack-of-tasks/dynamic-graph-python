@@ -173,7 +173,7 @@ static PyMethodDef dynamicGraphMethods[] = {
 __attribute__((unused))
 static struct PyModuleDef dynamicGraphModuleDef = {
   PyModuleDef_HEAD_INIT,
-  "dynamic_graph",
+  "wrap",
   NULL,
   sizeof(struct dynamicgraph::python::module_state),
   dynamicGraphMethods,
