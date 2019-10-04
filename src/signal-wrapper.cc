@@ -1,11 +1,11 @@
 // Copyright (c) 2018, Joseph Mirabel
 // Authors: Joseph Mirabel (joseph.mirabel@laas.fr)
 
-#include "signal-wrapper.hh"
-
 #include <Python.h>
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/command-bind.h>
+
+#include "dynamic-graph/python/signal-wrapper.hh"
 
 namespace dynamicgraph {
 namespace python {

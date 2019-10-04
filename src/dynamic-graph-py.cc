@@ -9,9 +9,9 @@
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/signal-base.h>
 
-#include "exception.hh"
-#include "dynamic-graph-py.hh"
-#include "signal-wrapper.hh"
+#include "dynamic-graph/python/exception.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
+#include "dynamic-graph/python/signal-wrapper.hh"
 
 namespace dynamicgraph {
 namespace python {

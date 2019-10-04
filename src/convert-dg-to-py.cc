@@ -1,12 +1,13 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include "../src/convert-dg-to-py.hh"
 #include <iostream>
 #include <sstream>
 
 #include <dynamic-graph/signal-base.h>
 #include <dynamic-graph/signal.h>
 #include <dynamic-graph/signal-caster.h>
+
+#include "dynamic-graph/python/convert-dg-to-py.hh"
 
 namespace dynamicgraph {
 

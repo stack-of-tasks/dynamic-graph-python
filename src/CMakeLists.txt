@@ -27,8 +27,6 @@ ADD_CUSTOM_TARGET(link_target ALL COMMAND ${CMAKE_COMMAND} -E create_symlink
   "${CMAKE_CURRENT_BINARY_DIR}/${PYTHON_MODULE}.so"
   "dynamic_graph/${PYTHON_MODULE}.so")
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-
 #
 # Installation
 #

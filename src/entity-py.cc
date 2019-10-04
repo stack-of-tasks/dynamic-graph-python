@@ -11,9 +11,9 @@
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/linear-algebra.h>
 
-#include "dynamic-graph-py.hh"
-#include "convert-dg-to-py.hh"
-#include "exception.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
+#include "dynamic-graph/python/convert-dg-to-py.hh"
+#include "dynamic-graph/python/exception.hh"
 
 // Ignore "dereferencing type-punned pointer will break strict-aliasing rules"
 // warnings on gcc caused by Py_RETURN_TRUE and Py_RETURN_FALSE.

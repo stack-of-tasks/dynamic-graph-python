@@ -6,7 +6,7 @@
 
 #include <dynamic-graph/signal-caster.h>
 
-#include "dynamic-graph-py.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
 
 namespace dynamicgraph {
 namespace python {
