@@ -1,4 +1,4 @@
-# Copyright 2010, 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
+# Copyright 2010-2019, Florent Lamiraux, Thomas Moulard, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
@@ -23,6 +23,7 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES}
 SETUP_PROJECT()
 
 FINDPYTHON()
+INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
 # Trigger dependency to dynamic-graph.
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
