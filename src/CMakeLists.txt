@@ -1,24 +1,15 @@
 # Copyright 2010 - 2019, Florent Lamiraux, Thomas Moulard, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
 #
-# Python
-#
-
-INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS})
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} ${PYTHON_LIBRARY_DIRS})
-
-#
 #
 #  Python interpreter
 #
 #
-SET(LIBRARY_NAME ${PROJECT_NAME})
-ADD_LIBRARY(${LIBRARY_NAME}
-    SHARED
-    interpreter.cc)
 
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME}
-    ${PYTHON_LIBRARY})
+SET(LIBRARY_NAME ${PROJECT_NAME})
+ADD_LIBRARY(${LIBRARY_NAME} SHARED interpreter.cc)
+
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${PYTHON_LIBRARY})
 TARGET_LINK_BOOST_PYTHON(${LIBRARY_NAME})
 
 IF(UNIX)
@@ -29,8 +20,7 @@ ENDIF(UNIX)
 SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
 
-INSTALL(TARGETS ${LIBRARY_NAME}
-    DESTINATION lib)
+INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION lib)
 
 #
 #
@@ -38,36 +28,7 @@ INSTALL(TARGETS ${LIBRARY_NAME}
 #
 #
 
-SET(PYTHON_MODULE wrap)
-
-ADD_LIBRARY(${PYTHON_MODULE}
-    MODULE
-    convert-dg-to-py.cc
-    debug-py.cc
-    dynamic-graph-py.cc
-    entity-py.cc
-    exception-python.cc
-    factory-py.cc
-    pool-py.cc
-    signal-base-py.cc
-    signal-caster-py.cc
-    signal-wrapper.cc
-    )
-
-# Remove prefix lib
-SET_TARGET_PROPERTIES(${PYTHON_MODULE}
-    PROPERTIES PREFIX "")
-
-PKG_CONFIG_USE_DEPENDENCY(${PYTHON_MODULE} dynamic-graph)
-
-CONFIG_FILES(link-to-python.hh)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-
-#
-# Installation
-#
-
-INSTALL(TARGETS ${PYTHON_MODULE} DESTINATION ${PYTHON_SITELIB}/dynamic_graph)
+ADD_SUBDIRECTORY(dynamic_graph)
 
 SET (PYTHON_SOURCES
     __init__.py

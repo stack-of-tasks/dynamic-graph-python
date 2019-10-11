@@ -4,7 +4,7 @@
 #include <iostream>
 #include "dynamic-graph/debug.h"
 #include "dynamic-graph/python/interpreter.hh"
-#include "link-to-python.hh"
+#include "dynamic-graph/python/link-to-python.hh"
 
 #include <boost/python/errors.hpp>
 #include <boost/python/object.hpp>

@@ -9,9 +9,9 @@
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/signal-base.h>
 
-#include "exception.hh"
-#include "dynamic-graph-py.hh"
-#include "signal-wrapper.hh"
+#include "dynamic-graph/python/exception.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
+#include "dynamic-graph/python/signal-wrapper.hh"
 
 namespace dynamicgraph {
 namespace python {
@@ -117,7 +117,7 @@ void initwrap(void)
   if (module == NULL) INITERROR;
   struct dynamicgraph::python::module_state* st = GETSTATE(module);
 
-  DGPYERROR = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
+  st->dgpyError = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
   if (st->dgpyError == NULL) {
     Py_DECREF(module);
     INITERROR;

@@ -3,6 +3,8 @@
 #ifndef DYNAMIC_GRAPH_PYTHON_EXCEPTION
 #define DYNAMIC_GRAPH_PYTHON_EXCEPTION
 
+#include "dynamic-graph/python/dynamic-graph-py.hh"
+
 /// \brief Catch all exceptions which may be sent when C++ code is
 /// called.
 #define CATCH_ALL_EXCEPTIONS()                       \

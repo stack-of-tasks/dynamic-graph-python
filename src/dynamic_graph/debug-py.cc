@@ -12,10 +12,10 @@
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/entity.h>
 #include <vector>
-#include "exception.hh"
+#include "dynamic-graph/python/exception.hh"
 
 #include <boost/shared_ptr.hpp>
-#include "dynamic-graph-py.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
 
 typedef boost::shared_ptr<std::ofstream> ofstreamShrPtr;
 

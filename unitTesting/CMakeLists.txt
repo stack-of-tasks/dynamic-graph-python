@@ -27,9 +27,8 @@ ADD_CUSTOM_COMMAND(TARGET interpreter-test-runfile POST_BUILD
 # Test the module generation
 ## Create an entity
 
-set(LIBRARY_NAME custom_entity)
+SET(LIBRARY_NAME "custom_entity")
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${LIBRARY_NAME}.cpp)
-
 SET_TARGET_PROPERTIES(${LIBRARY_NAME}
   PROPERTIES
   PREFIX ""

@@ -2,17 +2,12 @@
 # 2019 CNRS
 #
 import os
-import sys
 import time
 
+from custom_entity import CustomEntity
 from dynamic_graph import (addLoggerCoutOutputStream, addLoggerFileOutputStream, closeLoggerFileOutputStream,
                            real_time_logger_destroy, real_time_logger_spin_once)
 from dynamic_graph.entity import VerbosityLevel
-from dynamic_graph_tests.custom_entity import CustomEntity
-
-# Put local python module at first priority
-sys.path.insert(0, os.getcwd() + '/../src')
-sys.path.insert(0, os.getcwd())
 
 print(os.getcwd())
 

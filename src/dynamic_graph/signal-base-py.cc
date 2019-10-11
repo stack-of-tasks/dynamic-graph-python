@@ -12,10 +12,10 @@
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/factory.h>
 
-#include "dynamic-graph-py.hh"
-#include "convert-dg-to-py.hh"
-#include "exception.hh"
-#include "signal-wrapper.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
+#include "dynamic-graph/python/convert-dg-to-py.hh"
+#include "dynamic-graph/python/exception.hh"
+#include "dynamic-graph/python/signal-wrapper.hh"
 
 using dynamicgraph::SignalBase;
 

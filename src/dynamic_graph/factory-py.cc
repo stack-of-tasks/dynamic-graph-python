@@ -4,7 +4,7 @@
 #include <iostream>
 #include <dynamic-graph/factory.h>
 
-#include "dynamic-graph-py.hh"
+#include "dynamic-graph/python/dynamic-graph-py.hh"
 
 using dynamicgraph::Entity;
 using dynamicgraph::ExceptionAbstract;

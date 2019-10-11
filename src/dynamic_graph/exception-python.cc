@@ -7,7 +7,7 @@
  *
  */
 
-#include <dynamic-graph/python/exception-python.hh>
+#include "dynamic-graph/python/exception-python.hh"
 #include <dynamic-graph/debug.h>
 #include <stdarg.h>
 #include <cstdio>
