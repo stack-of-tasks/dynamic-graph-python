@@ -1,4 +1,4 @@
-# Copyright 2010, 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
+# Copyright 2010-2019, Florent Lamiraux, Thomas Moulard, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
@@ -10,7 +10,6 @@ SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/pthread.cmake)
 include(cmake/python.cmake)
 include(cmake/test.cmake)
 INCLUDE(cmake/sphinx.cmake)
@@ -24,6 +23,7 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES}
 PROJECT(${PROJECT_NAME} CXX)
 
 FINDPYTHON()
+INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
 # Trigger dependency to dynamic-graph.
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
