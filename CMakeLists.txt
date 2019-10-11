@@ -12,6 +12,7 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/pthread.cmake)
 include(cmake/python.cmake)
+include(cmake/test.cmake)
 INCLUDE(cmake/sphinx.cmake)
 
 SET(DOXYGEN_USE_MATHJAX YES)

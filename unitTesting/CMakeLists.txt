@@ -102,7 +102,4 @@ TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PUBLIC_KEYWORD} ${LIBRARY_NAME} ${PYTHO
 
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
-FILE(COPY
-  ${CMAKE_SOURCE_DIR}/unitTesting/test_custom_entity.py DESTINATION
-  ${CMAKE_BINARY_DIR}/unitTesting/ )
-
+ADD_PYTHON_UNIT_TEST("test-custom-entity" "unitTesting/test_custom_entity.py" src unitTesting)
