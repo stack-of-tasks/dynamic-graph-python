@@ -270,9 +270,14 @@ void Interpreter::runPythonFile(std::string filename, std::string& err) {
 }
 
 void Interpreter::runMain(void) {
-  const char* argv[] = {"dg-embedded-pysh"};
   PyEval_RestoreThread(_pyState);
+#if PY_MAJOR_VERSION >= 3
+  const wchar_t* argv[] = {L"dg-embedded-pysh"};
+  Py_Main(1, const_cast<wchar_t**>(argv));
+#else
+  const char* argv[] = {"dg-embedded-pysh"};
   Py_Main(1, const_cast<char**>(argv));
+#endif
   _pyState = PyEval_SaveThread();
 }
 

@@ -86,13 +86,12 @@ PyObject* error_out(
 #else
     PyObject*, PyObject*
 #endif
-    );
+);
 
 /**
    \brief List of python functions
 */
-__attribute__((unused))
-static PyMethodDef dynamicGraphMethods[] = {
+__attribute__((unused)) static PyMethodDef dynamicGraphMethods[] = {
     {"w_plug", dynamicgraph::python::plug, METH_VARARGS, "plug an output signal into an input signal"},
     {"enableTrace", dynamicgraph::python::enableTrace, METH_VARARGS, "Enable or disable tracing debug info in a file"},
     // Signals
@@ -170,29 +169,25 @@ static PyMethodDef dynamicGraphMethods[] = {
 };
 
 #if PY_MAJOR_VERSION >= 3
-__attribute__((unused))
-static struct PyModuleDef dynamicGraphModuleDef = {
-  PyModuleDef_HEAD_INIT,
-  "wrap",
-  NULL,
-  sizeof(struct dynamicgraph::python::module_state),
-  dynamicGraphMethods,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
+__attribute__((unused)) static struct PyModuleDef dynamicGraphModuleDef = {
+    PyModuleDef_HEAD_INIT,
+    "wrap",
+    NULL,
+    sizeof(struct dynamicgraph::python::module_state),
+    dynamicGraphMethods,
+    NULL,
+    NULL,
+    NULL,
+    NULL};
 #define GETSTATE(m) ((struct dynamicgraph::python::module_state*)PyModule_GetState(m))
 #define DGPYERROR GETSTATE(PyState_FindModule(&dynamicgraph::python::dynamicGraphModuleDef))->dgpyError
 #define INITERROR return NULL
 #else
-__attribute__((unused))
-  static struct module_state _state;
+__attribute__((unused)) static struct module_state _state;
 #define GETSTATE(m) (&dynamicgraph::python::_state)
 #define DGPYERROR dynamicgraph::python::_state.dgpyError
 #define INITERROR return
 #endif
-
 
 }  // namespace python
 }  // namespace dynamicgraph
