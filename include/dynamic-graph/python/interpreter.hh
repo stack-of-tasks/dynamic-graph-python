@@ -1,15 +1,16 @@
 // -*- mode: c++ -*-
 // Copyright 2011, Florent Lamiraux, CNRS.
 
+#ifndef DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
+#define DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
+
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <string>
 #include "dynamic-graph/python/api.hh"
 #include "dynamic-graph/python/deprecated.hh"
-
-#ifndef DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
-#define DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
 
 #include "dynamic-graph/python/api.hh"
 
@@ -54,7 +55,6 @@ class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
   /// Pointer to the dictionary of local variables
   PyObject* locals_;
   PyObject* mainmod_;
-  PyObject* traceback_format_exception_;
 };
 }  // namespace python
 }  // namespace dynamicgraph

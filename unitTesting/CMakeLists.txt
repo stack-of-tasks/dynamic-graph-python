@@ -4,7 +4,7 @@ ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test.cc)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-graph-python)
 ADD_TEST(${EXECUTABLE_NAME}  ${EXECUTABLE_NAME})
 
-## Test runfile
+# Test runfile
 SET(EXECUTABLE_NAME interpreter-test-runfile)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test-runfile.cc)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-graph-python)

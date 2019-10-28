@@ -50,17 +50,20 @@ int main(int argc, char** argv) {
   // because re as been imported in a previous test and it is not
   // safe to delete imported module...
   res = testFile("test_python-name_error.py",
-                 std::string("<type 'exceptions.NameError'>: name 're' is not defined:") +
-                     "   File \"test_python-name_error.py\", line 6, in <module>\n" +
-                     "    pathList = re.split(':', pkgConfigPath)\n",
+                 std::string("Traceback (most recent call last):\n"
+                             "  File \"test_python-name_error.py\", line 7, in <module>\n"
+                             "    pathList = re.split(':', pkgConfigPath)  # noqa\n"
+                             "NameError: name 're' is not defined\n"),
                  numTest) &&
         res;
 
   res = testFile("test_python-ok.py", "", numTest) && res;
   res = testFile("unexistant_file.py", "unexistant_file.py cannot be open", numTest) && res;
   res = testFile("test_python-syntax_error.py",
-                 std::string("<type 'exceptions.SyntaxError'>: ('invalid syntax', ") +
-                     "('test_python-syntax_error.py', 1, 11, " + "'hello world\\n'))",
+                 std::string("  File \"test_python-syntax_error.py\", line 2\n"
+                             "    hello world\n"
+                             "              ^\n"
+                             "SyntaxError: invalid syntax\n"),
                  numTest) &&
         res;
   res = testInterpreterDestructor("test_python-restart_interpreter.py", "") && res;
