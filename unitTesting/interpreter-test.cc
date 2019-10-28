@@ -15,8 +15,13 @@ int main(int argc, char** argv) {
   for (int i = 0; i < numTest; ++i) {
     // correct input
     interp.python("print('I am the interpreter')", result, out, err);
+    assert(out.compare("I am the interpreter"));
+    assert(err.length() == 0);
     // incorrect input
     interp.python("print I am the interpreter", result, out, err);
+    assert(result.length() == 0);
+    assert(out.length() == 0);
+    assert(err.length() > 50);
   }
   return 0;
 }
