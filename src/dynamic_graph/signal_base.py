@@ -3,6 +3,9 @@
 
   Author: Florent Lamiraux
 """
+
+from __future__ import print_function
+
 import re
 
 from .wrap import (create_signal_wrapper, signal_base_display, signal_base_display_dependencies,

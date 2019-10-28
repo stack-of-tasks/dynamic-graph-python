@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 
+from __future__ import print_function
+
 
 def addTrace(robot, trace, entityName, signalName, autoRecompute=True):
     """

@@ -4,6 +4,8 @@
 # using the str() member.
 # The statics prec, space and fullPrec can be used to modify the display.
 
+from __future__ import print_function
+
 
 def pseudozero(prec):
     """

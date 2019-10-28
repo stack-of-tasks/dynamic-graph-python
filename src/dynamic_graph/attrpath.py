@@ -9,6 +9,8 @@
 #  >>> e.a.b.c.d( ...)
 # as if it was a classical member function of e.
 
+from __future__ import print_function
+
 
 class CommandPath(object):
     """

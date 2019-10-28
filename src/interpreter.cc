@@ -11,7 +11,8 @@ std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt", std::ios::trunc& std
 // Python initialization commands
 namespace dynamicgraph {
 namespace python {
-static const std::string pythonPrefix[7] = {"import traceback\n",
+static const std::string pythonPrefix[8] = {"from __future__ import print_function\n",
+                                            "import traceback\n",
                                             "class StdoutCatcher:\n"
                                             "    def __init__(self):\n"
                                             "        self.data = ''\n"
@@ -98,6 +99,7 @@ Interpreter::Interpreter() {
   PyRun_SimpleString(pythonPrefix[4].c_str());
   PyRun_SimpleString(pythonPrefix[5].c_str());
   PyRun_SimpleString(pythonPrefix[6].c_str());
+  PyRun_SimpleString(pythonPrefix[7].c_str());
   PyRun_SimpleString("import linecache");
 
   // Allow threads

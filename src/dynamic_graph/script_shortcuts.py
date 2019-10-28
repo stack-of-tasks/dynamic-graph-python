@@ -8,6 +8,8 @@
 # entity      -> same as print(entity)
 # change the prompt to be '%'
 
+from __future__ import print_function
+
 # Changing prompt
 import sys
 

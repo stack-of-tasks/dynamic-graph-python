@@ -3,6 +3,8 @@
 
   Author: Florent Lamiraux, Nicolas Mansard
 """
+from __future__ import print_function
+
 import types
 from enum import Enum
 

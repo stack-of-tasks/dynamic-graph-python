@@ -3,6 +3,8 @@ Copyright (c) 2010 CNRS
 Author: Florent Lamiraux
 """
 
+from __future__ import print_function
+
 import sys
 
 from . import entity  # noqa
