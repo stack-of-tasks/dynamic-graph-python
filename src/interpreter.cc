@@ -6,15 +6,6 @@
 #include "dynamic-graph/python/interpreter.hh"
 #include "dynamic-graph/python/link-to-python.hh"
 
-#include <boost/python/errors.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/handle.hpp>
-#include <boost/python/extract.hpp>
-#include <boost/python/str.hpp>
-#include <boost/python/import.hpp>
-
-namespace py = boost::python;
-
 std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt", std::ios::trunc& std::ios::out);
 
 // Python initialization commands

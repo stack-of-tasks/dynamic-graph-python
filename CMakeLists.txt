@@ -32,7 +32,7 @@ ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
 # Search for Boost.
-SET(BOOST_COMPONENTS python filesystem system thread program_options unit_test_framework)
+SET(BOOST_COMPONENTS filesystem system thread program_options unit_test_framework)
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
