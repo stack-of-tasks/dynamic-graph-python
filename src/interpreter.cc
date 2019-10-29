@@ -26,31 +26,29 @@
 #include <boost/python/str.hpp>
 #include <boost/python/import.hpp>
 
-namespace py=boost::python;
+namespace py = boost::python;
 
-std::ofstream dg_debugfile( "/tmp/dynamic-graph-traces.txt", std::ios::trunc&std::ios::out );
+std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt", std::ios::trunc& std::ios::out);
 
 // Python initialization commands
 namespace dynamicgraph {
 namespace python {
-static const std::string pythonPrefix[5] = {
-  "import traceback\n",
-  "def display(s): return str(s) if not s is None else None",
-  "class StdoutCatcher:\n"
-  "    def __init__(self):\n"
-  "        self.data = ''\n"
-  "    def write(self, stuff):\n"
-  "        self.data = self.data + stuff\n"
-  "    def fetch(self):\n"
-  "        s = self.data[:]\n"
-  "        self.data = ''\n"
-  "        return s\n"
-  "stdout_catcher = StdoutCatcher()\n"
-  "import sys\n"
-  "sys.stdout = stdout_catcher"
-};
+static const std::string pythonPrefix[5] = {"import traceback\n",
+                                            "def display(s): return str(s) if not s is None else None",
+                                            "class StdoutCatcher:\n"
+                                            "    def __init__(self):\n"
+                                            "        self.data = ''\n"
+                                            "    def write(self, stuff):\n"
+                                            "        self.data = self.data + stuff\n"
+                                            "    def fetch(self):\n"
+                                            "        s = self.data[:]\n"
+                                            "        self.data = ''\n"
+                                            "        return s\n"
+                                            "stdout_catcher = StdoutCatcher()\n"
+                                            "import sys\n"
+                                            "sys.stdout = stdout_catcher"};
 }
-}
+}  // namespace dynamicgraph
 
 namespace dynamicgraph {
 namespace python {
@@ -59,14 +57,10 @@ namespace python {
 // http://thejosephturner.com/blog/post/embedding-python-in-c-applications-with-boostpython-part-2/
 std::string parse_python_exception();
 
-bool HandleErr(std::string & err,
-               PyObject * traceback_format_exception,
-               PyObject * globals_,
-               int PythonInputType)
-{
+bool HandleErr(std::string& err, PyObject* traceback_format_exception, PyObject* globals_, int PythonInputType) {
   dgDEBUGIN(15);
-  err="";
-  bool lres=false;
+  err = "";
+  bool lres = false;
 
   if (PyErr_Occurred()) {
     PyObject *ptype, *pvalue, *ptraceback, *pyerr;
@@ -84,13 +78,10 @@ bool HandleErr(std::string & err,
     assert(PyList_Check(pyerr));
     Py_ssize_t size = PyList_GET_SIZE(pyerr);
     std::string stringRes;
-    for (Py_ssize_t i=0; i<size; ++i)
-      stringRes += std::string
-          (PyString_AsString(PyList_GET_ITEM(pyerr, i)));
+    for (Py_ssize_t i = 0; i < size; ++i) stringRes += std::string(PyString_AsString(PyList_GET_ITEM(pyerr, i)));
     Py_DecRef(pyerr);
 
-
-    pyerr  = PyString_FromString(stringRes.c_str());
+    pyerr = PyString_FromString(stringRes.c_str());
     err = PyString_AsString(pyerr);
     dgDEBUG(15) << "err: " << err << std::endl;
     Py_DecRef(pyerr);
@@ -99,14 +90,11 @@ bool HandleErr(std::string & err,
     // and the interpreter input is set to Py_eval_input,
     // it is maybe a statement instead of an expression.
     // Therefore we indicate to re-evaluate the command.
-    if (PyErr_GivenExceptionMatches(ptype, PyExc_SyntaxError) &&
-        (PythonInputType==Py_eval_input))
-    {
+    if (PyErr_GivenExceptionMatches(ptype, PyExc_SyntaxError) && (PythonInputType == Py_eval_input)) {
       dgDEBUG(15) << "Detected a syntax error " << std::endl;
-      lres=false;
-    }
-    else
-      lres=true;
+      lres = false;
+    } else
+      lres = true;
 
     Py_CLEAR(args);
 
@@ -114,24 +102,22 @@ bool HandleErr(std::string & err,
   } else {
     dgDEBUG(15) << "no object generated but no error occured." << std::endl;
   }
-  PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()",
-                                      Py_eval_input, globals_,
-                                      globals_);
+  PyObject* stdout_obj = PyRun_String("stdout_catcher.fetch()", Py_eval_input, globals_, globals_);
   std::string out("");
 
   out = PyString_AsString(stdout_obj);
   // Local display for the robot (in debug mode or for the logs)
-  if (out.length()!=0)
-  { dgDEBUG(15) << std::endl; }
-  else { dgDEBUG(15) << "No exception." << std::endl; }
+  if (out.length() != 0) {
+    dgDEBUG(15) << std::endl;
+  } else {
+    dgDEBUG(15) << "No exception." << std::endl;
+  }
   dgDEBUGOUT(15);
   Py_DecRef(stdout_obj);
   return lres;
 }
 
-
-Interpreter::Interpreter()
-{
+Interpreter::Interpreter() {
   // load python dynamic library
   // this is silly, but required to be able to import dl module.
 #ifndef WIN32
@@ -151,8 +137,8 @@ Interpreter::Interpreter()
   PyRun_SimpleString(pythonPrefix[4].c_str());
   PyRun_SimpleString("import linecache");
 
-  traceback_format_exception_ = PyDict_GetItemString
-      (PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
+  traceback_format_exception_ =
+      PyDict_GetItemString(PyModule_GetDict(PyImport_AddModule("traceback")), "format_exception");
   assert(PyCallable_Check(traceback_format_exception_));
   Py_INCREF(traceback_format_exception_);
 
@@ -160,8 +146,7 @@ Interpreter::Interpreter()
   _pyState = PyEval_SaveThread();
 }
 
-Interpreter::~Interpreter()
-{
+Interpreter::~Interpreter() {
   PyEval_RestoreThread(_pyState);
 
   // Ideally, we should call Py_Finalize but this is not really supported by
@@ -169,23 +154,19 @@ Interpreter::~Interpreter()
   // Instead, we merelly remove variables.
   // Code was taken here: https://github.com/numpy/numpy/issues/8097#issuecomment-356683953
   {
-    PyObject * poAttrList = PyObject_Dir(mainmod_);
-    PyObject * poAttrIter = PyObject_GetIter(poAttrList);
-    PyObject * poAttrName;
+    PyObject* poAttrList = PyObject_Dir(mainmod_);
+    PyObject* poAttrIter = PyObject_GetIter(poAttrList);
+    PyObject* poAttrName;
 
-    while ((poAttrName = PyIter_Next(poAttrIter)) != NULL)
-    {
-      std::string oAttrName (PyString_AS_STRING(poAttrName));
+    while ((poAttrName = PyIter_Next(poAttrIter)) != NULL) {
+      std::string oAttrName(PyString_AS_STRING(poAttrName));
 
       // Make sure we don't delete any private objects.
-      if (oAttrName.compare(                 0,2,"__")!=0 ||
-          oAttrName.compare(oAttrName.size()-2,2,"__")!=0)
-      {
-        PyObject * poAttr = PyObject_GetAttr(mainmod_, poAttrName);
+      if (oAttrName.compare(0, 2, "__") != 0 || oAttrName.compare(oAttrName.size() - 2, 2, "__") != 0) {
+        PyObject* poAttr = PyObject_GetAttr(mainmod_, poAttrName);
 
         // Make sure we don't delete any module objects.
-        if (poAttr && poAttr->ob_type != mainmod_->ob_type)
-          PyObject_SetAttr(mainmod_, poAttrName, NULL);
+        if (poAttr && poAttr->ob_type != mainmod_->ob_type) PyObject_SetAttr(mainmod_, poAttrName, NULL);
 
         Py_DecRef(poAttr);
       }
@@ -200,26 +181,22 @@ Interpreter::~Interpreter()
   Py_DECREF(mainmod_);
   Py_DECREF(globals_);
   Py_DECREF(traceback_format_exception_);
-  //Py_Finalize();
+  // Py_Finalize();
 }
 
-std::string Interpreter::python( const std::string& command )
-{
-  std::string lerr(""),lout(""),lres("");
-  python(command,lres,lout,lerr);
+std::string Interpreter::python(const std::string& command) {
+  std::string lerr(""), lout(""), lres("");
+  python(command, lres, lout, lerr);
   return lres;
 }
 
-
-void Interpreter::python( const std::string& command, std::string& res,
-                          std::string& out, std::string& err)
-{
+void Interpreter::python(const std::string& command, std::string& res, std::string& out, std::string& err) {
   res = "";
   out = "";
   err = "";
 
   // Check if the command is not a python comment or empty.
-  std::string::size_type iFirstNonWhite = command.find_first_not_of (" \t");
+  std::string::size_type iFirstNonWhite = command.find_first_not_of(" \t");
   // Empty command
   if (iFirstNonWhite == std::string::npos) return;
   // Command is a comment. Ignore it.
@@ -228,56 +205,44 @@ void Interpreter::python( const std::string& command, std::string& res,
   PyEval_RestoreThread(_pyState);
 
   std::cout << command.c_str() << std::endl;
-  PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_,
-                                  globals_);
+  PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_, globals_);
   // Check if the result is null.
   if (!result) {
-
     // Test if this is a syntax error (due to the evaluation of an expression)
     // else just output the problem.
-    if (!HandleErr(err,
-                   traceback_format_exception_, globals_,
-                   Py_eval_input))
-    {
+    if (!HandleErr(err, traceback_format_exception_, globals_, Py_eval_input)) {
       // If this is a statement, re-parse the command.
       result = PyRun_String(command.c_str(), Py_single_input, globals_, globals_);
 
       // If there is still an error build the appropriate err string.
-      if (result == NULL) 
-        HandleErr(err,
-                  traceback_format_exception_, globals_,
-                  Py_single_input);
-      else 
+      if (result == NULL)
+        HandleErr(err, traceback_format_exception_, globals_, Py_single_input);
+      else
         // If there is no error, make sure that the previous error message is erased.
-        err="";
+        err = "";
+    } else {
+      dgDEBUG(15) << "Do not try a second time." << std::endl;
     }
-    else 
-    { dgDEBUG(15) << "Do not try a second time." << std::endl; }
   }
 
   PyObject* stdout_obj = 0;
-  stdout_obj = PyRun_String("stdout_catcher.fetch()",
-                            Py_eval_input, globals_,
-                            globals_);
+  stdout_obj = PyRun_String("stdout_catcher.fetch()", Py_eval_input, globals_, globals_);
   out = PyString_AsString(stdout_obj);
   // Local display for the robot (in debug mode or for the logs)
-  if (out.size()!=0)
-    std::cout << "Output:" << out << std::endl;
-  if (err.size()!=0)
-    std::cout << "Error:" << err << std::endl;
+  if (out.size() != 0) std::cout << "Output:" << out << std::endl;
+  if (err.size() != 0) std::cout << "Error:" << err << std::endl;
   PyObject* result2 = PyObject_Repr(result);
   // If python cannot build a string representation of result
   // then results is equal to NULL. This will trigger a SEGV
-  if (result2!=NULL)
-  {
+  if (result2 != NULL) {
     dgDEBUG(15) << "For command :" << command << std::endl;
     res = PyString_AsString(result2);
-    dgDEBUG(15) << "Result is: " << res <<std::endl;
-    dgDEBUG(15) << "Out is: " << out <<std::endl;
+    dgDEBUG(15) << "Result is: " << res << std::endl;
+    dgDEBUG(15) << "Out is: " << out << std::endl;
     dgDEBUG(15) << "Err is :" << err << std::endl;
+  } else {
+    dgDEBUG(15) << "Result is empty" << std::endl;
   }
-  else
-  { dgDEBUG(15) << "Result is empty" << std::endl; }
   Py_DecRef(stdout_obj);
   Py_DecRef(result2);
   Py_DecRef(result);
@@ -287,22 +252,16 @@ void Interpreter::python( const std::string& command, std::string& res,
   return;
 }
 
-PyObject* Interpreter::globals()
-{
-  return globals_;
-}
+PyObject* Interpreter::globals() { return globals_; }
 
-void Interpreter::runPythonFile( std::string filename )
-{
+void Interpreter::runPythonFile(std::string filename) {
   std::string err = "";
   runPythonFile(filename, err);
 }
 
-void Interpreter::runPythonFile( std::string filename, std::string& err)
-{
-  FILE* pFile = fopen( filename.c_str(),"r" );
-  if (pFile==0x0)
-  {
+void Interpreter::runPythonFile(std::string filename, std::string& err) {
+  FILE* pFile = fopen(filename.c_str(), "r");
+  if (pFile == 0x0) {
     err = filename + " cannot be open";
     return;
   }
@@ -311,30 +270,28 @@ void Interpreter::runPythonFile( std::string filename, std::string& err)
 
   err = "";
   PyObject* pymainContext = globals_;
-  PyObject* run = PyRun_FileExFlags(pFile, filename.c_str(),
-             Py_file_input, pymainContext,pymainContext, true, NULL);
+  PyObject* run = PyRun_FileExFlags(pFile, filename.c_str(), Py_file_input, pymainContext, pymainContext, true, NULL);
 
-  if (PyErr_Occurred())
-  {
+  if (PyErr_Occurred()) {
     err = parse_python_exception();
-    std::cerr << err << std::endl;;
+    std::cerr << err << std::endl;
+    ;
   }
   Py_DecRef(run);
 
   _pyState = PyEval_SaveThread();
 }
 
-void Interpreter::runMain( void )
-{
-  const char * argv [] = { "dg-embedded-pysh" };
+void Interpreter::runMain(void) {
+  const char* argv[] = {"dg-embedded-pysh"};
   PyEval_RestoreThread(_pyState);
-  Py_Main(1,const_cast<char**>(argv));
+  Py_Main(1, const_cast<char**>(argv));
   _pyState = PyEval_SaveThread();
 }
 
-std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
-{
-  char line[10000]; sprintf(line, "%s", "\n");
+std::string Interpreter::processStream(std::istream& stream, std::ostream& os) {
+  char line[10000];
+  sprintf(line, "%s", "\n");
   std::string command;
   std::streamsize maxSize = 10000;
 #if 0
@@ -350,48 +307,44 @@ std::string Interpreter::processStream(std::istream& stream, std::ostream& os)
   return command;
 }
 
-std::string parse_python_exception()
-{
+std::string parse_python_exception() {
   PyObject *type_ptr = NULL, *value_ptr = NULL, *traceback_ptr = NULL;
   PyErr_Fetch(&type_ptr, &value_ptr, &traceback_ptr);
   std::string ret("Unfetchable Python error");
 
-  if(type_ptr != NULL)
-  {
+  if (type_ptr != NULL) {
     py::handle<> h_type(type_ptr);
     py::str type_pstr(h_type);
     py::extract<std::string> e_type_pstr(type_pstr);
-    if(e_type_pstr.check())
+    if (e_type_pstr.check())
       ret = e_type_pstr();
     else
       ret = "Unknown exception type";
   }
 
-  if(value_ptr != NULL)
-  {
+  if (value_ptr != NULL) {
     py::handle<> h_val(value_ptr);
     py::str a(h_val);
     py::extract<std::string> returned(a);
-    if(returned.check())
-      ret +=  ": " + returned();
+    if (returned.check())
+      ret += ": " + returned();
     else
       ret += std::string(": Unparseable Python error: ");
   }
 
-  if(traceback_ptr != NULL)
-  {
+  if (traceback_ptr != NULL) {
     py::handle<> h_tb(traceback_ptr);
     py::object tb(py::import("traceback"));
     py::object fmt_tb(tb.attr("format_tb"));
     py::object tb_list(fmt_tb(h_tb));
     py::object tb_str(py::str("\n").join(tb_list));
     py::extract<std::string> returned(tb_str);
-    if(returned.check())
+    if (returned.check())
       ret += ": " + returned();
     else
       ret += std::string(": Unparseable Python traceback");
   }
   return ret;
 }
-} //namespace python
-} // namespace dynamicgraph
+}  // namespace python
+}  // namespace dynamicgraph

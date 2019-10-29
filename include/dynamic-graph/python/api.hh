@@ -15,6 +15,6 @@
 // dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef DYNAMIC_GRAPH_PYTHON_API_HH
-# define DYNAMIC_GRAPH_PYTHON_API_HH
-# include <dynamic-graph/python/config.hh>
-#endif //DYNAMIC_GRAPH_PYTHON_API_HH
+#define DYNAMIC_GRAPH_PYTHON_API_HH
+#include <dynamic-graph/python/config.hh>
+#endif  // DYNAMIC_GRAPH_PYTHON_API_HH

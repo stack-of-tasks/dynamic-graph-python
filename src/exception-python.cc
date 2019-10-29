@@ -24,49 +24,43 @@
 #include <cstdio>
 
 namespace dynamicgraph {
-  namespace python {
+namespace python {
 
-    /* --------------------------------------------------------------------- */
-    /* --- CLASS ----------------------------------------------------------- */
-    /* --------------------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
+/* --- CLASS ----------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
 
-    const std::string ExceptionPython::EXCEPTION_NAME = "Python";
+const std::string ExceptionPython::EXCEPTION_NAME = "Python";
 
-    ExceptionPython::
-    ExceptionPython ( const ExceptionPython::ErrorCodeEnum& errcode,
-		      const std::string & msg )
-      :ExceptionAbstract(errcode,msg)
-    {
-      dgDEBUGF( 15,"Created with message <%s>.",msg.c_str ());
-      dgDEBUG( 1) <<"Created with message <%s>."<<msg<<std::endl;
-    }
+ExceptionPython::ExceptionPython(const ExceptionPython::ErrorCodeEnum& errcode, const std::string& msg)
+    : ExceptionAbstract(errcode, msg) {
+  dgDEBUGF(15, "Created with message <%s>.", msg.c_str());
+  dgDEBUG(1) << "Created with message <%s>." << msg << std::endl;
+}
 
-    ExceptionPython::
-    ExceptionPython ( const ExceptionPython::ErrorCodeEnum& errcode,
-		      const std::string & msg,const char* format, ... )
-      :ExceptionAbstract(errcode,msg)
-    {
-      va_list args;
-      va_start(args,format);
+ExceptionPython::ExceptionPython(const ExceptionPython::ErrorCodeEnum& errcode, const std::string& msg,
+                                 const char* format, ...)
+    : ExceptionAbstract(errcode, msg) {
+  va_list args;
+  va_start(args, format);
 
-      const unsigned int SIZE = 256;
-      char  buffer[SIZE];
-      vsnprintf(buffer,SIZE,format,args);
+  const unsigned int SIZE = 256;
+  char buffer[SIZE];
+  vsnprintf(buffer, SIZE, format, args);
 
-      dgDEBUG(15) <<"Created "<<" with message <"
-		  <<msg<<"> and buffer <"<<buffer<<">. "<<std::endl;
+  dgDEBUG(15) << "Created "
+              << " with message <" << msg << "> and buffer <" << buffer << ">. " << std::endl;
 
-      message += buffer;
+  message += buffer;
 
-      va_end(args);
+  va_end(args);
 
-      dgDEBUG(1) << "Throw exception " << EXCEPTION_NAME << "[#" << errcode<<"]: "
-		 <<"<"<< message << ">."<<std::endl;
+  dgDEBUG(1) << "Throw exception " << EXCEPTION_NAME << "[#" << errcode << "]: "
+             << "<" << message << ">." << std::endl;
+}
 
-    }
-
-  } // namespace dynamicgraph
-} // namespace python
+}  // namespace python
+}  // namespace dynamicgraph
 
 /*
  * Local variables:

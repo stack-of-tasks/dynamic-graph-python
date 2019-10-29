@@ -2,9 +2,6 @@
  *  Copyright
  */
 
-#include "dynamic-graph-python-test.hh" 
+#include "dynamic-graph-python-test.hh"
 
-int main (int argc, char** argv)
-{
-  GraphTest testGraph();
-}
+int main(int argc, char** argv) { GraphTest testGraph(); }
