@@ -28,28 +28,6 @@ static const std::string pythonPrefix[8] = {"from __future__ import print_functi
                                             "sys.stdout = stdout_catcher",
                                             "sys.stderr = stderr_catcher"};
 
-// Get any PyObject and get its str() representation as an std::string
-std::string obj_to_str(PyObject* o) {
-  std::string ret;
-  PyObject* os;
-#if PY_MAJOR_VERSION >= 3
-  os = PyObject_Str(o);
-  assert(os != NULL);
-  assert(PyUnicode_Check(os));
-  ret = PyUnicode_AsUTF8(os);
-#else
-  os = PyObject_Unicode(o);
-  assert(os != NULL);
-  assert(PyUnicode_Check(os));
-  PyObject* oss = PyUnicode_AsUTF8String(os);
-  assert(oss != NULL);
-  ret = PyString_AsString(oss);
-  Py_DECREF(oss);
-#endif
-  Py_DECREF(os);
-  return ret;
-}
-
 bool HandleErr(std::string& err, PyObject* globals_, int PythonInputType) {
   dgDEBUGIN(15);
   err = "";

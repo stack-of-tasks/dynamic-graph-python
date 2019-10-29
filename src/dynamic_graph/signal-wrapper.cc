@@ -1,7 +1,6 @@
 // Copyright (c) 2018, Joseph Mirabel
 // Authors: Joseph Mirabel (joseph.mirabel@laas.fr)
 
-#include <Python.h>
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/command-bind.h>
 
@@ -45,7 +44,7 @@ template <class T, class Time>
 bool SignalWrapper<T, Time>::checkCallable(PyObject* c, std::string& error) {
   if (PyCallable_Check(c) == 0) {
     PyObject* str = PyObject_Str(c);
-    error = PyUnicode_AS_DATA(str);
+    error = obj_to_str(str);
     error += " is not callable";
     Py_DECREF(str);
     return false;

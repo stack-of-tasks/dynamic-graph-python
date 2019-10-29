@@ -4,11 +4,10 @@
 #ifndef DGPY_SIGNAL_WRAPPER
 #define DGPY_SIGNAL_WRAPPER
 
-#include <Python.h>
-
 #include <dynamic-graph/linear-algebra.h>
 #include <dynamic-graph/signal.h>
 #include <dynamic-graph/entity.h>
+#include "dynamic-graph/python/python-compat.hh"
 
 namespace dynamicgraph {
 namespace python {

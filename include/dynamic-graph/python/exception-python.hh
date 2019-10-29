@@ -4,10 +4,10 @@
 
 #ifndef DYNAMIC_GRAPH_PYTHON_EXCEPTION_PYTHON_H
 #define DYNAMIC_GRAPH_PYTHON_EXCEPTION_PYTHON_H
-#include <string>
 
 #include <dynamic-graph/fwd.hh>
 #include <dynamic-graph/exception-abstract.h>
+#include "dynamic-graph/python/python-compat.hh"
 
 // Depending on whether one is building or using the
 // library define DLLAPI to import or export.

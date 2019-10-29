@@ -8,7 +8,6 @@
 #include <dynamic-graph/real-time-logger.h>
 
 #include <map>
-#include <Python.h>
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/entity.h>
 #include <vector>

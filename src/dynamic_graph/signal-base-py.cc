@@ -1,6 +1,5 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <Python.h>
 #include <iostream>
 #include <sstream>
 

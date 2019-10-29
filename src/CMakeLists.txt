@@ -7,7 +7,7 @@
 #
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
-ADD_LIBRARY(${LIBRARY_NAME} SHARED interpreter.cc)
+ADD_LIBRARY(${LIBRARY_NAME} SHARED interpreter.cc dynamic_graph/python-compat.cc)
 
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${PYTHON_LIBRARY})
 

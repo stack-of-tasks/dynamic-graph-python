@@ -6,12 +6,10 @@
 
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-#include <string>
 #include "dynamic-graph/python/api.hh"
 #include "dynamic-graph/python/deprecated.hh"
 
+#include "dynamic-graph/python/python-compat.hh"
 #include "dynamic-graph/python/api.hh"
 
 namespace dynamicgraph {
@@ -48,7 +46,7 @@ class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
   PyObject* globals();
 
  private:
-  /// The Pythone thread state
+  /// The Python thread state
   PyThreadState* _pyState;
   /// Pointer to the dictionary of global variables
   PyObject* globals_;

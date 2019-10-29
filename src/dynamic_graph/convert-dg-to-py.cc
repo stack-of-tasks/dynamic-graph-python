@@ -8,6 +8,7 @@
 #include <dynamic-graph/signal-caster.h>
 
 #include "dynamic-graph/python/convert-dg-to-py.hh"
+#include "dynamic-graph/python/python-compat.hh"
 
 namespace dynamicgraph {
 
@@ -113,7 +114,7 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
       if (!PyUnicode_Check(pyObject)) {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "string");
       }
-      svalue = PyUnicode_AS_DATA(pyObject);
+      svalue = obj_to_str(pyObject);
       return Value(svalue);
       break;
     case (Value::VECTOR):

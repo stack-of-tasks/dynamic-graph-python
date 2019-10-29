@@ -1,16 +1,14 @@
 #ifndef DYNAMIC_GRAPH_PY
 #define DYNAMIC_GRAPH_PY
 
-#include <Python.h>
 #include <iostream>
 #include <sstream>
-#include <string>
 
 #include <dynamic-graph/debug.h>
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/signal-base.h>
 
-#include "signal-wrapper.hh"
+#include "dynamic-graph/python/signal-wrapper.hh"
 
 namespace dynamicgraph {
 namespace python {

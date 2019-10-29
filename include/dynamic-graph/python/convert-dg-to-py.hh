@@ -1,6 +1,5 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <Python.h>
 #include <dynamic-graph/linear-algebra.h>
 #include <dynamic-graph/value.h>
 #include <dynamic-graph/python/exception-python.hh>

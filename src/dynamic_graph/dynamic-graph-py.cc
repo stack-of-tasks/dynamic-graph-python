@@ -1,9 +1,7 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <Python.h>
 #include <iostream>
 #include <sstream>
-#include <string>
 
 #include <dynamic-graph/debug.h>
 #include <dynamic-graph/exception-factory.h>

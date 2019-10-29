@@ -7,6 +7,7 @@ SET(${PROJECT_NAME}_HEADERS
   exception.hh
   exception-python.hh
   interpreter.hh
+  python-compat.hh
   signal-wrapper.hh
 )
 
