@@ -13,7 +13,12 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph-python. If not, see <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+SET(PROJECT_NAMESPACE stack-of-tasks)
+SET(PROJECT_NAME dynamic-graph-python)
+SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
+SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
@@ -23,9 +28,6 @@ INCLUDE(cmake/cpack.cmake)
 include(cmake/header.cmake)
 include(cmake/python.cmake)
 
-SET(PROJECT_NAME dynamic-graph-python)
-SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
 
 SET(DOXYGEN_USE_MATHJAX YES)
 
@@ -40,7 +42,7 @@ SET(${PROJECT_NAME}_HEADERS
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 
-SETUP_PROJECT()
+PROJECT(${PROJECT_NAME} CXX)
 
 FINDPYTHON(2.7 EXACT REQUIRED)
 
@@ -59,6 +61,3 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(unitTesting)
-
-SETUP_PROJECT_FINALIZE()
-
