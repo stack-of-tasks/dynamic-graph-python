@@ -15,7 +15,17 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+SET(PROJECT_ORG stack-of-tasks)
+SET(PROJECT_NAME dynamic-graph-python)
+SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
+
+# Export CMake Target
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+
 INCLUDE(cmake/base.cmake)
+PROJECT(${PROJECT_NAME} CXX)
+
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/pthread.cmake)
@@ -23,9 +33,6 @@ INCLUDE(cmake/cpack.cmake)
 include(cmake/header.cmake)
 include(cmake/python.cmake)
 
-SET(PROJECT_NAME dynamic-graph-python)
-SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
 
 SET(DOXYGEN_USE_MATHJAX YES)
 
@@ -40,7 +47,6 @@ SET(${PROJECT_NAME}_HEADERS
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 
-SETUP_PROJECT()
 
 FINDPYTHON(2.7 EXACT REQUIRED)
 
@@ -60,5 +66,5 @@ ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(unitTesting)
 
-SETUP_PROJECT_FINALIZE()
+SETUP_PROJECT_PACKAGE_FINALIZE()
 
