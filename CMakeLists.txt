@@ -7,11 +7,14 @@ SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
 SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 
+# Export CMake Target
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
-include(cmake/python.cmake)
-include(cmake/test.cmake)
+INCLUDE(cmake/python.cmake)
+INCLUDE(cmake/test.cmake)
 INCLUDE(cmake/sphinx.cmake)
 
 SET(DOXYGEN_USE_MATHJAX YES)
