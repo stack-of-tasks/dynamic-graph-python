@@ -10,6 +10,12 @@ SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 # Export CMake Target
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 
+# Make sure that every header is generated in dynamic-graph
+SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
+
+# Do not fail on warning
+SET(CXX_DISABLE_WERROR TRUE)
+
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
@@ -29,16 +35,13 @@ PROJECT(${PROJECT_NAME} CXX)
 FINDPYTHON()
 INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
-# Trigger dependency to dynamic-graph.
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
+ADD_REQUIRED_DEPENDENCY(eigen3)
+ADD_PROJECT_DEPENDENCY(dynamic-graph 3.0.0 REQUIRED)
 
-# Add dependency toward dynamic graph library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
-# Search for Boost.
-SET(BOOST_COMPONENTS filesystem system thread program_options unit_test_framework)
+SET(BOOST_COMPONENTS filesystem system thread program_options unit_test_framework python)
 SEARCH_FOR_BOOST()
-SEARCH_FOR_EIGEN()
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include/${CUSTOM_HEADER_DIR})
