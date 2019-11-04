@@ -75,43 +75,63 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
       return Value(bvalue);
       break;
     case (Value::UNSIGNED):
-      if (!PyLong_Check(pyObject)) {
+      if (PyLong_Check(pyObject)) {
+        uvalue = (unsigned int)PyLong_AsUnsignedLongMask(pyObject);
+#if PY_MAJOR_VERSION == 2
+      } else if (PyInt_Check(pyObject)) {
+        uvalue = (unsigned int)PyInt_AsUnsignedLongMask(pyObject);
+#endif
+      } else {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "unsigned int");
       }
-      uvalue = (unsigned int)PyLong_AsUnsignedLongMask(pyObject);
       return Value(uvalue);
       break;
     case (Value::INT):
-      if (!PyLong_Check(pyObject)) {
+      if (PyLong_Check(pyObject)) {
+        ivalue = (int)PyLong_AsLong(pyObject);
+#if PY_MAJOR_VERSION == 2
+      } else if (PyInt_Check(pyObject)) {
+        ivalue = (int)PyInt_AsLong(pyObject);
+#endif
+      } else {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "int");
       }
-      ivalue = (int)PyLong_AsLong(pyObject);
       return Value(ivalue);
       break;
     case (Value::FLOAT):
       if (PyFloat_Check(pyObject)) {
         fvalue = (float)PyFloat_AsDouble(pyObject);
-        return Value(fvalue);
       } else if (PyLong_Check(pyObject)) {
         fvalue = (float)PyLong_AsLong(pyObject);
-        return Value(fvalue);
+#if PY_MAJOR_VERSION == 2
+      } else if (PyInt_Check(pyObject)) {
+        fvalue = (float)PyInt_AsLong(pyObject);
+#endif
       } else {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "float");
       }
+      return Value(fvalue);
       break;
     case (Value::DOUBLE):
       if (PyFloat_Check(pyObject)) {
         dvalue = PyFloat_AsDouble(pyObject);
-        return Value(dvalue);
       } else if (PyLong_Check(pyObject)) {
         dvalue = (double)PyLong_AsLong(pyObject);
-        return Value(dvalue);
+#if PY_MAJOR_VERSION == 2
+      } else if (PyInt_Check(pyObject)) {
+        dvalue = (double)PyInt_AsLong(pyObject);
+#endif
       } else {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "double");
       }
+      return Value(dvalue);
       break;
     case (Value::STRING):
-      if (!PyUnicode_Check(pyObject)) {
+      if (!PyUnicode_Check(pyObject)
+#if PY_MAJOR_VERSION == 2
+          && !PyString_Check(pyObject)
+#endif
+      ) {
         throw ExceptionPython(ExceptionPython::VALUE_PARSING, "string");
       }
       svalue = obj_to_str(pyObject);
@@ -130,6 +150,10 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
           v(i) = PyFloat_AsDouble(pyDouble);
         else if (PyLong_Check(pyDouble))
           v(i) = (int)PyLong_AsLong(pyDouble) + 0.0;
+#if PY_MAJOR_VERSION == 2
+        else if (PyInt_Check(pyDouble))
+          v(i) = (int)PyInt_AsLong(pyDouble) + 0.0;
+#endif
         else
           throw ExceptionPython(ExceptionPython::VECTOR_PARSING,
                                 "element of vector should be a floating "
