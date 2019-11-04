@@ -1,3 +1,6 @@
+# Test bindings
+ADD_PYTHON_UNIT_TEST("test-bindings" "unitTesting/test_bindings.py" src)
+
 # Test the interpreter
 SET(EXECUTABLE_NAME interpreter-test)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test.cc)
