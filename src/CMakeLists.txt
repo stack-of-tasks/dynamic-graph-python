@@ -33,7 +33,6 @@ SET (PYTHON_SOURCES
     attrpath.py
     entity.py
     signal_base.py
-    matlab.py
     script_shortcuts.py
     tools.py
     )
