@@ -140,7 +140,7 @@ class Entity(object):
         """
         Print the list of signals into standard output: temporary.
         """
-        signals = self.signals()
+        signals = list(self.signals())
         if len(signals) == 0:
             display("--- <" + self.name + "> has no signal")
         else:
