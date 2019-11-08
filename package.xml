@@ -1,0 +1,27 @@
+<package format="2">
+  <name>dynamic_graph_python</name>
+  <version>3.3.2</version>
+  <description>
+    Dynamic graph library Python bindings
+  </description>
+  <maintainer email="ostasse@laas.fr">Olivier Stasse</maintainer>
+  <license>BSDv2</license>
+  
+  <url>http://github.com/stack-of-tasks/dynamic-graph-python</url>
+  <author>Nicolas Mansard</author>
+  <author>Olivier Stasse</author>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>dynamic_graph</build_depend>
+
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>dynamic_graph</exec_depend>
+
+  <build_export_depend>roscpp</build_export_depend>    
+  <build_export_depend>dynamic_graph</build_export_depend>  
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <doc_depend>doxygen</doc_depend>
+  
+</package>
