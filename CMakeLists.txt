@@ -1,17 +1,5 @@
-# Copyright 2010, 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
-#
-# This file is part of dynamic-graph-python.
-# dynamic-graph-python is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# dynamic-graph-python is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# dynamic-graph-python. If not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010, 2019 JRL, CNRS/AIST, LAAS, CNRS
+# See LICENSE file.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
@@ -30,7 +18,15 @@ SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/base.cmake)
-PROJECT(${PROJECT_NAME} CXX)
+
+# Specify the project.
+cmake_policy(SET CMP0048 NEW)
+PROJECT(${PROJECT_NAME}
+  LANGUAGES
+  CXX
+  VERSION
+  ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
+  )
 
 find_package (Boost REQUIRED python filesystem system thread program_options unit_test_framework)
 find_package (Eigen3 REQUIRED NO_MODULE)
@@ -49,7 +45,6 @@ SET(${PROJECT_NAME}_HEADERS
   include/dynamic-graph/python/interpreter.hh
   include/dynamic-graph/python/api.hh
   include/dynamic-graph/python/exception-python.hh
-
 )
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
