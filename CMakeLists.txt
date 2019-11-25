@@ -28,13 +28,14 @@ PROJECT(${PROJECT_NAME}
   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
   )
 
-find_package (Boost REQUIRED python filesystem system thread program_options unit_test_framework)
-find_package (Eigen3 REQUIRED NO_MODULE)
 
 INCLUDE(cmake/pthread.cmake)
 INCLUDE(cmake/cpack.cmake)
 #include(cmake/header.cmake)
 include(cmake/python.cmake)
+
+add_project_dependency(Boost REQUIRED COMPONENTS python)
+add_project_dependency(dynamic-graph 3.0.0 REQUIRED )
 
 
 SET(DOXYGEN_USE_MATHJAX YES)
