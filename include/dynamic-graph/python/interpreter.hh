@@ -16,7 +16,11 @@
 
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
+#pragma GCC diagnostic push
+#pragma GCC system_header
 #include <Python.h>
+#pragma GCC diagnostic pop
+
 #include <string>
 #include "dynamic-graph/python/api.hh"
 #include "dynamic-graph/python/deprecated.hh"
