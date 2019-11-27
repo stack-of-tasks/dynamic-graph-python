@@ -17,7 +17,7 @@ int main(int argc, char ** argv)
   for (int i=0; i<numTest; ++i)
   {
     //correct input
-    interp.python("print \"I am the interpreter\"", result, out, err);
+    interp.python("print (\"I am the interpreter\")", result, out, err);
     //incorrect input
     interp.python("print I am the interpreter", result, out, err);
     // Test that variable dynamic_graph_remote_interpreter is set to True
