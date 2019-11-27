@@ -47,7 +47,8 @@ static const std::string pythonPrefix[5] = {
   "        return s\n"
   "stdout_catcher = StdoutCatcher()\n"
   "import sys\n"
-  "sys.stdout = stdout_catcher"
+  "sys.stdout = stdout_catcher\n"
+  "dynamic_graph_remote_interpreter = True"
 };
 }
 }

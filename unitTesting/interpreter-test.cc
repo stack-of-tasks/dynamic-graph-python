@@ -20,6 +20,13 @@ int main(int argc, char ** argv)
     interp.python("print \"I am the interpreter\"", result, out, err);
     //incorrect input
     interp.python("print I am the interpreter", result, out, err);
+    // Test that variable dynamic_graph_remote_interpreter is set to True
+    interp.python("globals ().has_key (\"dynamic_graph_remote_interpreter\")",
+                  result, out, err);
+    if (result != "True") return -1;
+    interp.python("dynamic_graph_remote_interpreter",
+                  result, out, err);
+    if (result != "True") return -1;
   }
   return 0;
 }
