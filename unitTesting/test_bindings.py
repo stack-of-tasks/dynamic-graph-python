@@ -6,9 +6,9 @@ from custom_entity import CustomEntity
 
 class BindingsTests(unittest.TestCase):
     def test_bindings(self):
-        with self.assertRaises(Exception) as error:
+        with self.assertRaises(Exception) as cm:
             dg.error_out()
-            self.assertEqual(str(error), "something bad happend")
+        self.assertEqual(str(cm.exception), "something bad happened")
 
     def test_type_check(self):
         first = CustomEntity('first_entity')
@@ -16,8 +16,9 @@ class BindingsTests(unittest.TestCase):
         # Check that we can connect first.out to second.in
         dg.plug(first.signal('out_double'), second.signal('in_double'))
         # Check that we can't connect first.out to second
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError) as cm:
             dg.plug(first.signal('out_double'), second)
+        self.assertEqual(str(cm.exception), "PyCapsule_GetPointer called with incorrect name")
 
 
 if __name__ == '__main__':
