@@ -62,7 +62,11 @@ int main(int argc, char** argv) {
   res = testFile("test_python-syntax_error.py",
                  std::string("  File \"test_python-syntax_error.py\", line 2\n"
                              "    hello world\n"
+#if PY_MINOR_VERSION >= 8
+                             "          ^\n"
+#else
                              "              ^\n"
+#endif
                              "SyntaxError: invalid syntax\n"),
                  numTest) &&
         res;
