@@ -40,8 +40,10 @@ PyObject* plug(PyObject* /*self*/, PyObject* args) {
 
   pObjIn = PyCapsule_GetPointer(objIn, "dynamic_graph.Signal");
   SignalBase<int>* signalIn = (SignalBase<int>*)pObjIn;
+  if (signalIn == NULL) return NULL;
   pObjOut = PyCapsule_GetPointer(objOut, "dynamic_graph.Signal");
   SignalBase<int>* signalOut = (SignalBase<int>*)pObjOut;
+  if (signalOut == NULL) return NULL;
   std::ostringstream os;
 
   try {

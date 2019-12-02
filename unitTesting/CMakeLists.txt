@@ -1,5 +1,3 @@
-# Test bindings
-ADD_PYTHON_UNIT_TEST("test-bindings" "unitTesting/test_bindings.py" src)
 
 # Test the interpreter
 SET(EXECUTABLE_NAME interpreter-test)
@@ -59,3 +57,6 @@ TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PUBLIC_KEYWORD} ${LIBRARY_NAME} ${PYTHO
 
 ## Test it
 ADD_PYTHON_UNIT_TEST("test-custom-entity" "unitTesting/test_custom_entity.py" src unitTesting)
+
+# also test other bindings, using this custom entity
+ADD_PYTHON_UNIT_TEST("test-bindings" "unitTesting/test_bindings.py" src unitTesting)
