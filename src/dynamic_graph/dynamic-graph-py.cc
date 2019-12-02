@@ -49,7 +49,8 @@ PyObject* plug(
   if (signalIn == NULL) {
       struct module_state* st = GETSTATE(m);
       std::ostringstream oss;
-      oss << "dgpy.plug in argument must be a dynamic_graph.Signal, not a " << PyCapsule_GetName(objIn);
+      oss << "dynamic_graph.plug(a, b): Argument 'b' must be of type 'dynamic_graph.Signal', but got "
+          << PyCapsule_GetName(objIn);
       PyErr_SetString(st->dgpyError, oss.str().c_str());
       return NULL;
   }
@@ -58,7 +59,8 @@ PyObject* plug(
   if (signalOut == NULL) {
       struct module_state* st = GETSTATE(m);
       std::ostringstream oss;
-      oss << "dgpy.plug out argument must be a dynamic_graph.Signal, not a " << PyCapsule_GetName(objOut);
+      oss << "dynamic_graph.plug(a, b): Argument 'a' must be of type 'dynamic_graph.Signal', but got "
+          << PyCapsule_GetName(objOut);
       PyErr_SetString(st->dgpyError, oss.str().c_str());
       return NULL;
   }

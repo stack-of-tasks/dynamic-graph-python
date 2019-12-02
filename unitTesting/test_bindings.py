@@ -4,6 +4,8 @@ import dynamic_graph as dg
 
 from custom_entity import CustomEntity
 
+ERR = "dynamic_graph.plug(a, b): Argument '%s' must be of type 'dynamic_graph.Signal', but got dynamic_graph.Entity"
+
 
 class BindingsTests(unittest.TestCase):
     def test_bindings(self):
@@ -20,14 +22,12 @@ class BindingsTests(unittest.TestCase):
         # Check that we can't connect first.out to second
         with self.assertRaises(dg.dgpyError) as cm_in:
             dg.plug(first.signal('out_double'), second)
-        self.assertEqual(str(cm_in.exception),
-                         "dgpy.plug in argument must be a dynamic_graph.Signal, not a dynamic_graph.Entity")
+        self.assertEqual(str(cm_in.exception), ERR % 'b')
 
         # Check that we can't connect first to second.in
         with self.assertRaises(dg.dgpyError) as cm_out:
             dg.plug(first, second.signal('in_double'))
-        self.assertEqual(str(cm_out.exception),
-                         "dgpy.plug out argument must be a dynamic_graph.Signal, not a dynamic_graph.Entity")
+        self.assertEqual(str(cm_out.exception), ERR % 'a')
 
 
 if __name__ == '__main__':
