@@ -17,13 +17,7 @@ namespace python {
 /**
    \brief plug a signal into another one.
 */
-PyObject* plug(
-#if PY_MAJOR_VERSION >= 3
-    PyObject* m, PyObject* args
-#else
-    PyObject*, PyObject* args
-#endif
-    ) {
+PyObject* plug(PyObject* /*self*/, PyObject* args) {
   PyObject* objOut = NULL;
   PyObject* objIn = NULL;
   void* pObjOut;
@@ -47,21 +41,19 @@ PyObject* plug(
   pObjIn = PyCapsule_GetPointer(objIn, "dynamic_graph.Signal");
   SignalBase<int>* signalIn = (SignalBase<int>*)pObjIn;
   if (signalIn == NULL) {
-      struct module_state* st = GETSTATE(m);
       std::ostringstream oss;
       oss << "dynamic_graph.plug(a, b): Argument 'b' must be of type 'dynamic_graph.Signal', but got "
           << PyCapsule_GetName(objIn);
-      PyErr_SetString(st->dgpyError, oss.str().c_str());
+      PyErr_SetString(PyExc_TypeError, oss.str().c_str());
       return NULL;
   }
   pObjOut = PyCapsule_GetPointer(objOut, "dynamic_graph.Signal");
   SignalBase<int>* signalOut = (SignalBase<int>*)pObjOut;
   if (signalOut == NULL) {
-      struct module_state* st = GETSTATE(m);
       std::ostringstream oss;
       oss << "dynamic_graph.plug(a, b): Argument 'a' must be of type 'dynamic_graph.Signal', but got "
           << PyCapsule_GetName(objOut);
-      PyErr_SetString(st->dgpyError, oss.str().c_str());
+      PyErr_SetString(PyExc_TypeError, oss.str().c_str());
       return NULL;
   }
   std::ostringstream os;

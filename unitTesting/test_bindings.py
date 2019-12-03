@@ -20,12 +20,12 @@ class BindingsTests(unittest.TestCase):
         dg.plug(first.signal('out_double'), second.signal('in_double'))
 
         # Check that we can't connect first.out to second
-        with self.assertRaises(dg.dgpyError) as cm_in:
+        with self.assertRaises(TypeError) as cm_in:
             dg.plug(first.signal('out_double'), second)
         self.assertEqual(str(cm_in.exception), ERR % 'b')
 
         # Check that we can't connect first to second.in
-        with self.assertRaises(dg.dgpyError) as cm_out:
+        with self.assertRaises(TypeError) as cm_out:
             dg.plug(first, second.signal('in_double'))
         self.assertEqual(str(cm_out.exception), ERR % 'a')
 
