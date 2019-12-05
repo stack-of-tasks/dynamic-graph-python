@@ -17,7 +17,7 @@ namespace python {
 /**
    \brief plug a signal into another one.
 */
-PyObject* plug(PyObject* /*self*/, PyObject* args) {
+PyObject* plug(PyObject* m, PyObject* args) {
   PyObject* objOut = NULL;
   PyObject* objIn = NULL;
   void* pObjOut;
@@ -61,11 +61,11 @@ PyObject* plug(PyObject* /*self*/, PyObject* args) {
   try {
     signalIn->plug(signalOut);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* enableTrace(PyObject* /*self*/, PyObject* args) {
+PyObject* enableTrace(PyObject* m, PyObject* args) {
   PyObject* boolean;
   char* filename = NULL;
 
@@ -82,12 +82,12 @@ PyObject* enableTrace(PyObject* /*self*/, PyObject* args) {
       try {
         DebugTrace::openFile(filename);
       }
-      CATCH_ALL_EXCEPTIONS();
+      CATCH_ALL_EXCEPTIONS(m);
     } else {
       try {
         DebugTrace::closeFile(filename);
       }
-      CATCH_ALL_EXCEPTIONS();
+      CATCH_ALL_EXCEPTIONS(m);
     }
   } else {
     return NULL;

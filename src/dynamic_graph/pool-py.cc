@@ -12,20 +12,20 @@ namespace python {
 
 namespace pool {
 
-PyObject* writeGraph(PyObject* /*self*/, PyObject* args) {
+PyObject* writeGraph(PyObject* m, PyObject* args) {
   char* filename;
   if (!PyArg_ParseTuple(args, "s", &filename)) return NULL;
   try {
     PoolStorage::getInstance()->writeGraph(filename);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
 /**
    \brief Get list of entities
 */
-PyObject* getEntityList(PyObject* /*self*/, PyObject* args) {
+PyObject* getEntityList(PyObject* m, PyObject* args) {
   if (!PyArg_ParseTuple(args, "")) return NULL;
 
   std::vector<std::string> entityNames;
@@ -47,7 +47,7 @@ PyObject* getEntityList(PyObject* /*self*/, PyObject* args) {
     }
     return Py_BuildValue("O", classTuple);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return NULL;
 }
 

@@ -25,7 +25,7 @@ namespace debug {
 
 std::map<std::string, ofstreamShrPtr> mapOfFiles_;
 
-PyObject* addLoggerFileOutputStream(PyObject* /*self*/, PyObject* args) {
+PyObject* addLoggerFileOutputStream(PyObject* m, PyObject* args) {
   char* filename;
   if (!PyArg_ParseTuple(args, "s", &filename)) return NULL;
   std::string sfilename(filename);
@@ -38,49 +38,49 @@ PyObject* addLoggerFileOutputStream(PyObject* /*self*/, PyObject* args) {
     dgRTLOG() << "Added " << filename << " as an output stream \n";
     mapOfFiles_[sfilename] = ofs_shrptr;
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* closeLoggerFileOutputStream(PyObject* /*self*/, PyObject* /*args */) {
+PyObject* closeLoggerFileOutputStream(PyObject* m, PyObject* /*args */) {
   try {
     for (std::map<std::string, ofstreamShrPtr>::iterator it = mapOfFiles_.begin(); it != mapOfFiles_.end(); ++it) {
       it->second->close();
     }
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* addLoggerCoutOutputStream(PyObject* /*self*/, PyObject* /*args*/) {
+PyObject* addLoggerCoutOutputStream(PyObject* m, PyObject* /*args*/) {
   try {
     dgADD_OSTREAM_TO_RTLOG(std::cout);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* realTimeLoggerDestroy(PyObject* /*self*/, PyObject* /*args*/) {
+PyObject* realTimeLoggerDestroy(PyObject* m, PyObject* /*args*/) {
   try {
     RealTimeLogger::destroy();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* realTimeLoggerSpinOnce(PyObject* /*self*/, PyObject* /*args*/) {
+PyObject* realTimeLoggerSpinOnce(PyObject* m, PyObject* /*args*/) {
   try {
     RealTimeLogger::instance().spinOnce();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* realTimeLoggerInstance(PyObject* /*self*/, PyObject* /*args*/) {
+PyObject* realTimeLoggerInstance(PyObject* m, PyObject* /*args*/) {
   try {
     RealTimeLogger::instance();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 

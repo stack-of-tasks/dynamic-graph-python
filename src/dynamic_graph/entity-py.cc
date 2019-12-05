@@ -37,7 +37,7 @@ namespace entity {
 /**
    \brief Create an instance of Entity
 */
-PyObject* create(PyObject* /*self*/, PyObject* args) {
+PyObject* create(PyObject* m, PyObject* args) {
   char* className = NULL;
   char* instanceName = NULL;
 
@@ -51,7 +51,7 @@ PyObject* create(PyObject* /*self*/, PyObject* args) {
                       ",\n"
                       "but this object is of type " +
                       std::string(obj->getClassName()) + " and not " + std::string(className));
-      PyErr_SetString(DGPYERROR, msg.c_str());
+      PyErr_SetString(DGPYERROR(m), msg.c_str());
       return NULL;
     }
   } else /* If not, create a new object. */
@@ -59,7 +59,7 @@ PyObject* create(PyObject* /*self*/, PyObject* args) {
     try {
       obj = dynamicgraph::FactoryStorage::getInstance()->newEntity(std::string(className), std::string(instanceName));
     }
-    CATCH_ALL_EXCEPTIONS();
+    CATCH_ALL_EXCEPTIONS(m);
   }
 
   // Return the pointer as a PyCapsule
@@ -69,7 +69,7 @@ PyObject* create(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Get name of entity
 */
-PyObject* getName(PyObject* /*self*/, PyObject* args) {
+PyObject* getName(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   void* pointer = NULL;
   std::string name;
@@ -86,14 +86,14 @@ PyObject* getName(PyObject* /*self*/, PyObject* args) {
   try {
     name = entity->getName();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("s", name.c_str());
 }
 
 /**
    \brief Get class name of entity
 */
-PyObject* getClassName(PyObject* /*self*/, PyObject* args) {
+PyObject* getClassName(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   void* pointer = NULL;
   std::string name;
@@ -110,14 +110,14 @@ PyObject* getClassName(PyObject* /*self*/, PyObject* args) {
   try {
     name = entity->getClassName();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("s", name.c_str());
 }
 
 /**
    \brief Check if the entity has a signal with the given name
 */
-PyObject* hasSignal(PyObject* /*self*/, PyObject* args) {
+PyObject* hasSignal(PyObject* m, PyObject* args) {
   char* name = NULL;
   PyObject* object = NULL;
   void* pointer = NULL;
@@ -136,7 +136,7 @@ PyObject* hasSignal(PyObject* /*self*/, PyObject* args) {
   try {
     hasSignal = entity->hasSignal(std::string(name));
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   if (hasSignal)
     Py_RETURN_TRUE;
@@ -147,7 +147,7 @@ PyObject* hasSignal(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Get a signal by name
 */
-PyObject* getSignal(PyObject* /*self*/, PyObject* args) {
+PyObject* getSignal(PyObject* m, PyObject* args) {
   char* name = NULL;
   PyObject* object = NULL;
   void* pointer = NULL;
@@ -166,14 +166,14 @@ PyObject* getSignal(PyObject* /*self*/, PyObject* args) {
   try {
     signal = &(entity->getSignal(std::string(name)));
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   // Return the pointer to the signal without destructor since the signal
   // is not owned by the calling object but by the Entity.
   return PyCapsule_New((void*)signal, "dynamic_graph.Signal", NULL);
 }
 
-PyObject* listSignals(PyObject* /*self*/, PyObject* args) {
+PyObject* listSignals(PyObject* m, PyObject* args) {
   void* pointer = NULL;
   PyObject* object = NULL;
 
@@ -198,11 +198,17 @@ PyObject* listSignals(PyObject* /*self*/, PyObject* args) {
     }
     return result;
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return NULL;
 }
 
-PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
+PyObject* executeCommand(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject* , PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   PyObject* argTuple = NULL;
   char* commandName = NULL;
@@ -236,7 +242,7 @@ PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
   if ((unsigned)size != typeVector.size()) {
     std::stringstream ss;
     ss << "command takes " << typeVector.size() << " parameters, " << size << " given.";
-    PyErr_SetString(DGPYERROR, ss.str().c_str());
+    PyErr_SetString(DGPYERROR(m), ss.str().c_str());
     return NULL;
   }
   std::vector<Value> valueVector;
@@ -249,10 +255,10 @@ PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
     } catch (const std::exception& exc) {
       std::stringstream ss;
       ss << "while parsing argument " << iParam + 1 << ": expecting " << exc.what() << ".";
-      PyErr_SetString(DGPYERROR, ss.str().c_str());
+      PyErr_SetString(DGPYERROR(m), ss.str().c_str());
       return NULL;
     } catch (...) {
-      PyErr_SetString(DGPYERROR, "Unknown exception");
+      PyErr_SetString(DGPYERROR(m), "Unknown exception");
       return NULL;
     }
   }
@@ -261,7 +267,7 @@ PyObject* executeCommand(PyObject* /*self*/, PyObject* args) {
     Value result = command->execute();
     return valueToPython(result);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return NULL;
 }
 
@@ -292,7 +298,7 @@ PyObject* listCommands(PyObject* /*self*/, PyObject* args) {
   }
   return result;
 }
-PyObject* getCommandDocstring(PyObject* /*self*/, PyObject* args) {
+PyObject* getCommandDocstring(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   char* commandName;
   if (!PyArg_ParseTuple(args, "Os", &object, &commandName)) {
@@ -301,7 +307,7 @@ PyObject* getCommandDocstring(PyObject* /*self*/, PyObject* args) {
 
   // Retrieve the entity instance
   if (!PyCapsule_CheckExact(object)) {
-    PyErr_SetString(DGPYERROR, "first argument is not an object");
+    PyErr_SetString(DGPYERROR(m), "first argument is not an object");
     return NULL;
   }
   void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
@@ -322,7 +328,7 @@ PyObject* getCommandDocstring(PyObject* /*self*/, PyObject* args) {
   return Py_BuildValue("s", docstring.c_str());
 }
 
-PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
+PyObject* getDocString(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) {
     return NULL;
@@ -330,7 +336,7 @@ PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
 
   // Retrieve the entity instance
   if (!PyCapsule_CheckExact(object)) {
-    PyErr_SetString(DGPYERROR, "first argument is not an object");
+    PyErr_SetString(DGPYERROR(m), "first argument is not an object");
     return NULL;
   }
   void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
@@ -338,20 +344,20 @@ PyObject* getDocString(PyObject* /*self*/, PyObject* args) {
   try {
     return Py_BuildValue("s", entity->getDocString().c_str());
   } catch (const std::exception& exc) {
-    PyErr_SetString(DGPYERROR, exc.what());
+    PyErr_SetString(DGPYERROR(m), exc.what());
     return NULL;
   } catch (...) {
-    PyErr_SetString(DGPYERROR, "Unknown exception");
+    PyErr_SetString(DGPYERROR(m), "Unknown exception");
     return NULL;
   }
   return NULL;
 }
 
-PyObject* display(PyObject* /*self*/, PyObject* args) {
+PyObject* display(PyObject* m, PyObject* args) {
   /* Retrieve the entity instance. */
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object) || (!PyCapsule_CheckExact(object))) {
-    PyErr_SetString(DGPYERROR, "first argument is not an object");
+    PyErr_SetString(DGPYERROR(m), "first argument is not an object");
     return NULL;
   }
   void* pointer = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
@@ -368,7 +374,7 @@ PyObject* display(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Set verbosity Level
 */
-PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
+PyObject* setLoggerVerbosityLevel(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   PyObject* objectVerbosityLevel = NULL;
   if (!PyArg_ParseTuple(args, "OO", &object, &objectVerbosityLevel)) return NULL;
@@ -408,13 +414,13 @@ PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
         break;
     }
   } catch (const std::exception& exc) {
-    PyErr_SetString(DGPYERROR, exc.what());
+    PyErr_SetString(DGPYERROR(m), exc.what());
     return NULL;
   } catch (const char* s) {
-    PyErr_SetString(DGPYERROR, s);
+    PyErr_SetString(DGPYERROR(m), s);
     return NULL;
   } catch (...) {
-    PyErr_SetString(DGPYERROR, "Unknown exception");
+    PyErr_SetString(DGPYERROR(m), "Unknown exception");
     return NULL;
   }
 
@@ -424,7 +430,7 @@ PyObject* setLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Get verbosity Level
 */
-PyObject* getLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
+PyObject* getLoggerVerbosityLevel(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -441,7 +447,7 @@ PyObject* getLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
   try {
     alv = entity->getLoggerVerbosityLevel();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   int ares = (int)alv;
   return Py_BuildValue("i", ares);
@@ -450,7 +456,7 @@ PyObject* getLoggerVerbosityLevel(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Get stream print period
 */
-PyObject* getStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
+PyObject* getStreamPrintPeriod(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -467,7 +473,7 @@ PyObject* getStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
   try {
     r = entity->getStreamPrintPeriod();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   return Py_BuildValue("d", r);
 }
@@ -475,7 +481,7 @@ PyObject* getStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Set print period
 */
-PyObject* setStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
+PyObject* setStreamPrintPeriod(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   double streamPrintPeriod = 0;
   if (!PyArg_ParseTuple(args, "Od", &object, &streamPrintPeriod)) return NULL;
@@ -493,13 +499,13 @@ PyObject* setStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
     entity->setStreamPrintPeriod(streamPrintPeriod);
 
   } catch (const std::exception& exc) {
-    PyErr_SetString(DGPYERROR, exc.what());
+    PyErr_SetString(DGPYERROR(m), exc.what());
     return NULL;
   } catch (const char* s) {
-    PyErr_SetString(DGPYERROR, s);
+    PyErr_SetString(DGPYERROR(m), s);
     return NULL;
   } catch (...) {
-    PyErr_SetString(DGPYERROR, "Unknown exception");
+    PyErr_SetString(DGPYERROR(m), "Unknown exception");
     return NULL;
   }
 
@@ -509,7 +515,7 @@ PyObject* setStreamPrintPeriod(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Get stream print period
 */
-PyObject* getTimeSample(PyObject* /*self*/, PyObject* args) {
+PyObject* getTimeSample(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -526,7 +532,7 @@ PyObject* getTimeSample(PyObject* /*self*/, PyObject* args) {
   try {
     r = entity->getTimeSample();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   return Py_BuildValue("d", r);
 }
@@ -534,7 +540,7 @@ PyObject* getTimeSample(PyObject* /*self*/, PyObject* args) {
 /**
    \brief Set time sample
 */
-PyObject* setTimeSample(PyObject* /*self*/, PyObject* args) {
+PyObject* setTimeSample(PyObject* m, PyObject* args) {
   PyObject* object = NULL;
   double timeSample;
   if (!PyArg_ParseTuple(args, "Od", &object, &timeSample)) return NULL;
@@ -552,13 +558,13 @@ PyObject* setTimeSample(PyObject* /*self*/, PyObject* args) {
     entity->setTimeSample(timeSample);
 
   } catch (const std::exception& exc) {
-    PyErr_SetString(DGPYERROR, exc.what());
+    PyErr_SetString(DGPYERROR(m), exc.what());
     return NULL;
   } catch (const char* s) {
-    PyErr_SetString(DGPYERROR, s);
+    PyErr_SetString(DGPYERROR(m), s);
     return NULL;
   } catch (...) {
-    PyErr_SetString(DGPYERROR, "Unknown exception");
+    PyErr_SetString(DGPYERROR(m), "Unknown exception");
     return NULL;
   }
 
