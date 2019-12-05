@@ -32,6 +32,10 @@ namespace python {
 
 using namespace convert;
 
+#if PY_MAJOR_VERSION == 2
+  extern PyObject* dgpyError;
+# endif
+
 namespace entity {
 
 /**

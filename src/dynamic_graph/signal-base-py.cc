@@ -21,6 +21,10 @@ using dynamicgraph::SignalBase;
 namespace dynamicgraph {
 namespace python {
 
+#if PY_MAJOR_VERSION == 2
+  extern PyObject* dgpyError;
+# endif
+
 using namespace convert;
 
 namespace signalBase {

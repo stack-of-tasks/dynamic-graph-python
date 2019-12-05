@@ -21,6 +21,10 @@ typedef boost::shared_ptr<std::ofstream> ofstreamShrPtr;
 namespace dynamicgraph {
 namespace python {
 
+#if PY_MAJOR_VERSION == 2
+  extern PyObject* dgpyError;
+# endif
+
 namespace debug {
 
 std::map<std::string, ofstreamShrPtr> mapOfFiles_;
