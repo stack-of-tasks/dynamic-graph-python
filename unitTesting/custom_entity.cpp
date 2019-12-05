@@ -8,11 +8,12 @@
 #include <sstream>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/exception-factory.h>
-#include "dynamic-graph/factory.h"
-#include "dynamic-graph/pool.h"
+#include <dynamic-graph/factory.h>
+#include <dynamic-graph/pool.h>
 #include <dynamic-graph/real-time-logger.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+#include <dynamic-graph/command-bind.h>
 
 namespace dynamicgraph {
 class CustomEntity : public Entity {
@@ -30,6 +31,11 @@ class CustomEntity : public Entity {
 
   {
     addSignal();
+
+    using namespace dynamicgraph::command;
+
+    this->addCommand("act", makeCommandVoid0( *this, &CustomEntity::act,
+          docCommandVoid0( "act on input signal")));
   }
 
   void addSignal() { signalRegistration(m_sigdSIN << m_sigdTimeDepSOUT); }
@@ -55,6 +61,10 @@ class CustomEntity : public Entity {
     sendMsg("This is a message of level MSG_TYPE_ERROR_STREAM", MSG_TYPE_ERROR_STREAM, __FILE__, __LINE__);
     sendMsg("end update", MSG_TYPE_ERROR, __FILE__, __LINE__);
     return res;
+  }
+
+  void act() {
+    m_sigdSIN.accessCopy();
   }
 };
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(CustomEntity, "CustomEntity");
