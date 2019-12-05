@@ -1,7 +1,10 @@
 import unittest
 
 import dynamic_graph as dg
+
 from custom_entity import CustomEntity
+
+ERR = "dynamic_graph.plug(a, b): Argument '%s' must be of type 'dynamic_graph.Signal', but got dynamic_graph.Entity"
 
 
 class BindingsTests(unittest.TestCase):
@@ -15,10 +18,16 @@ class BindingsTests(unittest.TestCase):
         second = CustomEntity('second_entity')
         # Check that we can connect first.out to second.in
         dg.plug(first.signal('out_double'), second.signal('in_double'))
+
         # Check that we can't connect first.out to second
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(TypeError) as cm_in:
             dg.plug(first.signal('out_double'), second)
-        self.assertEqual(str(cm.exception), "PyCapsule_GetPointer called with incorrect name")
+        self.assertEqual(str(cm_in.exception), ERR % 'b')
+
+        # Check that we can't connect first to second.in
+        with self.assertRaises(TypeError) as cm_out:
+            dg.plug(first, second.signal('in_double'))
+        self.assertEqual(str(cm_out.exception), ERR % 'a')
 
 
 if __name__ == '__main__':

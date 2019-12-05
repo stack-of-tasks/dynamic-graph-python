@@ -40,10 +40,22 @@ PyObject* plug(PyObject* /*self*/, PyObject* args) {
 
   pObjIn = PyCapsule_GetPointer(objIn, "dynamic_graph.Signal");
   SignalBase<int>* signalIn = (SignalBase<int>*)pObjIn;
-  if (signalIn == NULL) return NULL;
+  if (signalIn == NULL) {
+      std::ostringstream oss;
+      oss << "dynamic_graph.plug(a, b): Argument 'b' must be of type 'dynamic_graph.Signal', but got "
+          << PyCapsule_GetName(objIn);
+      PyErr_SetString(PyExc_TypeError, oss.str().c_str());
+      return NULL;
+  }
   pObjOut = PyCapsule_GetPointer(objOut, "dynamic_graph.Signal");
   SignalBase<int>* signalOut = (SignalBase<int>*)pObjOut;
-  if (signalOut == NULL) return NULL;
+  if (signalOut == NULL) {
+      std::ostringstream oss;
+      oss << "dynamic_graph.plug(a, b): Argument 'a' must be of type 'dynamic_graph.Signal', but got "
+          << PyCapsule_GetName(objOut);
+      PyErr_SetString(PyExc_TypeError, oss.str().c_str());
+      return NULL;
+  }
   std::ostringstream os;
 
   try {
@@ -121,6 +133,14 @@ void initwrap(void)
   if (st->dgpyError == NULL) {
     Py_DECREF(module);
     INITERROR;
+  }
+
+  Py_XINCREF(st->dgpyError);
+  if (PyModule_AddObject(module, "dgpyError", st->dgpyError) < 0) {
+    Py_XDECREF(st->dgpyError);
+    Py_CLEAR(st->dgpyError);
+    Py_DECREF(module);
+    return NULL;
   }
 
 #if PY_MAJOR_VERSION >= 3
