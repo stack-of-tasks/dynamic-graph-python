@@ -17,7 +17,13 @@ namespace python {
 /**
    \brief plug a signal into another one.
 */
-PyObject* plug(PyObject* m, PyObject* args) {
+PyObject* plug(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* objOut = NULL;
   PyObject* objIn = NULL;
   void* pObjOut;
@@ -65,7 +71,13 @@ PyObject* plug(PyObject* m, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* enableTrace(PyObject* m, PyObject* args) {
+PyObject* enableTrace(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* boolean;
   char* filename = NULL;
 
@@ -140,7 +152,7 @@ void initwrap(void)
     Py_XDECREF(st->dgpyError);
     Py_CLEAR(st->dgpyError);
     Py_DECREF(module);
-    return NULL;
+    INITERROR;
   }
 
 #if PY_MAJOR_VERSION >= 3

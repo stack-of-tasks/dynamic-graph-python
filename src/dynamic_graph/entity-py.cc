@@ -37,7 +37,13 @@ namespace entity {
 /**
    \brief Create an instance of Entity
 */
-PyObject* create(PyObject* m, PyObject* args) {
+PyObject* create(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   char* className = NULL;
   char* instanceName = NULL;
 
@@ -69,7 +75,13 @@ PyObject* create(PyObject* m, PyObject* args) {
 /**
    \brief Get name of entity
 */
-PyObject* getName(PyObject* m, PyObject* args) {
+PyObject* getName(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   void* pointer = NULL;
   std::string name;
@@ -93,7 +105,13 @@ PyObject* getName(PyObject* m, PyObject* args) {
 /**
    \brief Get class name of entity
 */
-PyObject* getClassName(PyObject* m, PyObject* args) {
+PyObject* getClassName(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   void* pointer = NULL;
   std::string name;
@@ -117,7 +135,13 @@ PyObject* getClassName(PyObject* m, PyObject* args) {
 /**
    \brief Check if the entity has a signal with the given name
 */
-PyObject* hasSignal(PyObject* m, PyObject* args) {
+PyObject* hasSignal(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   char* name = NULL;
   PyObject* object = NULL;
   void* pointer = NULL;
@@ -147,7 +171,13 @@ PyObject* hasSignal(PyObject* m, PyObject* args) {
 /**
    \brief Get a signal by name
 */
-PyObject* getSignal(PyObject* m, PyObject* args) {
+PyObject* getSignal(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   char* name = NULL;
   PyObject* object = NULL;
   void* pointer = NULL;
@@ -173,7 +203,13 @@ PyObject* getSignal(PyObject* m, PyObject* args) {
   return PyCapsule_New((void*)signal, "dynamic_graph.Signal", NULL);
 }
 
-PyObject* listSignals(PyObject* m, PyObject* args) {
+PyObject* listSignals(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
 
@@ -298,7 +334,13 @@ PyObject* listCommands(PyObject* /*self*/, PyObject* args) {
   }
   return result;
 }
-PyObject* getCommandDocstring(PyObject* m, PyObject* args) {
+PyObject* getCommandDocstring(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   char* commandName;
   if (!PyArg_ParseTuple(args, "Os", &object, &commandName)) {
@@ -328,7 +370,13 @@ PyObject* getCommandDocstring(PyObject* m, PyObject* args) {
   return Py_BuildValue("s", docstring.c_str());
 }
 
-PyObject* getDocString(PyObject* m, PyObject* args) {
+PyObject* getDocString(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) {
     return NULL;
@@ -353,7 +401,13 @@ PyObject* getDocString(PyObject* m, PyObject* args) {
   return NULL;
 }
 
-PyObject* display(PyObject* m, PyObject* args) {
+PyObject* display(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   /* Retrieve the entity instance. */
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object) || (!PyCapsule_CheckExact(object))) {
@@ -374,7 +428,13 @@ PyObject* display(PyObject* m, PyObject* args) {
 /**
    \brief Set verbosity Level
 */
-PyObject* setLoggerVerbosityLevel(PyObject* m, PyObject* args) {
+PyObject* setLoggerVerbosityLevel(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   PyObject* objectVerbosityLevel = NULL;
   if (!PyArg_ParseTuple(args, "OO", &object, &objectVerbosityLevel)) return NULL;
@@ -430,7 +490,13 @@ PyObject* setLoggerVerbosityLevel(PyObject* m, PyObject* args) {
 /**
    \brief Get verbosity Level
 */
-PyObject* getLoggerVerbosityLevel(PyObject* m, PyObject* args) {
+PyObject* getLoggerVerbosityLevel(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -456,7 +522,13 @@ PyObject* getLoggerVerbosityLevel(PyObject* m, PyObject* args) {
 /**
    \brief Get stream print period
 */
-PyObject* getStreamPrintPeriod(PyObject* m, PyObject* args) {
+PyObject* getStreamPrintPeriod(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -481,7 +553,13 @@ PyObject* getStreamPrintPeriod(PyObject* m, PyObject* args) {
 /**
    \brief Set print period
 */
-PyObject* setStreamPrintPeriod(PyObject* m, PyObject* args) {
+PyObject* setStreamPrintPeriod(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   double streamPrintPeriod = 0;
   if (!PyArg_ParseTuple(args, "Od", &object, &streamPrintPeriod)) return NULL;
@@ -515,7 +593,13 @@ PyObject* setStreamPrintPeriod(PyObject* m, PyObject* args) {
 /**
    \brief Get stream print period
 */
-PyObject* getTimeSample(PyObject* m, PyObject* args) {
+PyObject* getTimeSample(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -540,7 +624,13 @@ PyObject* getTimeSample(PyObject* m, PyObject* args) {
 /**
    \brief Set time sample
 */
-PyObject* setTimeSample(PyObject* m, PyObject* args) {
+PyObject* setTimeSample(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* object = NULL;
   double timeSample;
   if (!PyArg_ParseTuple(args, "Od", &object, &timeSample)) return NULL;

@@ -57,7 +57,9 @@ PythonSignalContainer* getPythonSignalContainer() {
   const std::string instanceName = "python_signals";
   const std::string className = "PythonSignalContainer";
   Entity* obj;
+#if PY_MAJOR_VERSION >= 3
   PyObject* m = PyState_FindModule(&dynamicgraph::python::dynamicGraphModuleDef);
+#endif
   if (PoolStorage::getInstance()->existEntity(instanceName, obj)) {
     if (obj->getClassName() != className) {
       std::string msg("Found an object named " + std::string(instanceName) +
@@ -84,7 +86,13 @@ PythonSignalContainer* getPythonSignalContainer() {
 /**
    \brief Create an instance of SignalWrapper
 */
-PyObject* createSignalWrapper(PyObject* m, PyObject* args) {
+PyObject* createSignalWrapper(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PythonSignalContainer* psc = getPythonSignalContainer();
   if (psc == NULL) return NULL;
 
@@ -141,7 +149,13 @@ PyObject* getTime(PyObject* /*self*/, PyObject* args) {
   return Py_BuildValue("i", time);
 }
 
-PyObject* setTime(PyObject* m, PyObject* args) {
+PyObject* setTime(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   int time;
@@ -158,7 +172,13 @@ PyObject* setTime(PyObject* m, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* display(PyObject* m, PyObject* args) {
+PyObject* display(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -176,7 +196,13 @@ PyObject* display(PyObject* m, PyObject* args) {
   return Py_BuildValue("s", oss.str().c_str());
 }
 
-PyObject* displayDependencies(PyObject* m, PyObject* args) {
+PyObject* displayDependencies(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   int time;
@@ -194,7 +220,13 @@ PyObject* displayDependencies(PyObject* m, PyObject* args) {
   return Py_BuildValue("s", oss.str().c_str());
 }
 
-PyObject* getValue(PyObject* m, PyObject* args) {
+PyObject* getValue(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -288,7 +320,13 @@ PyObject* getValue(PyObject* m, PyObject* args) {
   return Py_BuildValue("s", valueString.c_str());
 }
 
-PyObject* getName(PyObject* m, PyObject* args) {
+PyObject* getName(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -306,7 +344,13 @@ PyObject* getName(PyObject* m, PyObject* args) {
   return Py_BuildValue("s", name.c_str());
 }
 
-PyObject* getClassName(PyObject* m, PyObject* args) {
+PyObject* getClassName(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -324,7 +368,13 @@ PyObject* getClassName(PyObject* m, PyObject* args) {
   return Py_BuildValue("s", name.c_str());
 }
 
-PyObject* setValue(PyObject* m, PyObject* args) {
+PyObject* setValue(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   char* valueString = NULL;
@@ -345,7 +395,13 @@ PyObject* setValue(PyObject* m, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* recompute(PyObject* m, PyObject* args) {
+PyObject* recompute(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   unsigned int time;
@@ -361,7 +417,13 @@ PyObject* recompute(PyObject* m, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* unplug(PyObject* m, PyObject* args) {
+PyObject* unplug(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -376,7 +438,13 @@ PyObject* unplug(PyObject* m, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* isPlugged(PyObject* m, PyObject* args) {
+PyObject* isPlugged(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -395,7 +463,13 @@ PyObject* isPlugged(PyObject* m, PyObject* args) {
     return PyBool_FromLong(0);
 }
 
-PyObject* getPlugged(PyObject* m, PyObject* args) {
+PyObject* getPlugged(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;

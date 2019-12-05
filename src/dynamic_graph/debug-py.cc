@@ -25,7 +25,13 @@ namespace debug {
 
 std::map<std::string, ofstreamShrPtr> mapOfFiles_;
 
-PyObject* addLoggerFileOutputStream(PyObject* m, PyObject* args) {
+PyObject* addLoggerFileOutputStream(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   char* filename;
   if (!PyArg_ParseTuple(args, "s", &filename)) return NULL;
   std::string sfilename(filename);
@@ -42,7 +48,13 @@ PyObject* addLoggerFileOutputStream(PyObject* m, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* closeLoggerFileOutputStream(PyObject* m, PyObject* /*args */) {
+PyObject* closeLoggerFileOutputStream(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject*
+#else
+    PyObject*, PyObject*
+#endif
+    ) {
   try {
     for (std::map<std::string, ofstreamShrPtr>::iterator it = mapOfFiles_.begin(); it != mapOfFiles_.end(); ++it) {
       it->second->close();
@@ -52,7 +64,13 @@ PyObject* closeLoggerFileOutputStream(PyObject* m, PyObject* /*args */) {
   return Py_BuildValue("");
 }
 
-PyObject* addLoggerCoutOutputStream(PyObject* m, PyObject* /*args*/) {
+PyObject* addLoggerCoutOutputStream(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject*
+#else
+    PyObject*, PyObject*
+#endif
+    ) {
   try {
     dgADD_OSTREAM_TO_RTLOG(std::cout);
   }
@@ -60,7 +78,13 @@ PyObject* addLoggerCoutOutputStream(PyObject* m, PyObject* /*args*/) {
   return Py_BuildValue("");
 }
 
-PyObject* realTimeLoggerDestroy(PyObject* m, PyObject* /*args*/) {
+PyObject* realTimeLoggerDestroy(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject*
+#else
+    PyObject*, PyObject*
+#endif
+    ) {
   try {
     RealTimeLogger::destroy();
   }
@@ -68,7 +92,13 @@ PyObject* realTimeLoggerDestroy(PyObject* m, PyObject* /*args*/) {
   return Py_BuildValue("");
 }
 
-PyObject* realTimeLoggerSpinOnce(PyObject* m, PyObject* /*args*/) {
+PyObject* realTimeLoggerSpinOnce(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject*
+#else
+    PyObject*, PyObject*
+#endif
+    ) {
   try {
     RealTimeLogger::instance().spinOnce();
   }
@@ -76,7 +106,13 @@ PyObject* realTimeLoggerSpinOnce(PyObject* m, PyObject* /*args*/) {
   return Py_BuildValue("");
 }
 
-PyObject* realTimeLoggerInstance(PyObject* m, PyObject* /*args*/) {
+PyObject* realTimeLoggerInstance(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject*
+#else
+    PyObject*, PyObject*
+#endif
+    ) {
   try {
     RealTimeLogger::instance();
   }
