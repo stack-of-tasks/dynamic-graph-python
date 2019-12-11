@@ -10,22 +10,38 @@
 namespace dynamicgraph {
 namespace python {
 
+#if PY_MAJOR_VERSION == 2
+  extern PyObject* dgpyError;
+# endif
+
 namespace pool {
 
-PyObject* writeGraph(PyObject* /*self*/, PyObject* args) {
+PyObject* writeGraph(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   char* filename;
   if (!PyArg_ParseTuple(args, "s", &filename)) return NULL;
   try {
     PoolStorage::getInstance()->writeGraph(filename);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
 /**
    \brief Get list of entities
 */
-PyObject* getEntityList(PyObject* /*self*/, PyObject* args) {
+PyObject* getEntityList(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+  ) {
   if (!PyArg_ParseTuple(args, "")) return NULL;
 
   std::vector<std::string> entityNames;
@@ -47,7 +63,7 @@ PyObject* getEntityList(PyObject* /*self*/, PyObject* args) {
     }
     return Py_BuildValue("O", classTuple);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return NULL;
 }
 

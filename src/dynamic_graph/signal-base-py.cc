@@ -21,6 +21,10 @@ using dynamicgraph::SignalBase;
 namespace dynamicgraph {
 namespace python {
 
+#if PY_MAJOR_VERSION == 2
+  extern PyObject* dgpyError;
+# endif
+
 using namespace convert;
 
 namespace signalBase {
@@ -57,20 +61,23 @@ PythonSignalContainer* getPythonSignalContainer() {
   const std::string instanceName = "python_signals";
   const std::string className = "PythonSignalContainer";
   Entity* obj;
+#if PY_MAJOR_VERSION >= 3
+  PyObject* m = PyState_FindModule(&dynamicgraph::python::dynamicGraphModuleDef);
+#endif
   if (PoolStorage::getInstance()->existEntity(instanceName, obj)) {
     if (obj->getClassName() != className) {
       std::string msg("Found an object named " + std::string(instanceName) +
                       ",\n"
                       "but this object is of type " +
                       std::string(obj->getClassName()) + " and not " + std::string(className));
-      PyErr_SetString(DGPYERROR, msg.c_str());
+      PyErr_SetString(DGPYERROR(m), msg.c_str());
       return NULL;
     }
   } else {
     try {
       obj = FactoryStorage::getInstance()->newEntity(std::string(className), std::string(instanceName));
     }
-    CATCH_ALL_EXCEPTIONS();
+    CATCH_ALL_EXCEPTIONS(m);
   }
   return dynamic_cast<PythonSignalContainer*>(obj);
 }
@@ -83,7 +90,13 @@ PythonSignalContainer* getPythonSignalContainer() {
 /**
    \brief Create an instance of SignalWrapper
 */
-PyObject* createSignalWrapper(PyObject* /*self*/, PyObject* args) {
+PyObject* createSignalWrapper(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PythonSignalContainer* psc = getPythonSignalContainer();
   if (psc == NULL) return NULL;
 
@@ -109,7 +122,7 @@ PyObject* createSignalWrapper(PyObject* /*self*/, PyObject* args) {
   }
 
   if (obj == NULL) {
-    PyErr_SetString(DGPYERROR, error.c_str());
+    PyErr_SetString(DGPYERROR(m), error.c_str());
     return NULL;
   }
   // Register signal into the python signal container
@@ -140,13 +153,19 @@ PyObject* getTime(PyObject* /*self*/, PyObject* args) {
   return Py_BuildValue("i", time);
 }
 
-PyObject* setTime(PyObject* /*self*/, PyObject* args) {
+PyObject* setTime(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   int time;
   if (!PyArg_ParseTuple(args, "Oi", &object, &time)) return NULL;
   if (!PyCapsule_CheckExact(object)) {
-    PyErr_SetString(DGPYERROR, "object should be a C object");
+    PyErr_SetString(DGPYERROR(m), "object should be a C object");
     return NULL;
   }
 
@@ -157,7 +176,13 @@ PyObject* setTime(PyObject* /*self*/, PyObject* args) {
   return Py_BuildValue("");
 }
 
-PyObject* display(PyObject* /*self*/, PyObject* args) {
+PyObject* display(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -170,12 +195,18 @@ PyObject* display(PyObject* /*self*/, PyObject* args) {
   try {
     obj->display(oss);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   return Py_BuildValue("s", oss.str().c_str());
 }
 
-PyObject* displayDependencies(PyObject* /*self*/, PyObject* args) {
+PyObject* displayDependencies(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   int time;
@@ -189,11 +220,17 @@ PyObject* displayDependencies(PyObject* /*self*/, PyObject* args) {
   try {
     obj->displayDependencies(oss, time);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("s", oss.str().c_str());
 }
 
-PyObject* getValue(PyObject* /*self*/, PyObject* args) {
+PyObject* getValue(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -274,20 +311,26 @@ PyObject* getValue(PyObject* /*self*/, PyObject* args) {
       return Py_BuildValue("d", sigdouble->accessCopy());
     }
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   /* Non specific signal: use a generic way. */
   std::ostringstream value;
   try {
     signal->get(value);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   std::string valueString = value.str();
   return Py_BuildValue("s", valueString.c_str());
 }
 
-PyObject* getName(PyObject* /*self*/, PyObject* args) {
+PyObject* getName(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -300,12 +343,18 @@ PyObject* getName(PyObject* /*self*/, PyObject* args) {
   try {
     name = signal->getName();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   return Py_BuildValue("s", name.c_str());
 }
 
-PyObject* getClassName(PyObject* /*self*/, PyObject* args) {
+PyObject* getClassName(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -318,12 +367,18 @@ PyObject* getClassName(PyObject* /*self*/, PyObject* args) {
   try {
     signal->getClassName(name);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
 
   return Py_BuildValue("s", name.c_str());
 }
 
-PyObject* setValue(PyObject* /*self*/, PyObject* args) {
+PyObject* setValue(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   char* valueString = NULL;
@@ -340,11 +395,17 @@ PyObject* setValue(PyObject* /*self*/, PyObject* args) {
   try {
     signal->set(value);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* recompute(PyObject* /*self*/, PyObject* args) {
+PyObject* recompute(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   unsigned int time;
@@ -356,11 +417,17 @@ PyObject* recompute(PyObject* /*self*/, PyObject* args) {
   try {
     signal->recompute(time);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* unplug(PyObject* /*self*/, PyObject* args) {
+PyObject* unplug(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -371,11 +438,17 @@ PyObject* unplug(PyObject* /*self*/, PyObject* args) {
   try {
     signal->unplug();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* isPlugged(PyObject*, PyObject* args) {
+PyObject* isPlugged(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -387,14 +460,20 @@ PyObject* isPlugged(PyObject*, PyObject* args) {
   try {
     plugged = signal->isPlugged();
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   if (plugged)
     return PyBool_FromLong(1);
   else
     return PyBool_FromLong(0);
 }
 
-PyObject* getPlugged(PyObject*, PyObject* args) {
+PyObject* getPlugged(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -411,7 +490,7 @@ PyObject* getPlugged(PyObject*, PyObject* args) {
       throw std::runtime_error(msg);
     }
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   // Return the pointer to the signal without destructor since the signal
   // is not owned by the calling object.
   return PyCapsule_New((void*)otherSignal, "dynamic_graph.Signal", NULL);

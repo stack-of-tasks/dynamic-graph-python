@@ -14,10 +14,20 @@
 namespace dynamicgraph {
 namespace python {
 
+#if PY_MAJOR_VERSION == 2
+  PyObject* dgpyError;
+# endif
+
 /**
    \brief plug a signal into another one.
 */
-PyObject* plug(PyObject* /*self*/, PyObject* args) {
+PyObject* plug(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* objOut = NULL;
   PyObject* objIn = NULL;
   void* pObjOut;
@@ -61,11 +71,17 @@ PyObject* plug(PyObject* /*self*/, PyObject* args) {
   try {
     signalIn->plug(signalOut);
   }
-  CATCH_ALL_EXCEPTIONS();
+  CATCH_ALL_EXCEPTIONS(m);
   return Py_BuildValue("");
 }
 
-PyObject* enableTrace(PyObject* /*self*/, PyObject* args) {
+PyObject* enableTrace(
+#if PY_MAJOR_VERSION >= 3
+    PyObject* m, PyObject* args
+#else
+    PyObject*, PyObject* args
+#endif
+    ) {
   PyObject* boolean;
   char* filename = NULL;
 
@@ -82,12 +98,12 @@ PyObject* enableTrace(PyObject* /*self*/, PyObject* args) {
       try {
         DebugTrace::openFile(filename);
       }
-      CATCH_ALL_EXCEPTIONS();
+      CATCH_ALL_EXCEPTIONS(m);
     } else {
       try {
         DebugTrace::closeFile(filename);
       }
-      CATCH_ALL_EXCEPTIONS();
+      CATCH_ALL_EXCEPTIONS(m);
     }
   } else {
     return NULL;
@@ -102,8 +118,7 @@ PyObject* error_out(
     PyObject*, PyObject*
 #endif
 ) {
-  struct module_state* st = GETSTATE(m);
-  PyErr_SetString(st->dgpyError, "something bad happened");
+  PyErr_SetString(DGPYERROR(m), "something bad happened");
   return NULL;
 }
 
@@ -121,30 +136,29 @@ void initwrap(void)
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
-  PyObject* module = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
+  PyObject* m = PyModule_Create(&dynamicgraph::python::dynamicGraphModuleDef);
 #else
-  PyObject* module = Py_InitModule("wrap", dynamicgraph::python::dynamicGraphMethods);
+  PyObject* m = Py_InitModule("wrap", dynamicgraph::python::dynamicGraphMethods);
 #endif
 
-  if (module == NULL) INITERROR;
-  struct dynamicgraph::python::module_state* st = GETSTATE(module);
+  if (m == NULL) INITERROR;
 
-  st->dgpyError = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
-  if (st->dgpyError == NULL) {
-    Py_DECREF(module);
+  DGPYERROR(m) = PyErr_NewException(const_cast<char*>("dynamic_graph.dgpyError"), NULL, NULL);
+  if (DGPYERROR(m) == NULL) {
+    Py_DECREF(m);
     INITERROR;
   }
 
-  Py_XINCREF(st->dgpyError);
-  if (PyModule_AddObject(module, "dgpyError", st->dgpyError) < 0) {
-    Py_XDECREF(st->dgpyError);
-    Py_CLEAR(st->dgpyError);
-    Py_DECREF(module);
-    return NULL;
+  Py_XINCREF(DGPYERROR(m));
+  if (PyModule_AddObject(m, "dgpyError", DGPYERROR(m)) < 0) {
+    Py_XDECREF(DGPYERROR(m));
+    Py_CLEAR(DGPYERROR(m));
+    Py_DECREF(m);
+    INITERROR;
   }
 
 #if PY_MAJOR_VERSION >= 3
-  return module;
+  return m;
 #endif
 }
 
