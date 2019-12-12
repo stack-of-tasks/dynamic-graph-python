@@ -260,13 +260,15 @@ class Entity(object):
 
     def setLoggerVerbosityLevel(self, verbosity):
         """
-        Specify for the entity the verbosity level
+        Specify for the entity the verbosity level.
+        - param verbosity should be one of the attribute of the enum
+                dynamic_graph.entity.VerbosityLevel
         """
         return wrap.entity_set_logger_verbosity(self.obj, verbosity)
 
     def getLoggerVerbosityLevel(self):
         """
-        Returns the entity's verbosity level
+        Returns the entity's verbosity level (as a dynamic_graph.entity.VerbosityLevel)
         """
         r = wrap.entity_get_logger_verbosity(self.obj)
         if r == 0:
