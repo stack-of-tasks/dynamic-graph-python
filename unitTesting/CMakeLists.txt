@@ -1,6 +1,3 @@
-#
-#  Copyright
-#
 
 INCLUDE(CTest)
 
@@ -9,7 +6,7 @@ INCLUDE(CTest)
 #INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} ${PYTHON_LIBRARY_DIRS})
 
-ADD_DEFINITIONS(-DDEBUG=2)
+#ADD_DEFINITIONS(-DDEBUG=2)
 
 # provide path to library libdynamic-graph.so
 LINK_DIRECTORIES(${DYNAMIC_GRAPH_LIBRARY_DIRS})
@@ -21,42 +18,49 @@ LINK_DIRECTORIES(${${PROJECT_NAME}_BINARY_DIR}/src)
 ADD_DEFINITIONS(${DYNAMIC_GRAPH_CFLAGS})
 
 
+# Test the interpreter
 SET(EXECUTABLE_NAME interpreter-test)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test.cc)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-graph-python)
+TARGET_INCLUDE_DIRECTORIES(${EXECUTABLE_NAME}
+  PRIVATE ${PYTHON_INCLUDE_DIR})
 ADD_TEST(${EXECUTABLE_NAME}  ${EXECUTABLE_NAME})
 
-
-## Test runfile
+# Test runfile
 SET(EXECUTABLE_NAME interpreter-test-runfile)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test-runfile.cc)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-graph-python)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${PYTHON_LIBRARY})
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${Boost_LIBRARIES})
+TARGET_INCLUDE_DIRECTORIES(${EXECUTABLE_NAME}
+  PRIVATE ${PYTHON_INCLUDE_DIR})
+
 ADD_TEST(${EXECUTABLE_NAME}  ${EXECUTABLE_NAME})
 
 ADD_CUSTOM_COMMAND(TARGET interpreter-test-runfile POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-ok.py
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/unitTesting/test_python-ok.py
   ${CMAKE_BINARY_DIR}/unitTesting
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-name_error.py
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/unitTesting/test_python-name_error.py
   ${CMAKE_BINARY_DIR}/unitTesting
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-syntax_error.py
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/unitTesting/test_python-syntax_error.py
   ${CMAKE_BINARY_DIR}/unitTesting
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/unitTesting/test_python-restart_interpreter.py
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/unitTesting/test_python-restart_interpreter.py
   ${CMAKE_BINARY_DIR}/unitTesting
 )
 
-#### Build entity library ####
-set(LIBRARY_NAME custom_entity)
-ADD_LIBRARY(${LIBRARY_NAME} SHARED ${LIBRARY_NAME}.cpp)
 
-#remove the "lib" prefix from the publig output name
-SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES PREFIX "")
+# Test the module generation
+## Create an entity
 
 MESSAGE(STATUS "dynamic_graph_plugindir: ${DYNAMIC_GRAPH_PLUGINDIR}")
 
 SET_TARGET_PROPERTIES(${LIBRARY_NAME}
   PROPERTIES
+  PREFIX ""
   SOVERSION ${PROJECT_VERSION}
   INSTALL_RPATH ${DYNAMIC_GRAPH_PLUGINDIR})
 
@@ -65,46 +69,39 @@ target_link_libraries(${LIBRARY_NAME} dynamic-graph::dynamic-graph)
 
 #PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
 
-STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${LIBRARY_NAME})
-MESSAGE(STATUS "dynamic_graph_plugindir: ${DYNAMIC_GRAPH_PLUGINDIR}")
+# ## Create its bindings
+# ## This mimics DYNAMIC_GRAPH_PYTHON_MODULE(${LIBRARY_NAME}
+# ## ${LIBRARY_NAME} "${LIBRARY_NAME}-wrap")
 
-
-# Generates a local module in unitTesting
-FILE(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dynamic_graph_tests/${LIBRARY_NAME}")
 CONFIGURE_FILE(
   ${PROJECT_SOURCE_DIR}/cmake/dynamic_graph/submodule/__init__.py.cmake
-  ${PROJECT_BINARY_DIR}/unitTesting/dynamic_graph_tests/${LIBRARY_NAME}/__init__.py
+  ${PROJECT_BINARY_DIR}/unitTesting/${LIBRARY_NAME}/__init__.py
   )
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dynamic_graph_tests/__init__.py
-  "")
+# SET(PYTHON_MODULE "${LIBRARY_NAME}-wrap")
+# SET(SOURCE_PYTHON_MODULE "cmake/dynamic_graph/python-module-py.cc")
+# ADD_LIBRARY(${PYTHON_MODULE} MODULE ${PROJECT_SOURCE_DIR}/${SOURCE_PYTHON_MODULE})
+# MESSAGE(STATUS "LIBRARY_NAME for wrap: ${PROJECT_NAME}")
+# SET_TARGET_PROPERTIES(${PYTHON_MODULE}
+#   PROPERTIES PREFIX ""
+#   OUTPUT_NAME ${LIBRARY_NAME}/wrap
+#   )
+# target_include_directories(${PYTHON_MODULE}
+#   PRIVATE ${PYTHON_INCLUDE_DIR}
+#   )
 
-# Generates a local wrap.so library
+# TARGET_LINK_LIBRARIES(${PYTHON_MODULE}
+#   ${PUBLIC_KEYWORD} "-Wl,--no-as-needed")
+# TARGET_LINK_LIBRARIES(${PYTHON_MODULE}
+#   ${PUBLIC_KEYWORD}
+#   ${LIBRARY_NAME}
+#   ${PYTHON_LIBRARY})
 
-SET(SOURCE_PYTHON_MODULE "cmake/dynamic_graph/python-module-py.cc")
+## Test it
+ADD_PYTHON_UNIT_TEST("test-custom-entity"
+  "unitTesting/test_custom_entity.py"
+  src unitTesting)
 
-SET(PYTHON_MODULE   ${PYTHON_LIBRARY_NAME}-wrap)
-CMAKE_POLICY(PUSH)
-IF(POLICY CMP0037)
-  CMAKE_POLICY(SET CMP0037 OLD)
-ENDIF()
-
-ADD_LIBRARY(${PYTHON_MODULE}
-  MODULE
-  ${PROJECT_SOURCE_DIR}/${SOURCE_PYTHON_MODULE})
-
-SET_TARGET_PROPERTIES(${PYTHON_MODULE}
-  PROPERTIES PREFIX ""
-  OUTPUT_NAME dynamic_graph_tests/${LIBRARY_NAME}/wrap
-  )
-
-CMAKE_POLICY(POP)
-
-TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PUBLIC_KEYWORD} "-Wl,--no-as-needed")
-TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PUBLIC_KEYWORD} ${LIBRARY_NAME} ${PYTHON_LIBRARY})
-
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
-FILE(COPY
-  ${CMAKE_SOURCE_DIR}/unitTesting/test_custom_entity.py DESTINATION
-  ${CMAKE_BINARY_DIR}/unitTesting/ )
-
+# also test other bindings, using this custom entity
+ADD_PYTHON_UNIT_TEST("test-bindings"
+  "unitTesting/test_bindings.py"
+  src unitTesting)

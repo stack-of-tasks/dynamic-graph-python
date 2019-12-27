@@ -1,9 +1,0 @@
-New in version 2.5.1 - 2011-12-07
-* Move search for boost earlier in CMakeLists.txt,
-* Use PyObject_IsTrue to test a boolean C/Python API,
-* Replace deprecated python module dl module by DLFCN,
-* use print as a function for python 3 compatibility,
-* Modification of signal management for vector and matrix data,
-* Python files are now installed in site-packages instead of dist-packages,
-* Add tools.py file containing addTrace.
-New in version 2.5 - 2011-06-21

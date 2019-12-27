@@ -1,80 +1,60 @@
 // -*- mode: c++ -*-
 // Copyright 2011, Florent Lamiraux, CNRS.
-//
-// This file is part of dynamic-graph-python.
-// dynamic-graph is free software: you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License
-// as published by the Free Software Foundation, either version 3 of
-// the License, or (at your option) any later version.
-//
-// dynamic-graph is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Lesser Public License for more details.  You should have
-// received a copy of the GNU Lesser General Public License along with
-// dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
+#define DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
 
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
-#pragma GCC diagnostic push
-#pragma GCC system_header
-#include <Python.h>
-#pragma GCC diagnostic pop
 
-#include <string>
 #include "dynamic-graph/python/api.hh"
 #include "dynamic-graph/python/deprecated.hh"
 
-#ifndef DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
-# define DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
-
+#include "dynamic-graph/python/python-compat.hh"
 #include "dynamic-graph/python/api.hh"
 
 namespace dynamicgraph {
-  namespace python {
-      ///
-      /// This class implements a basis python interpreter.
-      ///
-      /// String sent to method python are interpreted by an onboard python
-      /// interpreter.
-    class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter
-    {
-    public:
-      Interpreter();
-      ~Interpreter();
-      /// \brief Method to start python interperter.
-      /// \param command string to execute
-      /// Method deprecated, you *SHOULD* handle error messages.
-      DYNAMIC_GRAPH_PYTHON_DEPRECATED std::string python( const std::string& command );
+namespace python {
+///
+/// This class implements a basis python interpreter.
+///
+/// String sent to method python are interpreted by an onboard python
+/// interpreter.
+class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
+ public:
+  Interpreter();
+  ~Interpreter();
+  /// \brief Method to start python interperter.
+  /// \param command string to execute
+  /// Method deprecated, you *SHOULD* handle error messages.
+  DYNAMIC_GRAPH_PYTHON_DEPRECATED std::string python(const std::string& command);
 
-      /// \brief Method to start python interperter.
-      /// \param command string to execute, result, stdout, stderr strings
-      void python( const std::string& command , std::string& result,
-                   std::string& out, std::string& err);
+  /// \brief Method to start python interperter.
+  /// \param command string to execute, result, stdout, stderr strings
+  void python(const std::string& command, std::string& result, std::string& out, std::string& err);
 
-      /// \brief Method to exectue a python script.
-      /// \param filename the filename
-      void runPythonFile( std::string filename );
-      void runPythonFile( std::string filename, std::string& err);
-      void runMain( void );
+  /// \brief Method to exectue a python script.
+  /// \param filename the filename
+  void runPythonFile(std::string filename);
+  void runPythonFile(std::string filename, std::string& err);
+  void runMain(void);
 
-      /// \brief Process input stream to send relevant blocks to python
-      /// \param stream input stream
-      std::string processStream(std::istream& stream, std::ostream& os);
+  /// \brief Process input stream to send relevant blocks to python
+  /// \param stream input stream
+  std::string processStream(std::istream& stream, std::ostream& os);
 
-      /// \brief Return a pointer to the dictionary of global variables
-      PyObject* globals();
+  /// \brief Return a pointer to the dictionary of global variables
+  PyObject* globals();
 
-    private:
-      /// The Pythone thread state
-      PyThreadState *_pyState;
-      /// Pointer to the dictionary of global variables
-      PyObject* globals_;
-      /// Pointer to the dictionary of local variables
-      PyObject* locals_;
-      PyObject* mainmod_;
-      PyObject* traceback_format_exception_;
-    };
-  } // namespace python
-} // namespace dynamicgraph
-#endif // DYNAMIC_GRAPH_PYTHON_INTERPRETER_H
+ private:
+  /// The Python thread state
+  PyThreadState* _pyState;
+  /// Pointer to the dictionary of global variables
+  PyObject* globals_;
+  /// Pointer to the dictionary of local variables
+  PyObject* locals_;
+  PyObject* mainmod_;
+};
+}  // namespace python
+}  // namespace dynamicgraph
+#endif  // DYNAMIC_GRAPH_PYTHON_INTERPRETER_H

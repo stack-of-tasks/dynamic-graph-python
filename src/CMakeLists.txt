@@ -1,36 +1,18 @@
-# Copyright 2010, 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
-#
-# This file is part of dynamic-graph-python.
-# dynamic-graph-python is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# dynamic-graph-python is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# dynamic-graph-python. If not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010 - 2019, Florent Lamiraux, Thomas Moulard, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
+# License
 
 #
-# Python
-#
-
-#INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS})
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} ${PYTHON_LIBRARY_DIRS})
-
-#
-#
+#  TARGET: C++ Library dynamic-graph-python
 #  Python interpreter
 #
 #
+
 SET(LIBRARY_NAME ${PROJECT_NAME})
-ADD_LIBRARY(${LIBRARY_NAME}
-  SHARED
-  interpreter.cc)
+ADD_LIBRARY(${LIBRARY_NAME} SHARED interpreter.cc dynamic_graph/python-compat.cc)
 
 target_include_directories(${LIBRARY_NAME}
+  PRIVATE
+  ${PYTHON_INCLUDE_DIRS}
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
@@ -60,7 +42,7 @@ INSTALL(TARGETS ${LIBRARY_NAME}
   )
 
 #
-#
+#  TARGET: C++ library wrap
 #  Python bindings
 #
 #
@@ -69,69 +51,84 @@ SET(PYTHON_MODULE wrap)
 
 ADD_LIBRARY(${PYTHON_MODULE}
   MODULE
-  convert-dg-to-py.cc
-  debug-py.cc
-  dynamic-graph-py.cc
-  entity-py.cc
-  exception-python.cc
-  factory-py.cc
-  pool-py.cc
-  signal-base-py.cc
-  signal-caster-py.cc
-  signal-wrapper.cc
+  ./dynamic_graph/convert-dg-to-py.cc
+  ./dynamic_graph/debug-py.cc
+  ./dynamic_graph/dynamic-graph-py.cc
+  ./dynamic_graph/entity-py.cc
+  ./dynamic_graph/exception-python.cc
+  ./dynamic_graph/factory-py.cc
+  ./dynamic_graph/pool-py.cc
+  ./dynamic_graph/signal-base-py.cc
+  ./dynamic_graph/signal-caster-py.cc
+  ./dynamic_graph/signal-wrapper.cc
 )
+
+target_include_directories(${PYTHON_MODULE}
+  PRIVATE ${PYTHON_INCLUDE_DIR}
+  )
 
 # Remove prefix lib
 SET_TARGET_PROPERTIES(${PYTHON_MODULE}
   PROPERTIES PREFIX "")
 
-
-#PKG_CONFIG_USE_DEPENDENCY(${PYTHON_MODULE} dynamic-graph)
 TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PYTHON_LIBRARY})
 TARGET_LINK_LIBRARIES(${PYTHON_MODULE} dynamic-graph::dynamic-graph)
 
-CONFIG_FILES(link-to-python.hh)
-#INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_PATH})
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-#
 # Installation
-#
-
 SET(PYTHON_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${PYTHON_SITELIB}/dynamic_graph)
+MESSAGE(STATUS "PYTHON_INSTALL_DIR: ${PYTHON_INSTALL_DIR}")
 
 INSTALL(TARGETS ${PYTHON_MODULE}
   EXPORT ${TARGETS_EXPORT_NAME}    
   DESTINATION
   ${PYTHON_INSTALL_DIR})
 
+
+#
+# Pure Python install 
+#
 SET (PYTHON_SOURCES
     __init__.py
     attrpath.py
     entity.py
     signal_base.py
-    matlab.py
     script_shortcuts.py
     tools.py
-)
+    )
 
 FOREACH (SOURCE ${PYTHON_SOURCES})
-  PYTHON_INSTALL_ON_SITE(dynamic_graph ${SOURCE} )
+    PYTHON_INSTALL_ON_SITE(dynamic_graph ${SOURCE})
 ENDFOREACH (SOURCE)
 
 # --- ADD the wrap on the dg modules
-# Tracer plugin
+#
+# Target: Tracer plugin
+#
 IF(WIN32)
-SET(TRACER_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer${CMAKE_STATIC_LIBRARY_SUFFIX})
+    SET(TRACER_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer${CMAKE_STATIC_LIBRARY_SUFFIX})
 ELSE(WIN32)
-SET(TRACER_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer${CMAKE_SHARED_LIBRARY_SUFFIX})
+    SET(TRACER_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer${CMAKE_SHARED_LIBRARY_SUFFIX})
 ENDIF(WIN32)
 DYNAMIC_GRAPH_PYTHON_MODULE("tracer" ${TRACER_PLUGIN} tracer-wrap)
 
-# TracerRealTime plugin
+target_include_directories(tracer-wrap
+  PRIVATE ${PYTHON_INCLUDE_DIR}
+)
+
+#
+# Target: TracerRealTime plugin
+#
 IF(WIN32)
-SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer-real-time${CMAKE_STATIC_LIBRARY_SUFFIX})
+    SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer-real-time${CMAKE_STATIC_LIBRARY_SUFFIX})
 ELSE(WIN32)
-SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer-real-time${CMAKE_SHARED_LIBRARY_SUFFIX})
+    SET(TRACERREALTIME_PLUGIN ${DYNAMIC_GRAPH_PLUGINDIR}/tracer-real-time${CMAKE_SHARED_LIBRARY_SUFFIX})
 ENDIF(WIN32)
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" ${TRACERREALTIME_PLUGIN} tracer_real_time-wrap)
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time"
+ ${TRACERREALTIME_PLUGIN}
+ tracer_real_time-wrap)
+
+target_include_directories(tracer_real_time-wrap
+ PRIVATE ${PYTHON_INCLUDE_DIR}
+ )
+  

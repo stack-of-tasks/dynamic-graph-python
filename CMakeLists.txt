@@ -1,12 +1,11 @@
-# Copyright 2010, 2019 JRL, CNRS/AIST, LAAS, CNRS
-# See LICENSE file.
+# Copyright 2010-2019, Florent Lamiraux, Thomas Moulard, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-SET(PROJECT_ORG stack-of-tasks)
+SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/dynamic-graph-python")
+SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 
 # Export CMake Target
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
@@ -20,27 +19,21 @@ SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 
 # Specify the project.
-cmake_policy(SET CMP0048 NEW)
-PROJECT(${PROJECT_NAME}
-  LANGUAGES
-  CXX
-  VERSION
-  ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
-  )
-
+COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
+PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 INCLUDE(cmake/pthread.cmake)
 INCLUDE(cmake/cpack.cmake)
-#include(cmake/header.cmake)
+include(cmake/sphinx.cmake)
 include(cmake/python.cmake)
 
 add_project_dependency(Boost REQUIRED COMPONENTS python)
 add_project_dependency(dynamic-graph 3.0.0 REQUIRED )
 
-
 SET(DOXYGEN_USE_MATHJAX YES)
 
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
+
 # Headers list.
 SET(${PROJECT_NAME}_HEADERS
   include/dynamic-graph/python/interpreter.hh
@@ -59,14 +52,14 @@ ADD_PROJECT_DEPENDENCY(dynamic-graph 3.0.0 REQUIRED)
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(include)
+ADD_SUBDIRECTORY(include/${CUSTOM_HEADER_DIR})
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(unitTesting)
-
-SETUP_PROJECT_PACKAGE_FINALIZE()
 
 get_cmake_property(_variableNames VARIABLES)
 list (SORT _variableNames)
 foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
+  LIST(APPEND LOGGING_WATCHED_VARIABLES
+    ${_variableName}
+    )
 endforeach()

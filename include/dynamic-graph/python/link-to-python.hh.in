@@ -1,0 +1,14 @@
+// -*- mode: c++ -*-
+// Copyright 2011, Florent Lamiraux, CNRS.
+
+#ifdef WIN32
+#include <Windows.h>
+#else
+#include <dlfcn.h>
+#endif
+
+namespace dynamicgraph {
+  namespace python {
+    std::string libpython("@PYTHON_LIBRARY@");
+  } // namespace python
+} // namespace dynamicgraph
