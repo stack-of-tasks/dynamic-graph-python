@@ -34,8 +34,8 @@ SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} dynamic-graph::dynamic-graph)
 
 INSTALL(TARGETS ${LIBRARY_NAME}
-  EXPORT ${TARGETS_EXPORT_NAME}  
-  PUBLIC_HEADER 
+  EXPORT ${TARGETS_EXPORT_NAME}
+  PUBLIC_HEADER
   INCLUDES DESTINATION include
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -58,6 +58,7 @@ ADD_LIBRARY(${PYTHON_MODULE}
   ./dynamic_graph/exception-python.cc
   ./dynamic_graph/factory-py.cc
   ./dynamic_graph/pool-py.cc
+  ./dynamic_graph/python-compat.cc
   ./dynamic_graph/signal-base-py.cc
   ./dynamic_graph/signal-caster-py.cc
   ./dynamic_graph/signal-wrapper.cc
@@ -80,13 +81,13 @@ SET(PYTHON_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${PYTHON_SITELIB}/dynamic_graph)
 MESSAGE(STATUS "PYTHON_INSTALL_DIR: ${PYTHON_INSTALL_DIR}")
 
 INSTALL(TARGETS ${PYTHON_MODULE}
-  EXPORT ${TARGETS_EXPORT_NAME}    
+  EXPORT ${TARGETS_EXPORT_NAME}
   DESTINATION
   ${PYTHON_INSTALL_DIR})
 
 
 #
-# Pure Python install 
+# Pure Python install
 #
 SET (PYTHON_SOURCES
     __init__.py
@@ -131,4 +132,3 @@ DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time"
 target_include_directories(tracer_real_time-wrap
  PRIVATE ${PYTHON_INCLUDE_DIR}
  )
-  
