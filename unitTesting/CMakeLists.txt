@@ -1,23 +1,3 @@
-
-INCLUDE(CTest)
-
-#INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
-#INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} ${PYTHON_LIBRARY_DIRS})
-
-#ADD_DEFINITIONS(-DDEBUG=2)
-
-# provide path to library libdynamic-graph.so
-LINK_DIRECTORIES(${DYNAMIC_GRAPH_LIBRARY_DIRS})
-
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-LINK_DIRECTORIES(${${PROJECT_NAME}_BINARY_DIR}/src)
-
-# Add dynamic-graph compilation flags and link to library libdynamic-graph.so
-ADD_DEFINITIONS(${DYNAMIC_GRAPH_CFLAGS})
-
-
 # Test the interpreter
 SET(EXECUTABLE_NAME interpreter-test)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test.cc)
@@ -57,7 +37,8 @@ ADD_CUSTOM_COMMAND(TARGET interpreter-test-runfile POST_BUILD
 ## Create an entity
 
 MESSAGE(STATUS "dynamic_graph_plugindir: ${DYNAMIC_GRAPH_PLUGINDIR}")
-
+SET(LIBRARY_NAME "custom_entity")
+ADD_LIBRARY(${LIBRARY_NAME} SHARED ${LIBRARY_NAME}.cpp)
 SET_TARGET_PROPERTIES(${LIBRARY_NAME}
   PROPERTIES
   PREFIX ""
@@ -77,31 +58,34 @@ CONFIGURE_FILE(
   ${PROJECT_SOURCE_DIR}/cmake/dynamic_graph/submodule/__init__.py.cmake
   ${PROJECT_BINARY_DIR}/unitTesting/${LIBRARY_NAME}/__init__.py
   )
-# SET(PYTHON_MODULE "${LIBRARY_NAME}-wrap")
-# SET(SOURCE_PYTHON_MODULE "cmake/dynamic_graph/python-module-py.cc")
-# ADD_LIBRARY(${PYTHON_MODULE} MODULE ${PROJECT_SOURCE_DIR}/${SOURCE_PYTHON_MODULE})
-# MESSAGE(STATUS "LIBRARY_NAME for wrap: ${PROJECT_NAME}")
-# SET_TARGET_PROPERTIES(${PYTHON_MODULE}
-#   PROPERTIES PREFIX ""
-#   OUTPUT_NAME ${LIBRARY_NAME}/wrap
-#   )
-# target_include_directories(${PYTHON_MODULE}
-#   PRIVATE ${PYTHON_INCLUDE_DIR}
-#   )
 
-# TARGET_LINK_LIBRARIES(${PYTHON_MODULE}
-#   ${PUBLIC_KEYWORD} "-Wl,--no-as-needed")
-# TARGET_LINK_LIBRARIES(${PYTHON_MODULE}
-#   ${PUBLIC_KEYWORD}
-#   ${LIBRARY_NAME}
-#   ${PYTHON_LIBRARY})
+SET(PYTHON_MODULE "${LIBRARY_NAME}-wrap")
+SET(SOURCE_PYTHON_MODULE "cmake/dynamic_graph/python-module-py.cc")
+ADD_LIBRARY(${PYTHON_MODULE} MODULE ${PROJECT_SOURCE_DIR}/${SOURCE_PYTHON_MODULE})
+SET_TARGET_PROPERTIES(${PYTHON_MODULE}
+  PROPERTIES PREFIX ""
+  OUTPUT_NAME ${LIBRARY_NAME}/wrap
+  )
+target_include_directories(${LIBRARY_NAME}
+  PRIVATE
+  ${PYTHON_INCLUDE_DIRS}
+  )
+target_include_directories(${PYTHON_MODULE}
+  PRIVATE
+  ${PYTHON_INCLUDE_DIRS}
+)
+
+TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PUBLIC_KEYWORD}
+  "-Wl,--no-as-needed")
+TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${PUBLIC_KEYWORD}
+  ${LIBRARY_NAME} ${PYTHON_LIBRARY})
 
 ## Test it
 ADD_PYTHON_UNIT_TEST("test-custom-entity"
   "unitTesting/test_custom_entity.py"
-  src unitTesting)
+  unitTesting)
 
 # also test other bindings, using this custom entity
 ADD_PYTHON_UNIT_TEST("test-bindings"
   "unitTesting/test_bindings.py"
-  src unitTesting)
+ unitTesting)

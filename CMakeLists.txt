@@ -23,8 +23,8 @@ COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
 PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 INCLUDE(cmake/pthread.cmake)
-INCLUDE(cmake/cpack.cmake)
 include(cmake/sphinx.cmake)
+include(cmake/test.cmake)
 include(cmake/python.cmake)
 
 add_project_dependency(Boost REQUIRED COMPONENTS python)
@@ -43,7 +43,7 @@ SET(${PROJECT_NAME}_HEADERS
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 
-FINDPYTHON(2.7 EXACT REQUIRED)
+FINDPYTHON()
 
 # Trigger dependency to dynamic-graph.
 ADD_PROJECT_DEPENDENCY(dynamic-graph 3.0.0 REQUIRED)
