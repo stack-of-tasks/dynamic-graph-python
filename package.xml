@@ -5,7 +5,7 @@
     Dynamic graph library Python bindings
   </description>
   <maintainer email="ostasse@laas.fr">Olivier Stasse</maintainer>
-  <license>BSDv2</license>
+  <license>BSD</license>
   
   <url>http://github.com/stack-of-tasks/dynamic-graph-python</url>
   <author>Nicolas Mansard</author>
