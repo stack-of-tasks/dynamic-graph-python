@@ -12,6 +12,7 @@ std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt", std::ios::trunc& std
 namespace dynamicgraph {
 namespace python {
 static const std::string pythonPrefix[8] = {"from __future__ import print_function\n",
+                                            "import sys\n",
                                             "import traceback\n",
                                             "class StdoutCatcher:\n"
                                             "    def __init__(self):\n"
@@ -24,7 +25,6 @@ static const std::string pythonPrefix[8] = {"from __future__ import print_functi
                                             "        return s\n",
                                             "stdout_catcher = StdoutCatcher()\n",
                                             "stderr_catcher = StdoutCatcher()\n",
-                                            "import sys\n",
                                             "sys.stdout = stdout_catcher",
                                             "sys.stderr = stderr_catcher"};
 
@@ -73,12 +73,14 @@ Interpreter::Interpreter() {
   PyRun_SimpleString(pythonPrefix[0].c_str());
   PyRun_SimpleString(pythonPrefix[1].c_str());
   PyRun_SimpleString(pythonPrefix[2].c_str());
+  /*
   PyRun_SimpleString(pythonPrefix[3].c_str());
   PyRun_SimpleString(pythonPrefix[4].c_str());
   PyRun_SimpleString(pythonPrefix[5].c_str());
   PyRun_SimpleString(pythonPrefix[6].c_str());
   PyRun_SimpleString(pythonPrefix[7].c_str());
   PyRun_SimpleString("import linecache");
+  */
 
   // Allow threads
   _pyState = PyEval_SaveThread();
@@ -213,16 +215,11 @@ void Interpreter::runPythonFile(std::string filename, std::string& err) {
   fclose(pFile);
 }
 
-void Interpreter::runMain(void) {
+int Interpreter::runMain(int argc, char* argv[]) {
   PyEval_RestoreThread(_pyState);
-#if PY_MAJOR_VERSION >= 3
-  const Py_UNICODE* argv[] = {L"dg-embedded-pysh"};
-  Py_Main(1, const_cast<Py_UNICODE**>(argv));
-#else
-  const char* argv[] = {"dg-embedded-pysh"};
-  Py_Main(1, const_cast<char**>(argv));
-#endif
+  int r = Py_BytesMain(argc, argv);
   _pyState = PyEval_SaveThread();
+  return r;
 }
 
 std::string Interpreter::processStream(std::istream& stream, std::ostream& os) {

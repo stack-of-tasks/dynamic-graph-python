@@ -36,7 +36,7 @@ class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
   /// \param filename the filename
   void runPythonFile(std::string filename);
   void runPythonFile(std::string filename, std::string& err);
-  void runMain(void);
+  int runMain(int argc, char* argv[]);
 
   /// \brief Process input stream to send relevant blocks to python
   /// \param stream input stream
