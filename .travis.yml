@@ -5,9 +5,9 @@ compiler:
   - clang
 env:
   global:
-  - secure: ECiHIh0aT5ml/MdKifvFIM2UpDWiPsJPEZpafLYM8U0VAPYThSfUe8JWhMsky8amOwm38akbSbr6C7iBKVpzjAqpgNdOdufO1RUZ6pUvtlVXiXTw2KlqPqbDVlD3QroVDhnX/rIRcg5ezEHAIb594uEaHdf8tlikhjdTc3aAgMA=
+  - secure: "ECiHIh0aT5ml/MdKifvFIM2UpDWiPsJPEZpafLYM8U0VAPYThSfUe8JWhMsky8amOwm38akbSbr6C7iBKVpzjAqpgNdOdufO1RUZ6pUvtlVXiXTw2KlqPqbDVlD3QroVDhnX/rIRcg5ezEHAIb594uEaHdf8tlikhjdTc3aAgMA="
   - APT_DEPENDENCIES="doxygen doxygen-latex libboost-all-dev libeigen3-dev liblapack-dev libblas-dev gfortran python-dev python-sphinx"
-  - GIT_DEPENDENCIES="proyan/dynamic-graph"
+  - GIT_DEPENDENCIES="stack-of-tasks/dynamic-graph"
   - LCOV_IGNORE_RULES="*unitTesting*"
   allow_failures: 
   - compiler: clang
@@ -17,11 +17,12 @@ notifications:
 branches:
   only:
   - master
-  - debian
+  - devel
 script: ./.travis/run build
+script: ./travis_custom/build_custom
 after_success: ./.travis/run after_success
 after_failure: ./.travis/run after_failure
-before_install: ./.travis/run before_install
+before_install: ./travis_custom/custom_before_install
 matrix:
   allow_failures:
     - compiler: clang
