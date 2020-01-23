@@ -7,14 +7,10 @@ SET(PROJECT_NAME dynamic-graph-python)
 SET(PROJECT_DESCRIPTION "Dynamic graph library Python bindings")
 SET(PROJECT_URL "http://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 
-# Export CMake Target
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
-
-# Make sure that every header is generated in dynamic-graph
 SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
-
-# Do not fail on warning
 SET(CXX_DISABLE_WERROR TRUE)
+SET(DOXYGEN_USE_MATHJAX YES)
 
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
@@ -22,10 +18,6 @@ INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/test.cmake)
 INCLUDE(cmake/sphinx.cmake)
-
-SET(DOXYGEN_USE_MATHJAX YES)
-
-SET(CUSTOM_HEADER_DIR "dynamic-graph/python")
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 

@@ -35,10 +35,7 @@ SET_TARGET_PROPERTIES(${LIBRARY_NAME}
   SOVERSION ${PROJECT_VERSION}
   INSTALL_RPATH ${DYNAMIC_GRAPH_PLUGINDIR})
 
-#add_dependencies(${LIBRARY_NAME} dynamic-graph)
 target_link_libraries(${LIBRARY_NAME} dynamic-graph::dynamic-graph)
-
-#PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
 
 ## Create its bindings
 ## This mimics DYNAMIC_GRAPH_PYTHON_MODULE(${LIBRARY_NAME} ${LIBRARY_NAME} "${LIBRARY_NAME}-wrap")
