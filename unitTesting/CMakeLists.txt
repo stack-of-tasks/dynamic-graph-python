@@ -1,3 +1,4 @@
+# Copyright 2010-2020, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 # Test the interpreter
 SET(EXECUTABLE_NAME interpreter-test)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test.cc)

@@ -1,4 +1,4 @@
-# Copyright 2010-2019, Florent Lamiraux, Thomas Moulard, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
+# Copyright 2010-2020, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
