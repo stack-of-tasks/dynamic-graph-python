@@ -22,7 +22,7 @@ script: ./.travis/run build
 script: ./travis_custom/build_custom
 after_success: ./.travis/run after_success
 after_failure: ./.travis/run after_failure
-before_install: ./.travis/run before_install
+before_install: ./travis_custom/custom_before_install
 matrix:
   allow_failures:
     - compiler: clang
