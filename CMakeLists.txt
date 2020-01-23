@@ -30,6 +30,10 @@ INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
 ADD_REQUIRED_DEPENDENCY(eigen3)
 ADD_PROJECT_DEPENDENCY(dynamic-graph 3.8.1 REQUIRED)
 
+# manually append to the .pc dependencies for now
+# ref https://github.com/jrl-umi3218/jrl-cmakemodules/issues/320
+_ADD_TO_LIST(_PKG_CONFIG_REQUIRES "dynamic-graph >= 3.8.1" ",")
+
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
 SET(BOOST_COMPONENTS filesystem system thread program_options unit_test_framework python)
