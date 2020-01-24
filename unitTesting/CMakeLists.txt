@@ -1,4 +1,4 @@
-
+# Copyright 2010-2020, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 # Test the interpreter
 SET(EXECUTABLE_NAME interpreter-test)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test.cc)
@@ -10,7 +10,7 @@ SET(EXECUTABLE_NAME interpreter-test-runfile)
 ADD_EXECUTABLE(${EXECUTABLE_NAME} interpreter-test-runfile.cc)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-graph-python)
 TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${PYTHON_LIBRARY})
-TARGET_LINK_BOOST_PYTHON(${EXECUTABLE_NAME})
+TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${Boost_LIBRARIES})
 ADD_TEST(${EXECUTABLE_NAME}  ${EXECUTABLE_NAME})
 
 ADD_CUSTOM_COMMAND(TARGET interpreter-test-runfile POST_BUILD
@@ -35,7 +35,8 @@ SET_TARGET_PROPERTIES(${LIBRARY_NAME}
   PREFIX ""
   SOVERSION ${PROJECT_VERSION}
   INSTALL_RPATH ${DYNAMIC_GRAPH_PLUGINDIR})
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
+
+target_link_libraries(${LIBRARY_NAME} dynamic-graph::dynamic-graph)
 
 ## Create its bindings
 ## This mimics DYNAMIC_GRAPH_PYTHON_MODULE(${LIBRARY_NAME} ${LIBRARY_NAME} "${LIBRARY_NAME}-wrap")
