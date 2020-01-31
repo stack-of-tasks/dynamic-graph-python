@@ -458,19 +458,19 @@ PyObject* setLoggerVerbosityLevel(
 
   try {
     switch (verbosityLevel) {
-      case 0:
+      case 8:
         entity->setLoggerVerbosityLevel(VERBOSITY_ALL);
         break;
-      case 1:
+      case 4:
         entity->setLoggerVerbosityLevel(VERBOSITY_INFO_WARNING_ERROR);
         break;
       case 2:
         entity->setLoggerVerbosityLevel(VERBOSITY_WARNING_ERROR);
         break;
-      case 3:
+      case 1:
         entity->setLoggerVerbosityLevel(VERBOSITY_ERROR);
         break;
-      case 4:
+      case 0:
         entity->setLoggerVerbosityLevel(VERBOSITY_NONE);
         break;
       default:

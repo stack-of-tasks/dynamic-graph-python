@@ -73,11 +73,11 @@ class VerbosityLevel(Enum):
     """
     Enum class for setVerbosityLevel
     """
-    VERBOSITY_ALL = 0
-    VERBOSITY_INFO_WARNING_ERROR = 1
+    VERBOSITY_ALL = 8
+    VERBOSITY_INFO_WARNING_ERROR = 4
     VERBOSITY_WARNING_ERROR = 2
-    VERBOSITY_ERROR = 3
-    VERBOSITY_NONE = 4
+    VERBOSITY_ERROR = 1
+    VERBOSITY_NONE = 0
 
 
 class Entity(object):
@@ -271,13 +271,13 @@ class Entity(object):
         Returns the entity's verbosity level (as a dynamic_graph.entity.VerbosityLevel)
         """
         r = wrap.entity_get_logger_verbosity(self.obj)
-        if r == 0:
+        if r == 8:
             return VerbosityLevel.VERBOSITY_ALL
-        elif r == 1:
+        elif r == 4:
             return VerbosityLevel.VERBOSITY_INFO_WARNING_ERROR
         elif r == 2:
             return VerbosityLevel.VERBOSITY_WARNING_ERROR
-        elif r == 3:
+        elif r == 1:
             return VerbosityLevel.VERBOSITY_ERROR
         return VerbosityLevel.VERBOSITY_NONE
 
