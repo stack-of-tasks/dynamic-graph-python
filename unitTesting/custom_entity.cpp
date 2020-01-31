@@ -48,18 +48,16 @@ class CustomEntity : public Entity {
   double &update(double &res, const int &inTime) {
     const double &aDouble = m_sigdSIN(inTime);
     res = aDouble;
-    std::ostringstream oss;
-    oss << "start update " << res;
-    sendMsg(oss.str().c_str(), MSG_TYPE_ERROR);
-    sendMsg("This is a message of level MSG_TYPE_DEBUG", MSG_TYPE_DEBUG, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_INFO", MSG_TYPE_INFO, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_WARNING", MSG_TYPE_WARNING, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_ERROR", MSG_TYPE_ERROR, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_DEBUG_STREAM", MSG_TYPE_DEBUG_STREAM, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_INFO_STREAM", MSG_TYPE_INFO_STREAM, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_WARNING_STREAM", MSG_TYPE_WARNING_STREAM, __FILE__, __LINE__);
-    sendMsg("This is a message of level MSG_TYPE_ERROR_STREAM", MSG_TYPE_ERROR_STREAM, __FILE__, __LINE__);
-    sendMsg("end update", MSG_TYPE_ERROR, __FILE__, __LINE__);
+    logger().stream(MSG_TYPE_ERROR) << "start update " << res << '\n';
+    DYNAMIC_GRAPH_ENTITY_DEBUG   (*this) << "This is a message of level MSG_TYPE_DEBUG\n";
+    DYNAMIC_GRAPH_ENTITY_INFO    (*this) << "This is a message of level MSG_TYPE_INFO\n";
+    DYNAMIC_GRAPH_ENTITY_WARNING (*this) << "This is a message of level MSG_TYPE_WARNING\n";
+    DYNAMIC_GRAPH_ENTITY_ERROR   (*this) << "This is a message of level MSG_TYPE_ERROR\n";
+    DYNAMIC_GRAPH_ENTITY_DEBUG_STREAM   (*this) << "This is a message of level MSG_TYPE_DEBUG_STREAM\n";
+    DYNAMIC_GRAPH_ENTITY_INFO_STREAM    (*this) << "This is a message of level MSG_TYPE_INFO_STREAM\n";
+    DYNAMIC_GRAPH_ENTITY_WARNING_STREAM (*this) << "This is a message of level MSG_TYPE_WARNING_STREAM\n";
+    DYNAMIC_GRAPH_ENTITY_ERROR_STREAM   (*this) << "This is a message of level MSG_TYPE_ERROR_STREAM\n";
+    logger().stream(MSG_TYPE_ERROR) << "end update\n";
     return res;
   }
 
