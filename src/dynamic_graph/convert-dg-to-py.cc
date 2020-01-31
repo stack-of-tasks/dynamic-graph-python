@@ -215,6 +215,12 @@ command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& val
       }
       return Value(m4);
       break;
+    case (Value::VALUES):
+      // TODO the vector of values cannot be built since
+      // - the value type inside the vector are not know
+      // - inferring the value type from the Python type is not implemented.
+      throw ExceptionPython(ExceptionPython::VALUE_PARSING, "not implemented: cannot create a vector of values");
+      break;
     default:
       std::cerr << "Only int, double and string are supported." << std::endl;
   }
@@ -252,6 +258,15 @@ PyObject* matrix4dToPython(const Eigen::Matrix4d& matrix) {
       PyTuple_SET_ITEM(row, iCol, pyDouble);
     }
     PyTuple_SET_ITEM(tuple, iRow, row);
+  }
+  return tuple;
+}
+
+PyObject* valuesToPython(const dynamicgraph::command::Values& vector) {
+  PyObject* tuple = PyTuple_New(vector.size());
+  for (std::size_t index = 0; index < vector.size(); index++) {
+    PyObject* item = valueToPython(vector[index]);
+    PyTuple_SET_ITEM(tuple, index, item);
   }
   return tuple;
 }
@@ -298,6 +313,8 @@ PyObject* valueToPython(const command::Value& value) {
     case (Value::MATRIX4D):
       matrix4dValue = value.value();
       return matrix4dToPython(matrix4dValue);
+    case (Value::VALUES):
+      return valuesToPython(value.constValuesValue());
     default:
       return Py_BuildValue("");
   }
