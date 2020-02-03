@@ -21,6 +21,10 @@ INCLUDE(cmake/sphinx.cmake)
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES plugindir ${PKG_CONFIG_ADDITIONAL_VARIABLES})
 
+OPTION(SUFFIX_SO_VERSION
+  "Suffix shared library name by a string depending on git status of project"
+  ON)
+
 COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
 PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
