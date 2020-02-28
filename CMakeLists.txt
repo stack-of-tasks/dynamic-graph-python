@@ -1,6 +1,6 @@
 # Copyright 2010-2020, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME dynamic-graph-python)
@@ -31,12 +31,8 @@ PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 FINDPYTHON()
 INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
-ADD_REQUIRED_DEPENDENCY(eigen3)
-ADD_PROJECT_DEPENDENCY(dynamic-graph 3.8.1 REQUIRED)
-
-# manually append to the .pc dependencies for now
-# ref https://github.com/jrl-umi3218/jrl-cmakemodules/issues/320
-_ADD_TO_LIST(_PKG_CONFIG_REQUIRES "dynamic-graph >= 3.8.1" ",")
+ADD_PROJECT_DEPENDENCY(Eigen3 REQUIRED PKG_CONFIG_REQUIRES eigen3)
+ADD_PROJECT_DEPENDENCY(dynamic-graph REQUIRED PKG_CONFIG_REQUIRES dynamic-graph)
 
 PKG_CONFIG_APPEND_LIBS("dynamic-graph-python")
 
