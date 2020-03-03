@@ -1,10 +1,15 @@
 // -*- mode: c++ -*-
 // Copyright 2011, Florent Lamiraux, CNRS.
 
+#ifdef WIN32
+#include <Windows.h>
+#else
+#include <dlfcn.h>
+#endif
+
 #include <iostream>
 #include "dynamic-graph/debug.h"
 #include "dynamic-graph/python/interpreter.hh"
-#include "dynamic-graph/python/link-to-python.hh"
 
 std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt", std::ios::trunc& std::ios::out);
 
@@ -61,7 +66,7 @@ Interpreter::Interpreter() {
   // load python dynamic library
   // this is silly, but required to be able to import dl module.
 #ifndef WIN32
-  dlopen(libpython.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+  dlopen(PYTHON_LIBRARY, RTLD_LAZY | RTLD_GLOBAL);
 #endif
   Py_Initialize();
   PyEval_InitThreads();

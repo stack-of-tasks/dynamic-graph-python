@@ -49,18 +49,18 @@ int main(int argc, char** argv) {
   // This test succeeds only because it is launched before "test_python-ok.py"
   // because re as been imported in a previous test and it is not
   // safe to delete imported module...
-  res = testFile("test_python-name_error.py",
+  res = testFile(PATH "test_python-name_error.py",
                  std::string("Traceback (most recent call last):\n"
-                             "  File \"test_python-name_error.py\", line 7, in <module>\n"
+                             "  File \"" PATH "test_python-name_error.py\", line 7, in <module>\n"
                              "    pathList = re.split(':', pkgConfigPath)  # noqa\n"
                              "NameError: name 're' is not defined\n"),
                  numTest) &&
         res;
 
-  res = testFile("test_python-ok.py", "", numTest) && res;
-  res = testFile("unexistant_file.py", "unexistant_file.py cannot be open", numTest) && res;
-  res = testFile("test_python-syntax_error.py",
-                 std::string("  File \"test_python-syntax_error.py\", line 2\n"
+  res = testFile(PATH "test_python-ok.py", "", numTest) && res;
+  res = testFile(PATH "unexistant_file.py", PATH "unexistant_file.py cannot be open", numTest) && res;
+  res = testFile(PATH "test_python-syntax_error.py",
+                 std::string("  File \"" PATH "test_python-syntax_error.py\", line 2\n"
                              "    hello world\n"
 #if PY_MINOR_VERSION >= 8
                              "          ^\n"
@@ -70,6 +70,6 @@ int main(int argc, char** argv) {
                              "SyntaxError: invalid syntax\n"),
                  numTest) &&
         res;
-  res = testInterpreterDestructor("test_python-restart_interpreter.py", "") && res;
+  res = testInterpreterDestructor(PATH "test_python-restart_interpreter.py", "") && res;
   return (res ? 0 : 1);
 }
