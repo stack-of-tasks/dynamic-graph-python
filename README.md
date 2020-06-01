@@ -2,8 +2,8 @@ dynamic-graph-python
 ====================
 
 [![Building Status](https://travis-ci.org/stack-of-tasks/dynamic-graph-python.svg?branch=master)](https://travis-ci.org/stack-of-tasks/dynamic-graph-python)
-[![Pipeline status](https://gepgitlab.laas.fr/stack-of-tasks/dynamic-graph-python/badges/master/pipeline.svg)](https://gepgitlab.laas.fr/stack-of-tasks/dynamic-graph-python/commits/master)
-[![Coverage report](https://gepgitlab.laas.fr/stack-of-tasks/dynamic-graph-python/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/stack-of-tasks/doc/stack-of-tasks/dynamic-graph-python/master/coverage/)
+[![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/dynamic-graph-python/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/dynamic-graph-python/commits/master)
+[![Coverage report](https://gitlab.laas.fr/stack-of-tasks/dynamic-graph-python/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/stack-of-tasks/doc/stack-of-tasks/dynamic-graph-python/master/coverage/)
 
 Python bindings for dynamic-graph.
 
@@ -119,4 +119,3 @@ Credits
 -------
 
 This package authors are credited in the [AUTHORS](AUTHORS) file.
-
