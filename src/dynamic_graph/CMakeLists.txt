@@ -12,7 +12,6 @@ ADD_LIBRARY(${PYTHON_MODULE} MODULE
   pool-py.cc
   python-compat.cc
   signal-base-py.cc
-  signal-caster-py.cc
   signal-wrapper.cc
   )
 

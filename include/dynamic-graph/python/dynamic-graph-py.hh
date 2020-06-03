@@ -54,9 +54,6 @@ PyObject* getStreamPrintPeriod(PyObject* self, PyObject* args);
 namespace factory {
 PyObject* getEntityClassList(PyObject* self, PyObject* args);
 }
-namespace signalCaster {
-PyObject* getSignalTypeList(PyObject* self, PyObject* args);
-}
 namespace pool {
 PyObject* writeGraph(PyObject* self, PyObject* args);
 PyObject* getEntityList(PyObject* self, PyObject* args);
@@ -133,8 +130,6 @@ __attribute__((unused)) static PyMethodDef dynamicGraphMethods[] = {
      "get the doc string of an entity type"},
     {"factory_get_entity_class_list", dynamicgraph::python::factory::getEntityClassList, METH_VARARGS,
      "return the list of entity classes"},
-    {"signal_caster_get_type_list", dynamicgraph::python::signalCaster::getSignalTypeList, METH_VARARGS,
-     "return the list of signal type names"},
     {"writeGraph", dynamicgraph::python::pool::writeGraph, METH_VARARGS, "Write the graph of entities in a filename."},
     {"get_entity_list", dynamicgraph::python::pool::getEntityList, METH_VARARGS,
      "return the list of instanciated entities"},
