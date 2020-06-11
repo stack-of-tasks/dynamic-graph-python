@@ -31,6 +31,7 @@ PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 FINDPYTHON()
 
 ADD_PROJECT_DEPENDENCY(dynamic-graph REQUIRED PKG_CONFIG_REQUIRES dynamic-graph)
+ADD_PROJECT_DEPENDENCY(eigenpy REQUIRED PKG_CONFIG_REQUIRES eigenpy)
 SET(BOOST_COMPONENTS filesystem system thread program_options unit_test_framework python)
 SEARCH_FOR_BOOST()
 
@@ -40,9 +41,8 @@ SET(${PROJECT_NAME}_HEADERS
   include/${CUSTOM_HEADER_DIR}/api.hh
   include/${CUSTOM_HEADER_DIR}/convert-dg-to-py.hh
   include/${CUSTOM_HEADER_DIR}/dynamic-graph-py.hh
-  include/${CUSTOM_HEADER_DIR}/exception.hh
-  include/${CUSTOM_HEADER_DIR}/exception-python.hh
   include/${CUSTOM_HEADER_DIR}/interpreter.hh
+  include/${CUSTOM_HEADER_DIR}/module.hh
   include/${CUSTOM_HEADER_DIR}/python-compat.hh
   include/${CUSTOM_HEADER_DIR}/signal-wrapper.hh
   )
@@ -50,13 +50,15 @@ SET(${PROJECT_NAME}_HEADERS
 SET(${PROJECT_NAME}_SOURCES
   src/interpreter.cc
   src/dynamic_graph/python-compat.cc
+  src/dynamic_graph/entity-py.cc
+  src/dynamic_graph/convert-dg-to-py.cc
   )
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS})
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES}
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES}
   ${PYTHON_LIBRARY} ${Boost_PYTHON_LIBRARIES} dynamic-graph::dynamic-graph)
 
 IF(SUFFIX_SO_VERSION)
