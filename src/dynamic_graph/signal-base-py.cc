@@ -27,6 +27,21 @@ namespace python {
 
 using namespace convert;
 
+typedef int time_type;
+
+typedef Eigen::AngleAxis<double> VectorUTheta;
+typedef Eigen::Quaternion<double> Quaternion;
+
+typedef Eigen::VectorXd Vector;
+typedef Eigen::Vector3d Vector3;
+typedef Eigen::Matrix<double, 7, 1> Vector7;
+
+typedef Eigen::MatrixXd Matrix;
+typedef Eigen::Matrix<double, 3, 3> MatrixRotation;
+typedef Eigen::Matrix<double, 4, 4> Matrix4;
+typedef Eigen::Transform<double, 3, Eigen::Affine> MatrixHomogeneous;
+typedef Eigen::Matrix<double, 6, 6> MatrixTwist;
+
 template<typename Time> void exposeSignalBase (const char* name)
 {
   typedef SignalBase<Time> S_t;
@@ -80,6 +95,22 @@ template<typename T, typename Time> auto exposeSignal (const std::string& name)
   return obj;
 }
 
+template<> auto exposeSignal<MatrixHomogeneous, time_type> (const std::string& name)
+{
+  typedef Signal<MatrixHomogeneous, time_type> S_t;
+  bp::class_<S_t, bp::bases<SignalBase<time_type> >, boost::noncopyable> obj(name.c_str(), bp::init<std::string>());
+  obj
+    .add_property("value",
+        +[](const S_t& signal) -> Matrix4 { return signal.accessCopy().matrix(); },
+        +[](S_t& signal, const Matrix4& v) {
+          // TODO it isn't hard to support pinocchio::SE3 type here.
+          // However, this adds a dependency to pinocchio.
+          signal.setConstant (MatrixHomogeneous(v));
+        }, "the signal value.")
+    ;
+  return obj;
+}
+
 template<typename T, typename Time> auto exposeSignalPtr (const std::string& name)
 {
   typedef SignalPtr<T, Time> S_t;
@@ -107,31 +138,21 @@ void exposeSignalsOfType(const std::string& name)
 
 void exposeSignals()
 {
-  typedef int time_type;
   exposeSignalBase<time_type>("SignalBase");
 
   exposeSignalsOfType<bool, time_type>("Bool");
   exposeSignalsOfType<int, time_type>("Int");
   exposeSignalsOfType<double, time_type>("Double");
 
-  typedef Eigen::VectorXd Vector;
-  typedef Eigen::Vector3d Vector3;
-  typedef Eigen::Matrix<double, 7, 1> Vector7;
   exposeSignalsOfType<Vector, time_type>("Vector");
   exposeSignalsOfType<Vector3, time_type>("Vector3");
   exposeSignalsOfType<Vector7, time_type>("Vector7");
 
-  typedef Eigen::MatrixXd Matrix;
-  typedef Eigen::Matrix<double, 3, 3> MatrixRotation;
-  typedef Eigen::Transform<double, 3, Eigen::Affine> MatrixHomogeneous;
-  typedef Eigen::Matrix<double, 6, 6> MatrixTwist;
   exposeSignalsOfType<Matrix, time_type>("Matrix");
   exposeSignalsOfType<MatrixRotation, time_type>("MatrixRotation");
   exposeSignalsOfType<MatrixHomogeneous, time_type>("MatrixHomogeneous");
   exposeSignalsOfType<MatrixTwist, time_type>("MatrixTwist");
 
-  typedef Eigen::AngleAxis<double> VectorUTheta;
-  typedef Eigen::Quaternion<double> Quaternion;
   exposeSignalsOfType<Quaternion, time_type>("Quaternion");
   exposeSignalsOfType<VectorUTheta, time_type>("VectorUTheta");
 }
