@@ -64,8 +64,29 @@ bp::object fromValue(const command::Value& value) {
   switch (value.type()) {
     case (Value::BOOL):
       return bp::object(value.boolValue());
-    default:
-      return bp::object();
+    case (Value::UNSIGNED):
+      return bp::object(value.unsignedValue());
+    case (Value::INT):
+      return bp::object(value.intValue());
+    case (Value::FLOAT):
+      return bp::object(value.floatValue());
+    case (Value::DOUBLE):
+      return bp::object(value.doubleValue());
+    case (Value::STRING):
+      return bp::object(value.stringValue());
+    case (Value::VECTOR):
+      return bp::object(value.vectorValue());
+    case (Value::MATRIX):
+      return bp::object(value.matrixXdValue());
+    case (Value::MATRIX4D):
+      return bp::object(value.matrix4dValue());
+    case (Value::VALUES):
+      {
+        bp::list list;
+        for(const Value& v : value.constValuesValue())
+          list.append(fromValue(v));
+        return list;
+      }
   }
   return bp::object();
 }

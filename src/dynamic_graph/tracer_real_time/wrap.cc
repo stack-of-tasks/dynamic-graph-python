@@ -7,7 +7,7 @@ BOOST_PYTHON_MODULE(wrap)
   using dynamicgraph::Tracer;
   using dynamicgraph::TracerRealTime;
 
-  bp::import("dynamic_graph");
+  bp::import("dynamic_graph.tracer");
   dynamicgraph::python::exposeEntity<TracerRealTime,
     bp::bases<Tracer> >()
     ;
