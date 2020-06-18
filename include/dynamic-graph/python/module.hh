@@ -13,6 +13,22 @@ namespace python {
 constexpr int AddSignals  = 1;
 constexpr int AddCommands = 2;
 
+namespace internal {
+
+template<typename T, int Options = AddCommands | AddSignals>
+bp::object makeEntity1(const char* name) {
+  Entity* ent = entity::create(T::CLASS_NAME.c_str(), name);
+  assert(dynamic_cast<T*>(ent) != NULL);
+  bp::object obj(bp::ptr(static_cast<T*>(ent)));
+  if (Options & AddCommands) entity::addCommands(obj);
+  if (Options & AddSignals)  entity::addSignals(obj);
+  return obj;
+}
+template<typename T, int Options = AddCommands | AddSignals>
+bp::object makeEntity2() { return makeEntity1<T, Options>(""); }
+
+}
+
 /// \tparam Options by default, all the signals and commands are added as
 ///         attribute to the Python object. This behaviour works fine for
 ///         entities that have static commands and signals.
@@ -48,14 +64,8 @@ inline auto exposeEntity ()
         })
   ;
   */
-  bp::def(T::CLASS_NAME.c_str(), +[](const char* name) -> bp::object {
-          Entity* ent = entity::create(T::CLASS_NAME.c_str(), name);
-          assert(dynamic_cast<T*>(ent) != NULL);
-          bp::object obj(bp::ptr(static_cast<T*>(ent)));
-          if (Options & AddCommands) entity::addCommands(obj);
-          if (Options & AddSignals)  entity::addSignals(obj);
-          return obj;
-        });
+  bp::def(T::CLASS_NAME.c_str(), &internal::makeEntity1<T, Options>);
+  bp::def(T::CLASS_NAME.c_str(), &internal::makeEntity2<T, Options>);
   return obj;
 }
 
