@@ -17,7 +17,7 @@ namespace bp = boost::python;
 namespace dynamicgraph {
 namespace python {
 
-template <typename Iterator>
+template <typename Iterator> inline
 bp::list to_py_list(Iterator begin, Iterator end) {
   typedef typename Iterator::value_type T;
   bp::list lst;
@@ -25,9 +25,16 @@ bp::list to_py_list(Iterator begin, Iterator end) {
   return lst;
 }
 
-template <typename Iterator>
+template <typename Iterator> inline
 bp::tuple to_py_tuple(Iterator begin, Iterator end) {
   return bp::tuple(to_py_list(begin, end));
+}
+
+template<typename T> inline
+std::vector< T > to_std_vector( const bp::object& iterable )
+{
+    return std::vector< T >( bp::stl_input_iterator< T >( iterable ),
+                             bp::stl_input_iterator< T >( ) );
 }
 
 void exposeSignals();
