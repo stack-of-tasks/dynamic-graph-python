@@ -87,8 +87,10 @@ bp::object fromValue(const command::Value& value) {
           list.append(fromValue(v));
         return list;
       }
+    case (Value::NONE):
+    default:
+      return bp::object();
   }
-  return bp::object();
 }
 
 }  // namespace convert
