@@ -17,6 +17,7 @@
 #include <dynamic-graph/signal-time-dependent.h>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/command.h>
+#include <dynamic-graph/factory.h>
 #include <dynamic-graph/pool.h>
 
 #include <dynamic-graph/tracer.h>
@@ -24,6 +25,7 @@
 #include "dynamic-graph/python/dynamic-graph-py.hh"
 #include "dynamic-graph/python/signal-wrapper.hh"
 #include "dynamic-graph/python/convert-dg-to-py.hh"
+#include "dynamic-graph/python/module.hh"
 
 namespace dynamicgraph {
 namespace python {
@@ -68,6 +70,24 @@ MapOfEntities* getEntityMap() {
 dg::SignalBase<int>* getSignal(dg::Entity& e, const std::string& name) {
   return &e.getSignal(name);
 }
+
+class PythonEntity : public dg::Entity
+{
+DYNAMIC_GRAPH_ENTITY_DECL();
+public:
+  using dg::Entity::Entity;
+
+  void signalRegistration(dg::SignalBase<int> &signal)
+  {
+    dg::Entity::signalRegistration(signal);
+  }
+  void signalDeregistration(const std::string &name)
+  {
+    dg::Entity::signalDeregistration(name);
+  }
+};
+
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonEntity, "PythonEntity");
 
 void exposeEntityBase()
 {
@@ -175,6 +195,16 @@ void exposeEntityBase()
     // For backward compat
     .add_static_property ("entities", bp::make_function(&getEntityMap, reference_existing_object()))
     ;
+
+    python::exposeEntity<PythonEntity, bp::bases<Entity>, 0>()
+      .def("signalRegistration", &PythonEntity::signalRegistration)
+      .def("signalDeregistration", &PythonEntity::signalDeregistration)
+      ;
+
+
+    python::exposeEntity<python::PythonSignalContainer, bp::bases<Entity>, 0>()
+      .def("rmSignal", &python::PythonSignalContainer::rmSignal, "Remove a signal", bp::arg("signal_name"))
+      ;
 }
 
 void exposeCommand()

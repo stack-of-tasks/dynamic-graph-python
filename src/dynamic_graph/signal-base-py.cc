@@ -17,6 +17,7 @@
 #include "dynamic-graph/python/dynamic-graph-py.hh"
 #include "dynamic-graph/python/convert-dg-to-py.hh"
 #include "dynamic-graph/python/signal-wrapper.hh"
+#include "dynamic-graph/python/module.hh"
 
 using dynamicgraph::SignalBase;
 
@@ -111,6 +112,13 @@ template<> auto exposeSignal<MatrixHomogeneous, time_type> (const std::string& n
   return obj;
 }
 
+template<typename T, typename Time> auto exposeSignalWrapper (const std::string& name)
+{
+  typedef SignalWrapper<T, Time> S_t;
+  bp::class_<S_t, bp::bases<Signal<T, Time> >, boost::noncopyable> obj(name.c_str(), bp::no_init);
+  return obj;
+}
+
 template<typename T, typename Time> auto exposeSignalPtr (const std::string& name)
 {
   typedef SignalPtr<T, Time> S_t;
@@ -133,6 +141,7 @@ void exposeSignalsOfType(const std::string& name)
 {
   exposeSignal<T, Time>("Signal" + name);
   exposeSignalPtr<T, Time>("SignalPtr" + name);
+  exposeSignalWrapper<T, Time>("SignalWrapper" + name);
   exposeSignalTimeDependent<T, Time>("SignalTimeDependent" + name);
 }
 

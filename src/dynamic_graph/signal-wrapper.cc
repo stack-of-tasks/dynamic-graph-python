@@ -8,19 +8,6 @@
 
 namespace dynamicgraph {
 namespace python {
-PythonSignalContainer::PythonSignalContainer(const std::string& name) : Entity(name) {
-  std::string docstring;
-
-  docstring =
-      "    \n"
-      "    Remove a signal\n"
-      "    \n"
-      "      Input:\n"
-      "        - name of the signal\n"
-      "    \n";
-  addCommand("rmSignal", command::makeCommandVoid1(*this, &PythonSignalContainer::rmSignal, docstring));
-}
-
 void PythonSignalContainer::signalRegistration(const SignalArray<int>& signals) {
   Entity::signalRegistration(signals);
 }

@@ -18,7 +18,7 @@ class PythonSignalContainer : public Entity {
   DYNAMIC_GRAPH_ENTITY_DECL();
 
  public:
-  PythonSignalContainer(const std::string& name);
+  using Entity::Entity;
 
   void signalRegistration(const SignalArray<int>& signals);
 
