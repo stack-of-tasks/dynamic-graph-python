@@ -17,6 +17,5 @@ ENDFOREACH(source)
 
 # --- ADD the wrap on the dg modules
 LINK_DIRECTORIES(${DYNAMIC_GRAPH_PLUGINDIR})
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer" dynamic-graph::tracer tracer-wrap)
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" dynamic-graph::tracer-real-time
-  tracer_real_time-wrap)
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer" tracer tracer-wrap)
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" tracer-real-time tracer_real_time-wrap)
