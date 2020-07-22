@@ -33,8 +33,8 @@ namespace python {
 using namespace convert;
 
 #if PY_MAJOR_VERSION == 2
-  extern PyObject* dgpyError;
-# endif
+extern PyObject* dgpyError;
+#endif
 
 namespace entity {
 
@@ -47,7 +47,7 @@ PyObject* create(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   char* className = NULL;
   char* instanceName = NULL;
 
@@ -85,7 +85,7 @@ PyObject* getName(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   void* pointer = NULL;
   std::string name;
@@ -115,7 +115,7 @@ PyObject* getClassName(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   void* pointer = NULL;
   std::string name;
@@ -145,7 +145,7 @@ PyObject* hasSignal(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   char* name = NULL;
   PyObject* object = NULL;
   void* pointer = NULL;
@@ -181,7 +181,7 @@ PyObject* getSignal(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   char* name = NULL;
   PyObject* object = NULL;
   void* pointer = NULL;
@@ -213,7 +213,7 @@ PyObject* listSignals(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
 
@@ -246,9 +246,9 @@ PyObject* executeCommand(
 #if PY_MAJOR_VERSION >= 3
     PyObject* m, PyObject* args
 #else
-    PyObject* , PyObject* args
+    PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   PyObject* argTuple = NULL;
   char* commandName = NULL;
@@ -344,7 +344,7 @@ PyObject* getCommandDocstring(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   char* commandName;
   if (!PyArg_ParseTuple(args, "Os", &object, &commandName)) {
@@ -380,7 +380,7 @@ PyObject* getDocString(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) {
     return NULL;
@@ -411,7 +411,7 @@ PyObject* display(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   /* Retrieve the entity instance. */
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object) || (!PyCapsule_CheckExact(object))) {
@@ -438,7 +438,7 @@ PyObject* setLoggerVerbosityLevel(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   PyObject* objectVerbosityLevel = NULL;
   if (!PyArg_ParseTuple(args, "OO", &object, &objectVerbosityLevel)) return NULL;
@@ -500,7 +500,7 @@ PyObject* getLoggerVerbosityLevel(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -532,7 +532,7 @@ PyObject* getStreamPrintPeriod(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -563,7 +563,7 @@ PyObject* setStreamPrintPeriod(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   double streamPrintPeriod = 0;
   if (!PyArg_ParseTuple(args, "Od", &object, &streamPrintPeriod)) return NULL;
@@ -603,7 +603,7 @@ PyObject* getTimeSample(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
 
@@ -634,7 +634,7 @@ PyObject* setTimeSample(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PyObject* object = NULL;
   double timeSample;
   if (!PyArg_ParseTuple(args, "Od", &object, &timeSample)) return NULL;

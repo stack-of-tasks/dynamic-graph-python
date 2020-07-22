@@ -11,8 +11,8 @@ namespace dynamicgraph {
 namespace python {
 
 #if PY_MAJOR_VERSION == 2
-  extern PyObject* dgpyError;
-# endif
+extern PyObject* dgpyError;
+#endif
 
 namespace pool {
 
@@ -22,7 +22,7 @@ PyObject* writeGraph(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   char* filename;
   if (!PyArg_ParseTuple(args, "s", &filename)) return NULL;
   try {
@@ -41,7 +41,7 @@ PyObject* getEntityList(
 #else
     PyObject*, PyObject* args
 #endif
-  ) {
+) {
   if (!PyArg_ParseTuple(args, "")) return NULL;
 
   std::vector<std::string> entityNames;
