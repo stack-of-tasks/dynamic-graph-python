@@ -22,8 +22,8 @@ namespace dynamicgraph {
 namespace python {
 
 #if PY_MAJOR_VERSION == 2
-  extern PyObject* dgpyError;
-# endif
+extern PyObject* dgpyError;
+#endif
 
 using namespace convert;
 
@@ -96,7 +96,7 @@ PyObject* createSignalWrapper(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   PythonSignalContainer* psc = getPythonSignalContainer();
   if (psc == NULL) return NULL;
 
@@ -159,7 +159,7 @@ PyObject* setTime(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   int time;
@@ -182,7 +182,7 @@ PyObject* display(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -206,7 +206,7 @@ PyObject* displayDependencies(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   int time;
@@ -230,7 +230,7 @@ PyObject* getValue(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -330,7 +330,7 @@ PyObject* getName(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -354,7 +354,7 @@ PyObject* getClassName(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -378,7 +378,7 @@ PyObject* setValue(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   char* valueString = NULL;
@@ -405,7 +405,7 @@ PyObject* recompute(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   unsigned int time;
@@ -427,7 +427,7 @@ PyObject* unplug(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -448,7 +448,7 @@ PyObject* isPlugged(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;
@@ -473,7 +473,7 @@ PyObject* getPlugged(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   void* pointer = NULL;
   PyObject* object = NULL;
   if (!PyArg_ParseTuple(args, "O", &object)) return NULL;

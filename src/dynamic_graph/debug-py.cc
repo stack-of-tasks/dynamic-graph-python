@@ -22,8 +22,8 @@ namespace dynamicgraph {
 namespace python {
 
 #if PY_MAJOR_VERSION == 2
-  extern PyObject* dgpyError;
-# endif
+extern PyObject* dgpyError;
+#endif
 
 namespace debug {
 
@@ -35,7 +35,7 @@ PyObject* addLoggerFileOutputStream(
 #else
     PyObject*, PyObject* args
 #endif
-    ) {
+) {
   char* filename;
   if (!PyArg_ParseTuple(args, "s", &filename)) return NULL;
   std::string sfilename(filename);
@@ -58,7 +58,7 @@ PyObject* closeLoggerFileOutputStream(
 #else
     PyObject*, PyObject*
 #endif
-    ) {
+) {
   try {
     for (std::map<std::string, ofstreamShrPtr>::iterator it = mapOfFiles_.begin(); it != mapOfFiles_.end(); ++it) {
       it->second->close();
@@ -74,7 +74,7 @@ PyObject* addLoggerCoutOutputStream(
 #else
     PyObject*, PyObject*
 #endif
-    ) {
+) {
   try {
     dgADD_OSTREAM_TO_RTLOG(std::cout);
   }
@@ -88,7 +88,7 @@ PyObject* realTimeLoggerDestroy(
 #else
     PyObject*, PyObject*
 #endif
-    ) {
+) {
   try {
     RealTimeLogger::destroy();
   }
@@ -102,7 +102,7 @@ PyObject* realTimeLoggerSpinOnce(
 #else
     PyObject*, PyObject*
 #endif
-    ) {
+) {
   try {
     RealTimeLogger::instance().spinOnce();
   }
@@ -116,7 +116,7 @@ PyObject* realTimeLoggerInstance(
 #else
     PyObject*, PyObject*
 #endif
-    ) {
+) {
   try {
     RealTimeLogger::instance();
   }
