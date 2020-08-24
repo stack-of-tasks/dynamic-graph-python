@@ -1,18 +1,15 @@
 import unittest
 
 import dynamic_graph as dg
-
 from custom_entity import CustomEntity
 
-ERR = "dynamic_graph.plug(a, b): Argument '%s' must be of type 'dynamic_graph.Signal', but got dynamic_graph.Entity"
+ERR = """Python argument types in
+    dynamic_graph.wrap.plug(%s, %s)
+did not match C++ signature:
+    plug(dynamicgraph::SignalBase<int>* signalOut, dynamicgraph::SignalBase<int>* signalIn)"""
 
 
 class BindingsTests(unittest.TestCase):
-    def test_bindings(self):
-        with self.assertRaises(dg.dgpyError) as cm:
-            dg.error_out()
-        self.assertEqual(str(cm.exception), "something bad happened")
-
     def test_type_check(self):
         """
         test the type checking in signal plugs
@@ -25,12 +22,12 @@ class BindingsTests(unittest.TestCase):
         # Check that we can't connect first.out to second
         with self.assertRaises(TypeError) as cm_in:
             dg.plug(first.signal('out_double'), second)
-        self.assertEqual(str(cm_in.exception), ERR % 'b')
+        self.assertEqual(str(cm_in.exception), ERR % ("SignalTimeDependentDouble", "CustomEntity"))
 
         # Check that we can't connect first to second.in
         with self.assertRaises(TypeError) as cm_out:
             dg.plug(first, second.signal('in_double'))
-        self.assertEqual(str(cm_out.exception), ERR % 'a')
+        self.assertEqual(str(cm_out.exception), ERR % ("CustomEntity", "SignalPtrDouble"))
 
     def test_dg_exc(self):
         """
@@ -38,7 +35,7 @@ class BindingsTests(unittest.TestCase):
         """
         ent = CustomEntity('test_dg_exc')
         # check that accessing a non initialized signal raises
-        with self.assertRaises(dg.dgpyError) as cm:
+        with self.assertRaises(RuntimeError) as cm:
             ent.act()
         self.assertEqual(
             str(cm.exception),
