@@ -24,8 +24,7 @@ namespace debug {
 
 std::map<std::string, ofstreamShrPtr> mapOfFiles_;
 
-void addLoggerFileOutputStream(const char* filename)
-{
+void addLoggerFileOutputStream(const char* filename) {
   std::ofstream* aofs = new std::ofstream;
   ofstreamShrPtr ofs_shrptr = boost::shared_ptr<std::ofstream>(aofs);
   aofs->open(filename, std::ofstream::out);
@@ -35,31 +34,17 @@ void addLoggerFileOutputStream(const char* filename)
   mapOfFiles_[filename] = ofs_shrptr;
 }
 
-void closeLoggerFileOutputStream()
-{
-  for (const auto& el : mapOfFiles_)
-    el.second->close();
+void closeLoggerFileOutputStream() {
+  for (const auto& el : mapOfFiles_) el.second->close();
 }
 
-void addLoggerCoutOutputStream()
-{
-  dgADD_OSTREAM_TO_RTLOG(std::cout);
-}
+void addLoggerCoutOutputStream() { dgADD_OSTREAM_TO_RTLOG(std::cout); }
 
-void realTimeLoggerDestroy()
-{
-  RealTimeLogger::destroy();
-}
+void realTimeLoggerDestroy() { RealTimeLogger::destroy(); }
 
-void realTimeLoggerSpinOnce()
-{
-  RealTimeLogger::instance().spinOnce();
-}
+void realTimeLoggerSpinOnce() { RealTimeLogger::instance().spinOnce(); }
 
-void realTimeLoggerInstance()
-{
-  RealTimeLogger::instance();
-}
+void realTimeLoggerInstance() { RealTimeLogger::instance(); }
 
 }  // namespace debug
 }  // namespace python

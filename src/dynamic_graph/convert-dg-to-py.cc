@@ -80,13 +80,11 @@ bp::object fromValue(const command::Value& value) {
       return bp::object(value.matrixXdValue());
     case (Value::MATRIX4D):
       return bp::object(value.matrix4dValue());
-    case (Value::VALUES):
-      {
-        bp::list list;
-        for(const Value& v : value.constValuesValue())
-          list.append(fromValue(v));
-        return list;
-      }
+    case (Value::VALUES): {
+      bp::list list;
+      for (const Value& v : value.constValuesValue()) list.append(fromValue(v));
+      return list;
+    }
     case (Value::NONE):
     default:
       return bp::object();

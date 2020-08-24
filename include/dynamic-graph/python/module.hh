@@ -10,24 +10,26 @@
 namespace dynamicgraph {
 namespace python {
 
-constexpr int AddSignals  = 1;
+constexpr int AddSignals = 1;
 constexpr int AddCommands = 2;
 
 namespace internal {
 
-template<typename T, int Options = AddCommands | AddSignals>
+template <typename T, int Options = AddCommands | AddSignals>
 bp::object makeEntity1(const char* name) {
   Entity* ent = entity::create(T::CLASS_NAME.c_str(), name);
   assert(dynamic_cast<T*>(ent) != NULL);
   bp::object obj(bp::ptr(static_cast<T*>(ent)));
   if (Options & AddCommands) entity::addCommands(obj);
-  if (Options & AddSignals)  entity::addSignals(obj);
+  if (Options & AddSignals) entity::addSignals(obj);
   return obj;
 }
-template<typename T, int Options = AddCommands | AddSignals>
-bp::object makeEntity2() { return makeEntity1<T, Options>(""); }
-
+template <typename T, int Options = AddCommands | AddSignals>
+bp::object makeEntity2() {
+  return makeEntity1<T, Options>("");
 }
+
+}  // namespace internal
 
 /// \tparam Options by default, all the signals and commands are added as
 ///         attribute to the Python object. This behaviour works fine for
@@ -35,16 +37,13 @@ bp::object makeEntity2() { return makeEntity1<T, Options>(""); }
 ///         If some commands or signals are added or removed dynamiccally, then
 ///         it is better to disable the default behaviour and handle it
 ///         specifically.
-template<typename T,
-  typename bases = boost::python::bases<dynamicgraph::Entity>,
-  int Options = AddCommands | AddSignals>
-inline auto exposeEntity ()
-{
-  //std::string hiddenClassName ("_" + T::CLASS_NAME);
-  std::string hiddenClassName (T::CLASS_NAME);
+template <typename T, typename bases = boost::python::bases<dynamicgraph::Entity>,
+          int Options = AddCommands | AddSignals>
+inline auto exposeEntity() {
+  // std::string hiddenClassName ("_" + T::CLASS_NAME);
+  std::string hiddenClassName(T::CLASS_NAME);
   namespace bp = boost::python;
-  bp::class_<T, bases, boost::noncopyable > obj (hiddenClassName.c_str(),
-      bp::init<std::string>());
+  bp::class_<T, bases, boost::noncopyable> obj(hiddenClassName.c_str(), bp::init<std::string>());
   /* TODO at the moment, I couldn't easily find a way to define a Python constructor
    * that would create the entity via the factory and then populate the
    * python object with its commands.
@@ -69,7 +68,7 @@ inline auto exposeEntity ()
   return obj;
 }
 
-} // namespace python
-} // namespace dynamicgraph
+}  // namespace python
+}  // namespace dynamicgraph
 
-#endif // DYNAMIC_GRAPH_PYTHON_MODULE_HH
+#endif  // DYNAMIC_GRAPH_PYTHON_MODULE_HH

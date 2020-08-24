@@ -39,7 +39,7 @@ class SignalWrapper : public Signal<T, Time> {
     this->setFunction(f);
   }
 
-  virtual ~SignalWrapper() {};
+  virtual ~SignalWrapper(){};
 
  private:
   T& call(T& value, Time t) {

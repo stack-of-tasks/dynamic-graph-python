@@ -2,12 +2,9 @@
 
 #include <dynamic-graph/tracer.h>
 
-BOOST_PYTHON_MODULE(wrap)
-{
+BOOST_PYTHON_MODULE(wrap) {
   using dynamicgraph::Tracer;
 
   bp::import("dynamic_graph");
-  dynamicgraph::python::exposeEntity<Tracer>()
-    .def("addSignal", &Tracer::addSignalToTrace)
-    ;
+  dynamicgraph::python::exposeEntity<Tracer>().def("addSignal", &Tracer::addSignalToTrace);
 }
