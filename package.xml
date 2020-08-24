@@ -21,7 +21,8 @@
   <depend>dynamic-graph</depend>
   <depend>roscpp</depend>
   <depend>boost</depend>
-  
+  <depend>eigenpy</depend>
+
   <buildtool_depend>cmake</buildtool_depend>
 
   <export>
