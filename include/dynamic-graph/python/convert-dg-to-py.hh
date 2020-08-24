@@ -1,18 +1,16 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
+#include <boost/python.hpp>
+
 #include <dynamic-graph/linear-algebra.h>
 #include <dynamic-graph/value.h>
-#include <dynamic-graph/python/exception-python.hh>
 
 namespace dynamicgraph {
 namespace python {
 namespace convert {
 
-command::Value pythonToValue(PyObject* pyObject, const command::Value::Type& valueType);
-PyObject* vectorToPython(const Vector& vector);
-PyObject* matrixToPython(const ::dynamicgraph::Matrix& matrix);
-PyObject* matrix4dToPython(const Eigen::Matrix4d& matrix);
-PyObject* valueToPython(const ::dynamicgraph::command::Value& value);
+command::Value toValue(boost::python::object o, const command::Value::Type& type);
+boost::python::object fromValue(const command::Value& value);
 
 }  // namespace convert
 }  // namespace python
