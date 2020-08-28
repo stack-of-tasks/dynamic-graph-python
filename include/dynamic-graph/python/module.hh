@@ -1,6 +1,11 @@
 #ifndef DYNAMIC_GRAPH_PYTHON_MODULE_HH
 #define DYNAMIC_GRAPH_PYTHON_MODULE_HH
 
+#ifdef PINOCCHIO_WITH_URDFDOM
+// If pinocchio is used, we have to include pinocchio header before boost mpl
+#include <pinocchio/fwd.hpp>
+#endif
+
 #include <boost/python.hpp>
 #include <boost/mpl/for_each.hpp>
 
