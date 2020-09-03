@@ -70,6 +70,8 @@ inline auto exposeEntity() {
   */
   bp::def(T::CLASS_NAME.c_str(), &internal::makeEntity1<T, Options>);
   bp::def(T::CLASS_NAME.c_str(), &internal::makeEntity2<T, Options>);
+  if (!(Options & AddCommands)) obj.def("add_commands", &entity::addCommands);
+  if (!(Options & AddSignals)) obj.def("add_signals", &entity::addSignals);
   return obj;
 }
 
