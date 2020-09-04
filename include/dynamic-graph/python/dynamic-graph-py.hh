@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
 
 #include <dynamic-graph/debug.h>
 #include <dynamic-graph/exception-factory.h>
