@@ -5,19 +5,17 @@
 
 #include <boost/python.hpp>
 
+#include "dynamic-graph/python/signal.hh"
+
 #include <dynamic-graph/signal-base.h>
 #include <dynamic-graph/signal.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <dynamic-graph/signal-caster.h>
 #include <dynamic-graph/linear-algebra.h>
-#include <dynamic-graph/pool.h>
-#include <dynamic-graph/factory.h>
+#include <dynamic-graph/value.h>
 
 #include "dynamic-graph/python/dynamic-graph-py.hh"
-#include "dynamic-graph/python/convert-dg-to-py.hh"
 #include "dynamic-graph/python/signal-wrapper.hh"
-#include "dynamic-graph/python/module.hh"
 
 using dynamicgraph::SignalBase;
 
@@ -25,8 +23,6 @@ namespace bp = boost::python;
 
 namespace dynamicgraph {
 namespace python {
-
-using namespace convert;
 
 typedef int time_type;
 
@@ -82,17 +78,6 @@ void exposeSignalBase(const char* name) {
            "Print the signal dependencies in a string");
 }
 
-template <typename T, typename Time>
-auto exposeSignal(const std::string& name) {
-  typedef Signal<T, Time> S_t;
-  bp::class_<S_t, bp::bases<SignalBase<Time> >, boost::noncopyable> obj(name.c_str(), bp::init<std::string>());
-  obj.add_property("value", bp::make_function(&S_t::accessCopy, bp::return_value_policy<bp::copy_const_reference>()),
-                   &S_t::setConstant,  // TODO check the setter
-                   "the signal value.\n"
-                   "warning: for Eigen objects, sig.value[0] = 1. may not work).");
-  return obj;
-}
-
 template <>
 auto exposeSignal<MatrixHomogeneous, time_type>(const std::string& name) {
   typedef Signal<MatrixHomogeneous, time_type> S_t;
@@ -105,35 +90,6 @@ auto exposeSignal<MatrixHomogeneous, time_type>(const std::string& name) {
                    },
                    "the signal value.");
   return obj;
-}
-
-template <typename T, typename Time>
-auto exposeSignalWrapper(const std::string& name) {
-  typedef SignalWrapper<T, Time> S_t;
-  bp::class_<S_t, bp::bases<Signal<T, Time> >, boost::noncopyable> obj(name.c_str(), bp::no_init);
-  return obj;
-}
-
-template <typename T, typename Time>
-auto exposeSignalPtr(const std::string& name) {
-  typedef SignalPtr<T, Time> S_t;
-  bp::class_<S_t, bp::bases<Signal<T, Time> >, boost::noncopyable> obj(name.c_str(), bp::no_init);
-  return obj;
-}
-
-template <typename T, typename Time>
-auto exposeSignalTimeDependent(const std::string& name) {
-  typedef SignalTimeDependent<T, Time> S_t;
-  bp::class_<S_t, bp::bases<Signal<T, Time> >, boost::noncopyable> obj(name.c_str(), bp::no_init);
-  return obj;
-}
-
-template <typename T, typename Time>
-void exposeSignalsOfType(const std::string& name) {
-  exposeSignal<T, Time>("Signal" + name);
-  exposeSignalPtr<T, Time>("SignalPtr" + name);
-  exposeSignalWrapper<T, Time>("SignalWrapper" + name);
-  exposeSignalTimeDependent<T, Time>("SignalTimeDependent" + name);
 }
 
 void exposeSignals() {
