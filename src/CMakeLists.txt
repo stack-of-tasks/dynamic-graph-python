@@ -16,6 +16,8 @@ FOREACH(source ${PYTHON_SOURCES})
 ENDFOREACH(source)
 
 # --- ADD the wrap on the dg modules
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer" dynamic-graph::tracer tracer-wrap)
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" dynamic-graph::tracer-real-time
-  tracer_real_time-wrap)
+LINK_DIRECTORIES(${DYNAMIC_GRAPH_PLUGINDIR})
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer" dynamic-graph::tracer tracer-wrap
+  SOURCE_PYTHON_MODULE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/tracer/wrap.cc)
+DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" dynamic-graph::tracer-real-time tracer_real_time-wrap
+  SOURCE_PYTHON_MODULE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/tracer_real_time/wrap.cc)

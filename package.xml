@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>dynamic-graph-python</name>
-  <version>3.5.3</version>
+  <version>4.0.0</version>
   <description>
     Dynamic graph library Python bindings
   </description>
@@ -20,7 +20,8 @@
   <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
   <depend>dynamic-graph</depend>
   <depend>boost</depend>
-  
+  <depend>eigenpy</depend>
+
   <buildtool_depend>cmake</buildtool_depend>
 
   <export>

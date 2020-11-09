@@ -2,11 +2,11 @@
 
 # Test the interpreter
 ADD_UNIT_TEST(interpreter-test interpreter-test.cc)
-TARGET_LINK_LIBRARIES(interpreter-test ${PROJECT_NAME})
+TARGET_LINK_LIBRARIES(interpreter-test PRIVATE ${PROJECT_NAME})
 
 # Test runfile
 ADD_UNIT_TEST(interpreter-test-runfile interpreter-test-runfile.cc)
-TARGET_LINK_LIBRARIES(interpreter-test-runfile ${PYTHON_LIBRARY} ${Boost_LIBRARIES} ${PROJECT_NAME})
+TARGET_LINK_LIBRARIES(interpreter-test-runfile PRIVATE ${PROJECT_NAME} Boost::unit_test_framework)
 TARGET_COMPILE_DEFINITIONS(interpreter-test-runfile PRIVATE PATH="${CMAKE_CURRENT_LIST_DIR}/")
 
 # Test the module generation
@@ -19,7 +19,7 @@ IF(SUFFIX_SO_VERSION)
     PROPERTIES SOVERSION ${PROJECT_VERSION})
 ENDIF(SUFFIX_SO_VERSION)
 
-target_link_libraries(${LIBRARY_NAME} dynamic-graph::dynamic-graph)
+target_link_libraries(${LIBRARY_NAME} PRIVATE dynamic-graph::dynamic-graph)
 
 ## Create its bindings
 ## This mimics DYNAMIC_GRAPH_PYTHON_MODULE(${LIBRARY_NAME} ${LIBRARY_NAME} "${LIBRARY_NAME}-wrap")
@@ -29,18 +29,26 @@ CONFIGURE_FILE(
   ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}/__init__.py
   )
 SET(PYTHON_MODULE "${LIBRARY_NAME}-wrap")
-SET(SOURCE_PYTHON_MODULE "cmake/dynamic_graph/python-module-py.cc")
-ADD_LIBRARY(${PYTHON_MODULE} MODULE ${PROJECT_SOURCE_DIR}/${SOURCE_PYTHON_MODULE})
+set(DYNAMICGRAPH_MODULE_HEADER "${CMAKE_SOURCE_DIR}/tests/custom_entity_module.h")
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/dynamic_graph/python-module-py.cc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/python-module-py.cc
+  @ONLY
+  )
+ADD_LIBRARY(${PYTHON_MODULE} MODULE ${CMAKE_CURRENT_BINARY_DIR}/python-module-py.cc)
 SET_TARGET_PROPERTIES(${PYTHON_MODULE} PROPERTIES
   PREFIX ""
   OUTPUT_NAME ${LIBRARY_NAME}/wrap)
 
 IF(UNIX AND NOT APPLE)
-  TARGET_LINK_LIBRARIES(${PYTHON_MODULE} "-Wl,--no-as-needed")
+  TARGET_LINK_LIBRARIES(${PYTHON_MODULE} PRIVATE "-Wl,--no-as-needed")
 ENDIF(UNIX AND NOT APPLE)
 
-TARGET_LINK_LIBRARIES(${PYTHON_MODULE} ${LIBRARY_NAME} ${PYTHON_LIBRARY})
-TARGET_INCLUDE_DIRECTORIES(${PYTHON_MODULE} SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(${PYTHON_MODULE} PRIVATE
+  ${LIBRARY_NAME} dynamic-graph-python
+  ${PYTHON_LIBRARY})
+TARGET_LINK_BOOST_PYTHON(${PYTHON_MODULE} PRIVATE)
+TARGET_INCLUDE_DIRECTORIES(${PYTHON_MODULE} SYSTEM PRIVATE ${PYTHON_INCLUDE_DIRS})
 
 ## Test it
 ADD_PYTHON_UNIT_TEST("test-custom-entity" "tests/test_custom_entity.py" src tests)
