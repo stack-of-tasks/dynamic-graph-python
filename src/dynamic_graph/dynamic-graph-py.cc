@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include <boost/python.hpp>
+#include <boost/python/raw_function.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 #include <eigenpy/eigenpy.hpp>
