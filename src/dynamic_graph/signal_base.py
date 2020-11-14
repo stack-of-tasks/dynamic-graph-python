@@ -4,11 +4,13 @@
 
 from __future__ import print_function
 
-from .wrap import SignalBase, create_signal_wrapper as SignalWrapper
-
 # I kept what follows for backward compatibility but I think it should be
 # removed
 import re
+
+from .wrap import SignalBase  # noqa
+from .wrap import create_signal_wrapper as SignalWrapper  # noqa
+
 
 def stringToTuple(vector):
     """
