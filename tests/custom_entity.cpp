@@ -6,6 +6,7 @@
 #define ENABLE_RT_LOG
 
 #include "custom_entity.h"
+#include <boost/bind.hpp>
 
 #include <dynamic-graph/command-bind.h>
 #include <dynamic-graph/entity.h>

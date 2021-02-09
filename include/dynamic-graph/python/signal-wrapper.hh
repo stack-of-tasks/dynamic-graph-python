@@ -5,6 +5,7 @@
 #define DGPY_SIGNAL_WRAPPER
 
 #include <boost/python.hpp>
+#include <boost/bind.hpp>
 
 #include <dynamic-graph/linear-algebra.h>
 #include <dynamic-graph/signal.h>
