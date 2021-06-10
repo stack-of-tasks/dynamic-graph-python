@@ -48,6 +48,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/${CUSTOM_HEADER_DIR}/api.hh
   include/${CUSTOM_HEADER_DIR}/convert-dg-to-py.hh
   include/${CUSTOM_HEADER_DIR}/dynamic-graph-py.hh
+  include/${CUSTOM_HEADER_DIR}/fwd.hh
   include/${CUSTOM_HEADER_DIR}/interpreter.hh
   include/${CUSTOM_HEADER_DIR}/module.hh
   include/${CUSTOM_HEADER_DIR}/python-compat.hh
