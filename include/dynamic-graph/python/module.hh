@@ -8,6 +8,7 @@
 
 #include <boost/python.hpp>
 #include <boost/mpl/for_each.hpp>
+#include <boost/mpl/vector.hpp>
 
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/python/dynamic-graph-py.hh>
