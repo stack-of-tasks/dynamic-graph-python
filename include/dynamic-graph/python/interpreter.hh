@@ -6,6 +6,7 @@
 
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
+#include <dynamic-graph/python/fwd.hh>
 #include "dynamic-graph/python/api.hh"
 #include "dynamic-graph/python/deprecated.hh"
 
