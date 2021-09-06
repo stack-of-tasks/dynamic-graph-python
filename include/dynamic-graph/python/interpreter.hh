@@ -8,7 +8,6 @@
 #undef _XOPEN_SOURCE
 #include <dynamic-graph/python/fwd.hh>
 #include "dynamic-graph/python/api.hh"
-#include "dynamic-graph/python/deprecated.hh"
 
 #include "dynamic-graph/python/python-compat.hh"
 #include "dynamic-graph/python/api.hh"
@@ -27,7 +26,7 @@ class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
   /// \brief Method to start python interperter.
   /// \param command string to execute
   /// Method deprecated, you *SHOULD* handle error messages.
-  DYNAMIC_GRAPH_PYTHON_DEPRECATED std::string python(const std::string& command);
+  [[deprecated("you *SHOULD* handle error messages")]] std::string python(const std::string& command);
 
   /// \brief Method to start python interperter.
   /// \param command string to execute, result, stdout, stderr strings
