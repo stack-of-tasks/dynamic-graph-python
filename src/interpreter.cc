@@ -69,7 +69,9 @@ Interpreter::Interpreter() {
   dlopen(PYTHON_LIBRARY, RTLD_LAZY | RTLD_GLOBAL);
 #endif
   Py_Initialize();
+#if PY_MAJOR_VERSION < 3 || PY_MINOR_VERSION < 7
   PyEval_InitThreads();
+#endif
   mainmod_ = PyImport_AddModule("__main__");
   Py_INCREF(mainmod_);
   globals_ = PyModule_GetDict(mainmod_);
