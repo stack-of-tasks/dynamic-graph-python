@@ -5,14 +5,14 @@
 #include <iostream>
 
 #define ENABLE_RT_LOG
+#include <dynamic-graph/entity.h>
+#include <dynamic-graph/pool.h>
 #include <dynamic-graph/real-time-logger.h>
 
+#include <boost/shared_ptr.hpp>
 #include <map>
-#include <dynamic-graph/pool.h>
-#include <dynamic-graph/entity.h>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
 #include "dynamic-graph/python/dynamic-graph-py.hh"
 
 typedef boost::shared_ptr<std::ofstream> ofstreamShrPtr;

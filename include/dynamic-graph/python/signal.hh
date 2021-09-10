@@ -1,13 +1,12 @@
 // Copyright 2020, Joseph Mirabel, LAAS-CNRS.
 
-#include <sstream>
-
-#include <boost/python.hpp>
-
 #include <dynamic-graph/signal-base.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 #include <dynamic-graph/signal.h>
+
+#include <boost/python.hpp>
+#include <sstream>
 
 #include "dynamic-graph/python/signal-wrapper.hh"
 

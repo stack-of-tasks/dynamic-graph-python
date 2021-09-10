@@ -15,7 +15,7 @@ namespace dynamicgraph {
 namespace python {
 class Interpreter;
 typedef shared_ptr<Interpreter> InterpreterPtr_t;
-} // namespace python
-} // namespace dynamicgraph
+}  // namespace python
+}  // namespace dynamicgraph
 
-#endif // DYNAMIC_GRAPH_PYTHON_FWD_HH
+#endif  // DYNAMIC_GRAPH_PYTHON_FWD_HH

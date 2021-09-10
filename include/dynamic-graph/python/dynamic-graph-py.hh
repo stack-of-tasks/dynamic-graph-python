@@ -1,15 +1,14 @@
 #ifndef DYNAMIC_GRAPH_PY
 #define DYNAMIC_GRAPH_PY
 
-#include <iostream>
-#include <sstream>
-
-#include <boost/python.hpp>
-#include <boost/python/stl_iterator.hpp>
-
 #include <dynamic-graph/debug.h>
 #include <dynamic-graph/exception-factory.h>
 #include <dynamic-graph/signal-base.h>
+
+#include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
+#include <iostream>
+#include <sstream>
 
 #include "dynamic-graph/python/signal-wrapper.hh"
 

@@ -1,7 +1,8 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <iostream>
 #include <dynamic-graph/factory.h>
+
+#include <iostream>
 
 #include "dynamic-graph/python/dynamic-graph-py.hh"
 
