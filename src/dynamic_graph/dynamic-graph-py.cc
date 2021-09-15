@@ -1,32 +1,30 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <iostream>
-#include <sstream>
+#include "dynamic-graph/python/dynamic-graph-py.hh"
 
+#include <dynamic-graph/command.h>
+#include <dynamic-graph/debug.h>
+#include <dynamic-graph/entity.h>
+#include <dynamic-graph/exception-factory.h>
+#include <dynamic-graph/factory.h>
+#include <dynamic-graph/pool.h>
+#include <dynamic-graph/signal-base.h>
+#include <dynamic-graph/signal-time-dependent.h>
+#include <dynamic-graph/signal.h>
+#include <dynamic-graph/tracer.h>
+
+#include <Eigen/Geometry>
 #include <boost/python.hpp>
 #include <boost/python/raw_function.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
-
 #include <eigenpy/eigenpy.hpp>
-#include <Eigen/Geometry>
 #include <eigenpy/geometry.hpp>
+#include <iostream>
+#include <sstream>
 
-#include <dynamic-graph/debug.h>
-#include <dynamic-graph/exception-factory.h>
-#include <dynamic-graph/signal-base.h>
-#include <dynamic-graph/signal.h>
-#include <dynamic-graph/signal-time-dependent.h>
-#include <dynamic-graph/entity.h>
-#include <dynamic-graph/command.h>
-#include <dynamic-graph/factory.h>
-#include <dynamic-graph/pool.h>
-
-#include <dynamic-graph/tracer.h>
-
-#include "dynamic-graph/python/dynamic-graph-py.hh"
-#include "dynamic-graph/python/signal-wrapper.hh"
 #include "dynamic-graph/python/convert-dg-to-py.hh"
 #include "dynamic-graph/python/module.hh"
+#include "dynamic-graph/python/signal-wrapper.hh"
 
 namespace dynamicgraph {
 namespace python {
@@ -106,35 +104,38 @@ void exposeEntityBase() {
       .add_property("streamPrintPeriod", &Entity::getStreamPrintPeriod, &Entity::setStreamPrintPeriod,
                     "set the period at which debugging information are printed")
 
-      .def("__str__",
-           +[](const Entity& e) -> std::string {
-             std::ostringstream os;
-             e.display(os);
-             return os.str();
-           })
-      .def("signals",
-           +[](const Entity& e) -> bp::list {
-             bp::list ret;
-             for (auto& el : e.getSignalMap()) ret.append(bp::ptr(el.second));
-             return ret;
-           },
-           "Return the list of signals.")
+      .def(
+          "__str__",
+          +[](const Entity& e) -> std::string {
+            std::ostringstream os;
+            e.display(os);
+            return os.str();
+          })
+      .def(
+          "signals",
+          +[](const Entity& e) -> bp::list {
+            bp::list ret;
+            for (auto& el : e.getSignalMap()) ret.append(bp::ptr(el.second));
+            return ret;
+          },
+          "Return the list of signals.")
       //.def("signal", +[](Entity& e, const std::string &name) { return &e.getSignal(name); },
       // reference_existing_object())
       .def("signal", &getSignal, reference_existing_object(), "get signal by name from an Entity", bp::arg("name"))
       .def("hasSignal", &Entity::hasSignal, "return True if the entity has a signal with the given name")
 
-      .def("displaySignals",
-           +[](const Entity& e) {
-             Entity::SignalMap signals(e.getSignalMap());
-             std::cout << "--- <" << e.getName();
-             if (signals.empty())
-               std::cout << "> has no signal\n";
-             else
-               std::cout << "> signal list:\n";
-             for (const auto& el : signals) el.second->display(std::cout << "    |-- <") << '\n';
-           },
-           "Print the list of signals into standard output: temporary.")
+      .def(
+          "displaySignals",
+          +[](const Entity& e) {
+            Entity::SignalMap signals(e.getSignalMap());
+            std::cout << "--- <" << e.getName();
+            if (signals.empty())
+              std::cout << "> has no signal\n";
+            else
+              std::cout << "> signal list:\n";
+            for (const auto& el : signals) el.second->display(std::cout << "    |-- <") << '\n';
+          },
+          "Print the list of signals into standard output: temporary.")
 
       /*
       .def("__getattr__", +[](Entity& e, const std::string &name) -> SignalBase<int>* { return &e.getSignal(name); },
@@ -240,22 +241,26 @@ BOOST_PYTHON_MODULE(wrap) {
   typedef dg::PoolStorage::Entities MapOfEntities;
   bp::class_<MapOfEntities>("MapOfEntities")
       .def("__len__", &MapOfEntities::size)
-      .def("keys",
-           +[](const MapOfEntities& m) -> bp::tuple {
-             bp::list res;
-             for (const auto& el : m) res.append(el.first);
-             return bp::tuple(res);
-           })
-      .def("values",
-           +[](const MapOfEntities& m) -> bp::tuple {
-             bp::list res;
-             for (const auto& el : m) res.append(bp::ptr(el.second));
-             return bp::tuple(res);
-           })
+      .def(
+          "keys",
+          +[](const MapOfEntities& m) -> bp::tuple {
+            bp::list res;
+            for (const auto& el : m) res.append(el.first);
+            return bp::tuple(res);
+          })
+      .def(
+          "values",
+          +[](const MapOfEntities& m) -> bp::tuple {
+            bp::list res;
+            for (const auto& el : m) res.append(bp::ptr(el.second));
+            return bp::tuple(res);
+          })
       .def("__getitem__", static_cast<dg::Entity*& (MapOfEntities::*)(const std::string& k)>(&MapOfEntities::at),
            reference_existing_object())
-      .def("__setitem__", +[](MapOfEntities& m, const std::string& n, dg::Entity* e) { m.emplace(n, e); })
+      .def(
+          "__setitem__", +[](MapOfEntities& m, const std::string& n, dg::Entity* e) { m.emplace(n, e); })
       .def("__iter__", bp::iterator<MapOfEntities>())
-      .def("__contains__", +[](const MapOfEntities& m, const std::string& n) -> bool { return m.count(n); });
+      .def(
+          "__contains__", +[](const MapOfEntities& m, const std::string& n) -> bool { return m.count(n); });
   bp::to_python_converter<MapOfEntities::value_type, MapOfEntitiesPairToPythonConverter>();
 }

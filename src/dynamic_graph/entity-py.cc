@@ -1,14 +1,13 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <iostream>
-
+#include <dynamic-graph/command.h>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/factory.h>
-
-#include <dynamic-graph/command.h>
 #include <dynamic-graph/linear-algebra.h>
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/value.h>
+
+#include <iostream>
 
 #include "dynamic-graph/python/convert-dg-to-py.hh"
 #include "dynamic-graph/python/dynamic-graph-py.hh"

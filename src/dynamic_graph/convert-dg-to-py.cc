@@ -1,16 +1,16 @@
 // Copyright 2010, Florent Lamiraux, Thomas Moulard, LAAS-CNRS.
 
-#include <iostream>
-#include <sstream>
+#include "dynamic-graph/python/convert-dg-to-py.hh"
+
+#include <dynamic-graph/signal-base.h>
+#include <dynamic-graph/signal-caster.h>
+#include <dynamic-graph/signal.h>
 
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
+#include <iostream>
+#include <sstream>
 
-#include <dynamic-graph/signal-base.h>
-#include <dynamic-graph/signal.h>
-#include <dynamic-graph/signal-caster.h>
-
-#include "dynamic-graph/python/convert-dg-to-py.hh"
 #include "dynamic-graph/python/python-compat.hh"
 
 namespace dynamicgraph {

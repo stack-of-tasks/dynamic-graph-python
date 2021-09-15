@@ -6,7 +6,6 @@
 #define ENABLE_RT_LOG
 
 #include "custom_entity.h"
-#include <boost/bind.hpp>
 
 #include <dynamic-graph/command-bind.h>
 #include <dynamic-graph/entity.h>
@@ -16,6 +15,8 @@
 #include <dynamic-graph/real-time-logger.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
+#include <boost/bind.hpp>
 
 namespace dynamicgraph {
 

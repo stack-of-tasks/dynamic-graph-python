@@ -6,11 +6,11 @@
 #include <pinocchio/fwd.hpp>
 #endif
 
-#include <boost/python.hpp>
+#include <dynamic-graph/entity.h>
+
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/vector.hpp>
-
-#include <dynamic-graph/entity.h>
+#include <boost/python.hpp>
 #include <dynamic-graph/python/dynamic-graph-py.hh>
 
 namespace dynamicgraph {

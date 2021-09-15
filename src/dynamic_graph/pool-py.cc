@@ -1,7 +1,8 @@
 // Copyright 2011, 2012, Florent Lamiraux, LAAS-CNRS.
 
-#include <dynamic-graph/pool.h>
 #include <dynamic-graph/entity.h>
+#include <dynamic-graph/pool.h>
+
 #include <vector>
 
 #include "dynamic-graph/python/dynamic-graph-py.hh"
