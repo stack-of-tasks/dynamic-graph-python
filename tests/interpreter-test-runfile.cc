@@ -62,7 +62,9 @@ int main(int argc, char** argv) {
   res = testFile(PATH "test_python-syntax_error.py",
                  std::string("  File \"" PATH "test_python-syntax_error.py\", line 2\n"
                              "    hello world\n"
-#if PY_MINOR_VERSION >= 8
+#if PY_MINOR_VERSION >= 10
+                             "          ^^^^^\n"
+#elif PY_MINOR_VERSION >= 8
                              "          ^\n"
 #else
                              "              ^\n"
