@@ -3,11 +3,14 @@ import unittest
 import dynamic_graph as dg
 from custom_entity import CustomEntity
 
-_SIG = "dynamicgraph::SignalBase<int>*"
-ERR = f"""Python argument types in
+ERR = (
+    """Python argument types in
     dynamic_graph.wrap.plug(%s, %s)
 did not match C++ signature:
-    plug({_SIG} signalOut, {_SIG} signalIn)"""
+    plug("""
+    "dynamicgraph::SignalBase<int>* signalOut, "
+    "dynamicgraph::SignalBase<int>* signalIn)"
+)
 
 
 class BindingsTests(unittest.TestCase):
