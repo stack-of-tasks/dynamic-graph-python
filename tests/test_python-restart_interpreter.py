@@ -3,6 +3,6 @@ import numpy  # noqa
 
 # Make sure the variable is deleted.
 if "var" in locals() or "var" in globals():
-    raise ValueError('Not cleaned')
+    raise ValueError("Not cleaned")
 
 var = "This string should have been deleted."

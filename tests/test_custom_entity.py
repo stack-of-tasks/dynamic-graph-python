@@ -5,8 +5,13 @@ import os
 import time
 
 from custom_entity import CustomEntity
-from dynamic_graph import (addLoggerCoutOutputStream, addLoggerFileOutputStream, closeLoggerFileOutputStream,
-                           real_time_logger_destroy, real_time_logger_spin_once)
+from dynamic_graph import (
+    addLoggerCoutOutputStream,
+    addLoggerFileOutputStream,
+    closeLoggerFileOutputStream,
+    real_time_logger_destroy,
+    real_time_logger_spin_once,
+)
 from dynamic_graph.entity import VerbosityLevel
 
 print(os.getcwd())

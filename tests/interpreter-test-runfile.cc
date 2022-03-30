@@ -1,16 +1,19 @@
-// The purpose of this unit test is to check the interpreter::runPythonFile method
+// The purpose of this unit test is to check the interpreter::runPythonFile
+// method
 #include <cstring>
 #include <iostream>
 
 #include "dynamic-graph/python/interpreter.hh"
 
-bool testFile(const std::string& filename, const std::string& expectedOutput, int numTest) {
+bool testFile(const std::string& filename, const std::string& expectedOutput,
+              int numTest) {
   std::string err = "";
   dynamicgraph::python::Interpreter interp;
   for (int i = 0; i < numTest; ++i) {
     interp.runPythonFile(filename, err);
     if (err != expectedOutput) {
-      std::cerr << "At iteration " << i << ", the output was not the one expected:" << std::endl;
+      std::cerr << "At iteration " << i
+                << ", the output was not the one expected:" << std::endl;
       std::cerr << " expected: " << expectedOutput << std::endl;
       std::cerr << " err:      " << err << std::endl;
       return false;
@@ -19,7 +22,8 @@ bool testFile(const std::string& filename, const std::string& expectedOutput, in
   return true;
 }
 
-bool testInterpreterDestructor(const std::string& filename, const std::string& expectedOutput) {
+bool testInterpreterDestructor(const std::string& filename,
+                               const std::string& expectedOutput) {
   std::string err = "";
   {
     dynamicgraph::python::Interpreter interp;
@@ -49,18 +53,23 @@ int main(int argc, char** argv) {
   // This test succeeds only because it is launched before "test_python-ok.py"
   // because re as been imported in a previous test and it is not
   // safe to delete imported module...
-  res = testFile(PATH "test_python-name_error.py",
-                 std::string("Traceback (most recent call last):\n"
-                             "  File \"" PATH "test_python-name_error.py\", line 7, in <module>\n"
-                             "    pathList = re.split(':', pkgConfigPath)  # noqa\n"
-                             "NameError: name 're' is not defined\n"),
-                 numTest) &&
+  res = testFile(
+            PATH "test_python-name_error.py",
+            std::string("Traceback (most recent call last):\n"
+                        "  File \"" PATH
+                        "test_python-name_error.py\", line 7, in <module>\n"
+                        "    pathList = re.split(':', pkgConfigPath)  # noqa\n"
+                        "NameError: name 're' is not defined\n"),
+            numTest) &&
         res;
 
   res = testFile(PATH "test_python-ok.py", "", numTest) && res;
-  res = testFile(PATH "unexistant_file.py", PATH "unexistant_file.py cannot be open", numTest) && res;
+  res = testFile(PATH "unexistant_file.py",
+                 PATH "unexistant_file.py cannot be open", numTest) &&
+        res;
   res = testFile(PATH "test_python-syntax_error.py",
-                 std::string("  File \"" PATH "test_python-syntax_error.py\", line 2\n"
+                 std::string("  File \"" PATH
+                             "test_python-syntax_error.py\", line 2\n"
                              "    hello world\n"
 #if PY_MINOR_VERSION >= 10
                              "          ^^^^^\n"
@@ -72,6 +81,8 @@ int main(int argc, char** argv) {
                              "SyntaxError: invalid syntax\n"),
                  numTest) &&
         res;
-  res = testInterpreterDestructor(PATH "test_python-restart_interpreter.py", "") && res;
+  res = testInterpreterDestructor(PATH "test_python-restart_interpreter.py",
+                                  "") &&
+        res;
   return (res ? 0 : 1);
 }

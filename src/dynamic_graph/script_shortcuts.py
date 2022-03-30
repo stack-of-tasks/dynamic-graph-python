@@ -19,10 +19,10 @@ from .signal_base import SignalBase
 
 # Enables shortcut "name"
 def sig_short_name(self):
-    return self.getName().split(':')[-1]
+    return self.getName().split(":")[-1]
 
 
-setattr(SignalBase, 'name', property(sig_short_name))
+setattr(SignalBase, "name", property(sig_short_name))
 
 
 # Enables shortcuts "m"
@@ -56,12 +56,12 @@ def sigMatPrint(sig):
     return PrettySignalPrint(sig)
 
 
-setattr(SignalBase, 'm', property(PrettySignalPrint))
+setattr(SignalBase, "m", property(PrettySignalPrint))
 
 
 # Enable the same as 'm', but directly on the signal object.
 def sigRepr(self):
-    return self.name + ' = ' + str(self.value)
+    return self.name + " = " + str(self.value)
 
 
 def sigCall(sig, iter):
@@ -74,9 +74,9 @@ def sigTimeIncr(sig, iter):
     print(sigRepr(sig))
 
 
-setattr(SignalBase, '__repr__', sigRepr)
-setattr(SignalBase, '__call__', sigCall)
-setattr(SignalBase, '__add__', sigTimeIncr)
+setattr(SignalBase, "__repr__", sigRepr)
+setattr(SignalBase, "__call__", sigCall)
+setattr(SignalBase, "__add__", sigTimeIncr)
 
 
 # Enables shortcut "deps"
@@ -97,19 +97,17 @@ class SignalDepPrint:
         return self
 
 
-setattr(SignalBase, 'deps', property(SignalDepPrint))
+setattr(SignalBase, "deps", property(SignalDepPrint))
 
-setattr(Entity, 'sigs', property(Entity.displaySignals))
-setattr(Entity, '__repr__', Entity.__str__)
+setattr(Entity, "sigs", property(Entity.displaySignals))
+setattr(Entity, "__repr__", Entity.__str__)
 
-sys.ps1 = '% '
+sys.ps1 = "% "
 
 
 # Enable function that can be call without()def optionalparentheses(f):
 def optionalparentheses(f):
-
     class decoclass:
-
         def __init__(self, f):
             self.functor = f
 
@@ -118,7 +116,7 @@ def optionalparentheses(f):
             if isinstance(res, str):
                 return res
             else:
-                return ''
+                return ""
 
         def __call__(self, *arg):
             return self.functor(*arg)

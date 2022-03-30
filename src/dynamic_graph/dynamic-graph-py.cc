@@ -32,7 +32,9 @@ namespace python {
 /**
    \brief plug a signal into another one.
 */
-void plug(SignalBase<int>* signalOut, SignalBase<int>* signalIn) { signalIn->plug(signalOut); }
+void plug(SignalBase<int>* signalOut, SignalBase<int>* signalIn) {
+  signalIn->plug(signalOut);
+}
 
 void enableTrace(bool enable, const char* filename) {
   if (enable)
@@ -48,7 +50,8 @@ namespace bp = boost::python;
 namespace dg = dynamicgraph;
 
 typedef bp::return_value_policy<bp::manage_new_object> manage_new_object;
-typedef bp::return_value_policy<bp::reference_existing_object> reference_existing_object;
+typedef bp::return_value_policy<bp::reference_existing_object>
+    reference_existing_object;
 
 typedef dg::PoolStorage::Entities MapOfEntities;
 
@@ -58,9 +61,14 @@ struct MapOfEntitiesPairToPythonConverter {
   }
 };
 
-MapOfEntities* getEntityMap() { return const_cast<MapOfEntities*>(&dg::PoolStorage::getInstance()->getEntityMap()); }
+MapOfEntities* getEntityMap() {
+  return const_cast<MapOfEntities*>(
+      &dg::PoolStorage::getInstance()->getEntityMap());
+}
 
-dg::SignalBase<int>* getSignal(dg::Entity& e, const std::string& name) { return &e.getSignal(name); }
+dg::SignalBase<int>* getSignal(dg::Entity& e, const std::string& name) {
+  return &e.getSignal(name);
+}
 
 class PythonEntity : public dg::Entity {
   DYNAMIC_GRAPH_ENTITY_DECL();
@@ -68,8 +76,12 @@ class PythonEntity : public dg::Entity {
  public:
   using dg::Entity::Entity;
 
-  void signalRegistration(dg::SignalBase<int>& signal) { dg::Entity::signalRegistration(signal); }
-  void signalDeregistration(const std::string& name) { dg::Entity::signalDeregistration(name); }
+  void signalRegistration(dg::SignalBase<int>& signal) {
+    dg::Entity::signalRegistration(signal);
+  }
+  void signalDeregistration(const std::string& name) {
+    dg::Entity::signalDeregistration(name);
+  }
 };
 
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonEntity, "PythonEntity");
@@ -85,23 +97,31 @@ void exposeEntityBase() {
       .export_values();
 
   bp::class_<Entity, boost::noncopyable>("Entity", bp::no_init)
-      .add_property("name", bp::make_function(&Entity::getName, bp::return_value_policy<bp::copy_const_reference>()))
+      .add_property("name",
+                    bp::make_function(
+                        &Entity::getName,
+                        bp::return_value_policy<bp::copy_const_reference>()))
       .add_property("className",
-                    bp::make_function(&Entity::getClassName, bp::return_value_policy<bp::copy_const_reference>()),
+                    bp::make_function(
+                        &Entity::getClassName,
+                        bp::return_value_policy<bp::copy_const_reference>()),
                     "the class name of the Entity")
       .add_property("__doc__", &Entity::getDocString)
 
       .def("setLoggerVerbosityLevel", &Entity::setLoggerVerbosityLevel)
       .def("getLoggerVerbosityLevel", &Entity::getLoggerVerbosityLevel)
-      .add_property("loggerVerbosityLevel", &Entity::setLoggerVerbosityLevel, &Entity::getLoggerVerbosityLevel,
+      .add_property("loggerVerbosityLevel", &Entity::setLoggerVerbosityLevel,
+                    &Entity::getLoggerVerbosityLevel,
                     "the verbosity level of the entity")
       .def("setTimeSample", &Entity::setTimeSample)
       .def("getTimeSample", &Entity::getTimeSample)
-      .add_property("timeSample", &Entity::getTimeSample, &Entity::setTimeSample,
+      .add_property("timeSample", &Entity::getTimeSample,
+                    &Entity::setTimeSample,
                     "the time sample for printing debugging information")
       .def("setStreamPrintPeriod", &Entity::setStreamPrintPeriod)
       .def("getStreamPrintPeriod", &Entity::getStreamPrintPeriod)
-      .add_property("streamPrintPeriod", &Entity::getStreamPrintPeriod, &Entity::setStreamPrintPeriod,
+      .add_property("streamPrintPeriod", &Entity::getStreamPrintPeriod,
+                    &Entity::setStreamPrintPeriod,
                     "set the period at which debugging information are printed")
 
       .def(
@@ -119,10 +139,13 @@ void exposeEntityBase() {
             return ret;
           },
           "Return the list of signals.")
-      //.def("signal", +[](Entity& e, const std::string &name) { return &e.getSignal(name); },
+      //.def("signal", +[](Entity& e, const std::string &name) { return
+      //&e.getSignal(name); },
       // reference_existing_object())
-      .def("signal", &getSignal, reference_existing_object(), "get signal by name from an Entity", bp::arg("name"))
-      .def("hasSignal", &Entity::hasSignal, "return True if the entity has a signal with the given name")
+      .def("signal", &getSignal, reference_existing_object(),
+           "get signal by name from an Entity", bp::arg("name"))
+      .def("hasSignal", &Entity::hasSignal,
+           "return True if the entity has a signal with the given name")
 
       .def(
           "displaySignals",
@@ -133,12 +156,14 @@ void exposeEntityBase() {
               std::cout << "> has no signal\n";
             else
               std::cout << "> signal list:\n";
-            for (const auto& el : signals) el.second->display(std::cout << "    |-- <") << '\n';
+            for (const auto& el : signals)
+              el.second->display(std::cout << "    |-- <") << '\n';
           },
           "Print the list of signals into standard output: temporary.")
 
       /*
-      .def("__getattr__", +[](Entity& e, const std::string &name) -> SignalBase<int>* { return &e.getSignal(name); },
+      .def("__getattr__", +[](Entity& e, const std::string &name) ->
+      SignalBase<int>* { return &e.getSignal(name); },
           reference_existing_object())
       def __getattr__(self, name):
           try:
@@ -147,16 +172,16 @@ void exposeEntityBase() {
               try:
                   object.__getattr__(self, name)
               except AttributeError:
-                  raise AttributeError("'%s' entity has no attribute %s\n" % (self.name, name) +
-                                       '  entity attributes are usually either\n' + '    - commands,\n' +
-                                       '    - signals or,\n' + '    - user defined attributes')
+                  raise AttributeError("'%s' entity has no attribute %s\n" %
+      (self.name, name) + '  entity attributes are usually either\n' + '    -
+      commands,\n' + '    - signals or,\n' + '    - user defined attributes')
                                        */
       /*
-      .def("__setattr__", +[](bp::object self, const std::string &name, bp::object value) {
-            Entity& e = bp::extract<Entity&> (self);
-            if (e.hasSignal(name))
-              throw std::invalid_argument(name + " already designates a signal. "
-                  "It is not advised to set a new attribute of the same name.");
+      .def("__setattr__", +[](bp::object self, const std::string &name,
+      bp::object value) { Entity& e = bp::extract<Entity&> (self); if
+      (e.hasSignal(name)) throw std::invalid_argument(name + " already
+      designates a signal. " "It is not advised to set a new attribute of the
+      same name.");
             // TODO How do you do that ? I am sure it is possible.
             //object.__setattr__(self, name, value)
           })
@@ -165,66 +190,85 @@ void exposeEntityBase() {
       /* TODO ?
       def boundNewCommand(self, cmdName):
           """
-          At construction, all existing commands are bound directly in the class.
-          This method enables to bound new commands dynamically. These new bounds
-          are not made with the class, but directly with the object instance.
+          At construction, all existing commands are bound directly in the
+      class. This method enables to bound new commands dynamically. These new
+      bounds are not made with the class, but directly with the object instance.
           """
       def boundAllNewCommands(self):
           """
-          For all commands that are not attribute of the object instance nor of the
-          class, a new attribute of the instance is created to bound the command.
+          For all commands that are not attribute of the object instance nor of
+      the class, a new attribute of the instance is created to bound the
+      command.
           """
           */
 
       // For backward compat
-      .add_static_property("entities", bp::make_function(&getEntityMap, reference_existing_object()));
+      .add_static_property(
+          "entities",
+          bp::make_function(&getEntityMap, reference_existing_object()));
 
   python::exposeEntity<PythonEntity, bp::bases<Entity>, 0>()
       .def("signalRegistration", &PythonEntity::signalRegistration)
       .def("signalDeregistration", &PythonEntity::signalDeregistration);
 
-  python::exposeEntity<python::PythonSignalContainer, bp::bases<Entity>, 0>().def(
-      "rmSignal", &python::PythonSignalContainer::rmSignal, "Remove a signal", bp::arg("signal_name"));
+  python::exposeEntity<python::PythonSignalContainer, bp::bases<Entity>, 0>()
+      .def("rmSignal", &python::PythonSignalContainer::rmSignal,
+           "Remove a signal", bp::arg("signal_name"));
 }
 
 void exposeCommand() {
   using dg::command::Command;
   bp::class_<Command, boost::noncopyable>("Command", bp::no_init)
-      .def("__call__", bp::raw_function(dg::python::entity::executeCmd, 1), "execute the command")
+      .def("__call__", bp::raw_function(dg::python::entity::executeCmd, 1),
+           "execute the command")
       .add_property("__doc__", &Command::getDocstring);
 }
 
 void exposeOldAPI() {
-  bp::def("plug", dynamicgraph::python::plug, "plug an output signal into an input signal",
+  bp::def("plug", dynamicgraph::python::plug,
+          "plug an output signal into an input signal",
           (bp::arg("signalOut"), "signalIn"));
-  bp::def("enableTrace", dynamicgraph::python::enableTrace, "Enable or disable tracing debug info in a file");
+  bp::def("enableTrace", dynamicgraph::python::enableTrace,
+          "Enable or disable tracing debug info in a file");
   // Signals
-  bp::def("create_signal_wrapper", dynamicgraph::python::signalBase::createSignalWrapper, reference_existing_object(),
-          "create a SignalWrapper C++ object");
+  bp::def("create_signal_wrapper",
+          dynamicgraph::python::signalBase::createSignalWrapper,
+          reference_existing_object(), "create a SignalWrapper C++ object");
   // Entity
-  bp::def("factory_get_entity_class_list", dynamicgraph::python::factory::getEntityClassList,
+  bp::def("factory_get_entity_class_list",
+          dynamicgraph::python::factory::getEntityClassList,
           "return the list of entity classes");
-  bp::def("writeGraph", dynamicgraph::python::pool::writeGraph, "Write the graph of entities in a filename.");
-  bp::def("get_entity_list", dynamicgraph::python::pool::getEntityList, "return the list of instanciated entities");
-  bp::def("addLoggerFileOutputStream", dynamicgraph::python::debug::addLoggerFileOutputStream,
+  bp::def("writeGraph", dynamicgraph::python::pool::writeGraph,
+          "Write the graph of entities in a filename.");
+  bp::def("get_entity_list", dynamicgraph::python::pool::getEntityList,
+          "return the list of instanciated entities");
+  bp::def("addLoggerFileOutputStream",
+          dynamicgraph::python::debug::addLoggerFileOutputStream,
           "add a output file stream to the logger by filename");
-  bp::def("addLoggerCoutOutputStream", dynamicgraph::python::debug::addLoggerCoutOutputStream,
+  bp::def("addLoggerCoutOutputStream",
+          dynamicgraph::python::debug::addLoggerCoutOutputStream,
           "add std::cout as output stream to the logger");
-  bp::def("closeLoggerFileOutputStream", dynamicgraph::python::debug::closeLoggerFileOutputStream,
+  bp::def("closeLoggerFileOutputStream",
+          dynamicgraph::python::debug::closeLoggerFileOutputStream,
           "close all the loggers file output streams.");
-  bp::def("real_time_logger_destroy", dynamicgraph::python::debug::realTimeLoggerDestroy,
+  bp::def("real_time_logger_destroy",
+          dynamicgraph::python::debug::realTimeLoggerDestroy,
           "Destroy the real time logger.");
-  bp::def("real_time_logger_spin_once", dynamicgraph::python::debug::realTimeLoggerSpinOnce,
+  bp::def("real_time_logger_spin_once",
+          dynamicgraph::python::debug::realTimeLoggerSpinOnce,
           "Destroy the real time logger.");
-  bp::def("real_time_logger_instance", dynamicgraph::python::debug::realTimeLoggerInstance,
+  bp::def("real_time_logger_instance",
+          dynamicgraph::python::debug::realTimeLoggerInstance,
           "Starts the real time logger.");
 }
 
 void enableEigenPy() {
   eigenpy::enableEigenPy();
 
-  if (!eigenpy::register_symbolic_link_to_registered_type<Eigen::Quaterniond>()) eigenpy::exposeQuaternion();
-  if (!eigenpy::register_symbolic_link_to_registered_type<Eigen::AngleAxisd>()) eigenpy::exposeAngleAxis();
+  if (!eigenpy::register_symbolic_link_to_registered_type<Eigen::Quaterniond>())
+    eigenpy::exposeQuaternion();
+  if (!eigenpy::register_symbolic_link_to_registered_type<Eigen::AngleAxisd>())
+    eigenpy::exposeAngleAxis();
 
   eigenpy::enableEigenPySpecific<Eigen::Matrix4d>();
 }
@@ -255,12 +299,19 @@ BOOST_PYTHON_MODULE(wrap) {
             for (const auto& el : m) res.append(bp::ptr(el.second));
             return bp::tuple(res);
           })
-      .def("__getitem__", static_cast<dg::Entity*& (MapOfEntities::*)(const std::string& k)>(&MapOfEntities::at),
+      .def("__getitem__",
+           static_cast<dg::Entity*& (MapOfEntities::*)(const std::string& k)>(
+               &MapOfEntities::at),
            reference_existing_object())
       .def(
-          "__setitem__", +[](MapOfEntities& m, const std::string& n, dg::Entity* e) { m.emplace(n, e); })
+          "__setitem__", +[](MapOfEntities& m, const std::string& n,
+                             dg::Entity* e) { m.emplace(n, e); })
       .def("__iter__", bp::iterator<MapOfEntities>())
       .def(
-          "__contains__", +[](const MapOfEntities& m, const std::string& n) -> bool { return m.count(n); });
-  bp::to_python_converter<MapOfEntities::value_type, MapOfEntitiesPairToPythonConverter>();
+          "__contains__",
+          +[](const MapOfEntities& m, const std::string& n) -> bool {
+            return m.count(n);
+          });
+  bp::to_python_converter<MapOfEntities::value_type,
+                          MapOfEntitiesPairToPythonConverter>();
 }

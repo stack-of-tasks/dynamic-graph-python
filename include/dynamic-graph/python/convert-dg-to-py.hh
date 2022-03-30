@@ -9,7 +9,8 @@ namespace dynamicgraph {
 namespace python {
 namespace convert {
 
-command::Value toValue(boost::python::object o, const command::Value::Type& type);
+command::Value toValue(boost::python::object o,
+                       const command::Value::Type& type);
 boost::python::object fromValue(const command::Value& value);
 
 }  // namespace convert
