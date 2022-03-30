@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             std::string("Traceback (most recent call last):\n"
                         "  File \"" PATH
                         "test_python-name_error.py\", line 7, in <module>\n"
-                        "    pathList = re.split(':', pkgConfigPath)  # noqa\n"
+                        "    pathList = re.split(\":\", pkgConfigPath)  # noqa\n"
                         "NameError: name 're' is not defined\n"),
             numTest) &&
         res;
