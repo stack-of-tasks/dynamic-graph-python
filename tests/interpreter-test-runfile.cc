@@ -53,14 +53,14 @@ int main(int argc, char** argv) {
   // This test succeeds only because it is launched before "test_python-ok.py"
   // because re as been imported in a previous test and it is not
   // safe to delete imported module...
-  res = testFile(
-            PATH "test_python-name_error.py",
-            std::string("Traceback (most recent call last):\n"
-                        "  File \"" PATH
-                        "test_python-name_error.py\", line 7, in <module>\n"
-                        "    pathList = re.split(\":\", pkgConfigPath)  # noqa\n"
-                        "NameError: name 're' is not defined\n"),
-            numTest) &&
+  res = testFile(PATH "test_python-name_error.py",
+                 std::string(
+                     "Traceback (most recent call last):\n"
+                     "  File \"" PATH
+                     "test_python-name_error.py\", line 7, in <module>\n"
+                     "    pathList = re.split(\":\", pkgConfigPath)  # noqa\n"
+                     "NameError: name 're' is not defined\n"),
+                 numTest) &&
         res;
 
   res = testFile(PATH "test_python-ok.py", "", numTest) && res;
