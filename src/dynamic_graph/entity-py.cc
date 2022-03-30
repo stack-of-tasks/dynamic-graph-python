@@ -37,7 +37,8 @@ namespace entity {
 /// \param obj an Entity object
 void addCommands(bp::object obj) {
   Entity& entity = bp::extract<Entity&>(obj);
-  for (const auto& el : entity.getNewStyleCommandMap()) obj.attr(el.first.c_str()) = bp::object(bp::ptr(el.second));
+  for (const auto& el : entity.getNewStyleCommandMap())
+    obj.attr(el.first.c_str()) = bp::object(bp::ptr(el.second));
 }
 
 /// \param obj an Entity object
@@ -56,16 +57,20 @@ void addSignals(bp::object obj) {
 Entity* create(const char* className, const char* instanceName) {
   Entity* obj = NULL;
   /* Try to find if the corresponding object already exists. */
-  if (dynamicgraph::PoolStorage::getInstance()->existEntity(instanceName, obj)) {
+  if (dynamicgraph::PoolStorage::getInstance()->existEntity(instanceName,
+                                                            obj)) {
     if (obj->getClassName() != className) {
-      throw std::invalid_argument("Found an object named " + std::string(instanceName) +
+      throw std::invalid_argument("Found an object named " +
+                                  std::string(instanceName) +
                                   ",\n"
                                   "but this object is of type " +
-                                  std::string(obj->getClassName()) + " and not " + std::string(className));
+                                  std::string(obj->getClassName()) +
+                                  " and not " + std::string(className));
     }
   } else /* If not, create a new object. */
   {
-    obj = dynamicgraph::FactoryStorage::getInstance()->newEntity(std::string(className), std::string(instanceName));
+    obj = dynamicgraph::FactoryStorage::getInstance()->newEntity(
+        std::string(className), std::string(instanceName));
   }
 
   return obj;
@@ -78,7 +83,8 @@ bp::object executeCmd(bp::tuple args, bp::dict) {
     throw std::out_of_range("Wrong number of arguments");
   std::vector<Value> values;
   values.reserve(command.valueTypes().size());
-  for (int i = 1; i < bp::len(args); ++i) values.push_back(convert::toValue(args[i], command.valueTypes()[i - 1]));
+  for (int i = 1; i < bp::len(args); ++i)
+    values.push_back(convert::toValue(args[i], command.valueTypes()[i - 1]));
   command.setParameterValues(values);
   return convert::fromValue(command.execute());
 }

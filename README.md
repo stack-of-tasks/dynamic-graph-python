@@ -3,6 +3,8 @@
 [![Building Status](https://travis-ci.org/stack-of-tasks/dynamic-graph-python.svg?branch=master)](https://travis-ci.org/stack-of-tasks/dynamic-graph-python)
 [![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/dynamic-graph-python/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/dynamic-graph-python/commits/master)
 [![Coverage report](https://gitlab.laas.fr/stack-of-tasks/dynamic-graph-python/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/stack-of-tasks/doc/stack-of-tasks/dynamic-graph-python/master/coverage/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/stack-of-tasks/dynamic-graph-python/master.svg)](https://results.pre-commit.ci/latest/github/stack-of-tasks/dynamic-graph-python)
 
 Python bindings for dynamic-graph.
 

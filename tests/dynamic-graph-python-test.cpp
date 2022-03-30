@@ -6,4 +6,6 @@
 
 #include <iostream>
 
-GraphTest::GraphTest() { std::cout << "Constructor of unitTesting object of class Graph." << std::endl; }
+GraphTest::GraphTest() {
+  std::cout << "Constructor of unitTesting object of class Graph." << std::endl;
+}

@@ -12,27 +12,29 @@
 #include "dynamic-graph/debug.h"
 #include "dynamic-graph/python/interpreter.hh"
 
-std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt", std::ios::trunc& std::ios::out);
+std::ofstream dg_debugfile("/tmp/dynamic-graph-traces.txt",
+                           std::ios::trunc& std::ios::out);
 
 // Python initialization commands
 namespace dynamicgraph {
 namespace python {
-static const std::string pythonPrefix[8] = {"from __future__ import print_function\n",
-                                            "import traceback\n",
-                                            "class StdoutCatcher:\n"
-                                            "    def __init__(self):\n"
-                                            "        self.data = ''\n"
-                                            "    def write(self, stuff):\n"
-                                            "        self.data = self.data + stuff\n"
-                                            "    def fetch(self):\n"
-                                            "        s = self.data[:]\n"
-                                            "        self.data = ''\n"
-                                            "        return s\n",
-                                            "stdout_catcher = StdoutCatcher()\n",
-                                            "stderr_catcher = StdoutCatcher()\n",
-                                            "import sys\n",
-                                            "sys.stdout = stdout_catcher",
-                                            "sys.stderr = stderr_catcher"};
+static const std::string pythonPrefix[8] = {
+    "from __future__ import print_function\n",
+    "import traceback\n",
+    "class StdoutCatcher:\n"
+    "    def __init__(self):\n"
+    "        self.data = ''\n"
+    "    def write(self, stuff):\n"
+    "        self.data = self.data + stuff\n"
+    "    def fetch(self):\n"
+    "        s = self.data[:]\n"
+    "        self.data = ''\n"
+    "        return s\n",
+    "stdout_catcher = StdoutCatcher()\n",
+    "stderr_catcher = StdoutCatcher()\n",
+    "import sys\n",
+    "sys.stdout = stdout_catcher",
+    "sys.stderr = stderr_catcher"};
 
 bool HandleErr(std::string& err, PyObject* globals_, int PythonInputType) {
   dgDEBUGIN(15);
@@ -42,7 +44,8 @@ bool HandleErr(std::string& err, PyObject* globals_, int PythonInputType) {
   if (PyErr_Occurred() != NULL) {
     bool is_syntax_error = PyErr_ExceptionMatches(PyExc_SyntaxError);
     PyErr_Print();
-    PyObject* stderr_obj = PyRun_String("stderr_catcher.fetch()", Py_eval_input, globals_, globals_);
+    PyObject* stderr_obj = PyRun_String("stderr_catcher.fetch()", Py_eval_input,
+                                        globals_, globals_);
     err = obj_to_str(stderr_obj);
     Py_DECREF(stderr_obj);
 
@@ -98,7 +101,8 @@ Interpreter::~Interpreter() {
   // Ideally, we should call Py_Finalize but this is not really supported by
   // Python.
   // Instead, we merelly remove variables.
-  // Code was taken here: https://github.com/numpy/numpy/issues/8097#issuecomment-356683953
+  // Code was taken here:
+  // https://github.com/numpy/numpy/issues/8097#issuecomment-356683953
   {
     PyObject* poAttrList = PyObject_Dir(mainmod_);
     PyObject* poAttrIter = PyObject_GetIter(poAttrList);
@@ -108,11 +112,13 @@ Interpreter::~Interpreter() {
       std::string oAttrName(obj_to_str(poAttrName));
 
       // Make sure we don't delete any private objects.
-      if (oAttrName.compare(0, 2, "__") != 0 || oAttrName.compare(oAttrName.size() - 2, 2, "__") != 0) {
+      if (oAttrName.compare(0, 2, "__") != 0 ||
+          oAttrName.compare(oAttrName.size() - 2, 2, "__") != 0) {
         PyObject* poAttr = PyObject_GetAttr(mainmod_, poAttrName);
 
         // Make sure we don't delete any module objects.
-        if (poAttr && poAttr->ob_type != mainmod_->ob_type) PyObject_SetAttr(mainmod_, poAttrName, NULL);
+        if (poAttr && poAttr->ob_type != mainmod_->ob_type)
+          PyObject_SetAttr(mainmod_, poAttrName, NULL);
 
         Py_DECREF(poAttr);
       }
@@ -135,7 +141,8 @@ std::string Interpreter::python(const std::string& command) {
   return lres;
 }
 
-void Interpreter::python(const std::string& command, std::string& res, std::string& out, std::string& err) {
+void Interpreter::python(const std::string& command, std::string& res,
+                         std::string& out, std::string& err) {
   res = "";
   out = "";
   err = "";
@@ -150,18 +157,21 @@ void Interpreter::python(const std::string& command, std::string& res, std::stri
   PyEval_RestoreThread(_pyState);
 
   std::cout << command.c_str() << std::endl;
-  PyObject* result = PyRun_String(command.c_str(), Py_eval_input, globals_, globals_);
+  PyObject* result =
+      PyRun_String(command.c_str(), Py_eval_input, globals_, globals_);
   // Check if the result is null.
   if (result == NULL) {
     // Test if this is a syntax error (due to the evaluation of an expression)
     // else just output the problem.
     if (!HandleErr(err, globals_, Py_eval_input)) {
       // If this is a statement, re-parse the command.
-      result = PyRun_String(command.c_str(), Py_single_input, globals_, globals_);
+      result =
+          PyRun_String(command.c_str(), Py_single_input, globals_, globals_);
 
       // If there is still an error build the appropriate err string.
       if (result == NULL) HandleErr(err, globals_, Py_single_input);
-      // If there is no error, make sure that the previous error message is erased.
+      // If there is no error, make sure that the previous error message is
+      // erased.
       else
         err = "";
     } else
@@ -169,7 +179,8 @@ void Interpreter::python(const std::string& command, std::string& res, std::stri
   }
 
   PyObject* stdout_obj = 0;
-  stdout_obj = PyRun_String("stdout_catcher.fetch()", Py_eval_input, globals_, globals_);
+  stdout_obj =
+      PyRun_String("stdout_catcher.fetch()", Py_eval_input, globals_, globals_);
   out = obj_to_str(stdout_obj);
   Py_DECREF(stdout_obj);
   // Local display for the robot (in debug mode or for the logs)
@@ -210,7 +221,8 @@ void Interpreter::runPythonFile(std::string filename, std::string& err) {
   PyEval_RestoreThread(_pyState);
 
   err = "";
-  PyObject* run = PyRun_File(pFile, filename.c_str(), Py_file_input, globals_, globals_);
+  PyObject* run =
+      PyRun_File(pFile, filename.c_str(), Py_file_input, globals_, globals_);
   if (run == NULL) {
     HandleErr(err, globals_, Py_file_input);
     std::cerr << err << std::endl;

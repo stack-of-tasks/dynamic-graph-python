@@ -35,7 +35,8 @@ class SignalWrapper : public Signal<T, Time> {
 
   static bool checkCallable(pyobject c, std::string& error);
 
-  SignalWrapper(std::string name, pyobject callable) : parent_t(name), callable(callable) {
+  SignalWrapper(std::string name, pyobject callable)
+      : parent_t(name), callable(callable) {
     typedef boost::function2<T&, T&, Time> function_t;
     function_t f = boost::bind(&SignalWrapper::call, this, _1, _2);
     this->setFunction(f);

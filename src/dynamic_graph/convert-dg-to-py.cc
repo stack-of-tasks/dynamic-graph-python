@@ -51,7 +51,8 @@ command::Value toValue(bp::object o, const command::Value::Type& valueType) {
       // TODO the vector of values cannot be built since
       // - the value type inside the vector are not know
       // - inferring the value type from the Python type is not implemented.
-      throw std::invalid_argument("not implemented: cannot create a vector of values");
+      throw std::invalid_argument(
+          "not implemented: cannot create a vector of values");
       break;
     default:
       std::cerr << "Only int, double and string are supported." << std::endl;

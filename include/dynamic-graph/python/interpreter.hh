@@ -25,11 +25,13 @@ class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
   /// \brief Method to start python interperter.
   /// \param command string to execute
   /// Method deprecated, you *SHOULD* handle error messages.
-  [[deprecated("you *SHOULD* handle error messages")]] std::string python(const std::string& command);
+  [[deprecated("you *SHOULD* handle error messages")]] std::string python(
+      const std::string& command);
 
   /// \brief Method to start python interperter.
   /// \param command string to execute, result, stdout, stderr strings
-  void python(const std::string& command, std::string& result, std::string& out, std::string& err);
+  void python(const std::string& command, std::string& result, std::string& out,
+              std::string& err);
 
   /// \brief Method to exectue a python script.
   /// \param filename the filename

@@ -8,13 +8,17 @@
 
 namespace dynamicgraph {
 namespace python {
-void PythonSignalContainer::signalRegistration(const SignalArray<int>& signals) {
+void PythonSignalContainer::signalRegistration(
+    const SignalArray<int>& signals) {
   Entity::signalRegistration(signals);
 }
 
-void PythonSignalContainer::rmSignal(const std::string& name) { Entity::signalDeregistration(name); }
+void PythonSignalContainer::rmSignal(const std::string& name) {
+  Entity::signalDeregistration(name);
+}
 
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonSignalContainer, "PythonSignalContainer");
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(PythonSignalContainer,
+                                   "PythonSignalContainer");
 
 template <class T, class Time>
 bool SignalWrapper<T, Time>::checkCallable(pyobject c, std::string& error) {
