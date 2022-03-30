@@ -30,7 +30,9 @@ class CommandPath(object):
 
 
 def createCommandModule(target, name):
+
     def createGetter(name):
+
         def __(self):
             obj = getattr(self, name)
             obj.mother = self

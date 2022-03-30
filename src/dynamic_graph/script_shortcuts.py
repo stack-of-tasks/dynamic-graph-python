@@ -107,7 +107,9 @@ sys.ps1 = '% '
 
 # Enable function that can be call without()def optionalparentheses(f):
 def optionalparentheses(f):
+
     class decoclass:
+
         def __init__(self, f):
             self.functor = f
 

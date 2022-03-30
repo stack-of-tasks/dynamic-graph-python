@@ -6,7 +6,8 @@ TARGET_LINK_LIBRARIES(interpreter-test PRIVATE ${PROJECT_NAME})
 
 # Test runfile
 ADD_UNIT_TEST(interpreter-test-runfile interpreter-test-runfile.cc)
-TARGET_LINK_LIBRARIES(interpreter-test-runfile PRIVATE ${PROJECT_NAME} Boost::unit_test_framework)
+TARGET_LINK_LIBRARIES(interpreter-test-runfile PRIVATE ${PROJECT_NAME})
+TARGET_INCLUDE_DIRECTORIES(interpreter-test-runfile PRIVATE Boost::unit_test_framework)
 TARGET_COMPILE_DEFINITIONS(interpreter-test-runfile PRIVATE PATH="${CMAKE_CURRENT_LIST_DIR}/")
 
 # Test the module generation

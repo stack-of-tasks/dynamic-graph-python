@@ -10,6 +10,7 @@ did not match C++ signature:
 
 
 class BindingsTests(unittest.TestCase):
+
     def test_type_check(self):
         """
         test the type checking in signal plugs
