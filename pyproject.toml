@@ -1,5 +1,3 @@
 [tool.black]
-exclude = "tests/test_python-syntax_error.py"
-
-[tool.isort]
-line_length = 88
+exclude = "cmake"
+extend-exclude = "tests/test_python-syntax_error.py"
