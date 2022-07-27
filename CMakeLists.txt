@@ -60,9 +60,17 @@ set(${PROJECT_NAME}_SOURCES
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
                                    ${${PROJECT_NAME}_HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
-target_link_libraries(
-  ${PROJECT_NAME} PUBLIC dynamic-graph::dynamic-graph
-                         Python${PYTHON_VERSION_MAJOR}::Python)
+target_link_libraries(${PROJECT_NAME} PUBLIC dynamic-graph::dynamic-graph)
+modernize_target_link_libraries(
+  ${PROJECT_NAME}
+  SCOPE
+  PUBLIC
+  TARGETS
+  Python${PYTHON_VERSION_MAJOR}::Python
+  LIBRARIES
+  ${PYTHON_LIBRARIES}
+  INCLUDE_DIRS
+  ${PYTHON_INCLUDE_DIRS})
 target_link_boost_python(${PROJECT_NAME} PRIVATE)
 
 if(SUFFIX_SO_VERSION)
