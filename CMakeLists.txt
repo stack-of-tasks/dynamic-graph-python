@@ -29,6 +29,7 @@ CHECK_MINIMAL_CXX_STANDARD(14 ENFORCE)
 # Project dependencies
 ADD_PROJECT_DEPENDENCY(dynamic-graph 4.4.0 REQUIRED)
 ADD_PROJECT_DEPENDENCY(eigenpy 2.7.10 REQUIRED)
+INCLUDE(cmake/python.cmake)  # TODO: overwriting eigenpy/python.cmake
 IF(BUILD_TESTING)
   FIND_PACKAGE(Boost REQUIRED COMPONENTS unit_test_framework)
 ENDIF(BUILD_TESTING)
