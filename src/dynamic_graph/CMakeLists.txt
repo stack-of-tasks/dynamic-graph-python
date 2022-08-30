@@ -1,26 +1,24 @@
-# Copyright 2010-2021, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem Saurel, JRL, CNRS/AIST, LAAS-CNRS
+# Copyright 2010-2021, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem
+# Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
-SET(PYTHON_MODULE wrap)
+set(PYTHON_MODULE wrap)
 
-ADD_LIBRARY(${PYTHON_MODULE} MODULE
-  debug-py.cc
-  dynamic-graph-py.cc
-  factory-py.cc
-  pool-py.cc
-  signal-base-py.cc
-  signal-wrapper.cc
-  )
+add_library(
+  ${PYTHON_MODULE} MODULE debug-py.cc dynamic-graph-py.cc factory-py.cc
+                          pool-py.cc signal-base-py.cc signal-wrapper.cc)
 
-TARGET_LINK_LIBRARIES(${PYTHON_MODULE} PUBLIC ${PROJECT_NAME} eigenpy::eigenpy)
-TARGET_LINK_BOOST_PYTHON(${PYTHON_MODULE} PRIVATE)
+target_link_libraries(${PYTHON_MODULE} PUBLIC ${PROJECT_NAME} eigenpy::eigenpy)
+target_link_boost_python(${PYTHON_MODULE} PRIVATE)
 
 # Remove prefix lib
-SET_TARGET_PROPERTIES(${PYTHON_MODULE} PROPERTIES PREFIX "")
+set_target_properties(${PYTHON_MODULE} PROPERTIES PREFIX "")
 
-IF(UNIX AND NOT APPLE)
-  SET_TARGET_PROPERTIES(${PYTHON_MODULE} PROPERTIES INSTALL_RPATH "\$ORIGIN/../../..")
-ENDIF()
+if(UNIX AND NOT APPLE)
+  set_target_properties(${PYTHON_MODULE} PROPERTIES INSTALL_RPATH
+                                                    "\$ORIGIN/../../..")
+endif()
 
-INSTALL(TARGETS ${PYTHON_MODULE}
+install(
+  TARGETS ${PYTHON_MODULE}
   EXPORT ${TARGETS_EXPORT_NAME}
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph)

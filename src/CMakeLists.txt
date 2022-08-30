@@ -1,23 +1,20 @@
-#  Python bindings
+# Python bindings
 
-ADD_SUBDIRECTORY(dynamic_graph)
+add_subdirectory(dynamic_graph)
 
-SET(PYTHON_SOURCES
-  __init__.py
-  attrpath.py
-  entity.py
-  signal_base.py
-  script_shortcuts.py
-  tools.py
-  )
+set(PYTHON_SOURCES __init__.py attrpath.py entity.py signal_base.py
+                   script_shortcuts.py tools.py)
 
-FOREACH(source ${PYTHON_SOURCES})
-  PYTHON_INSTALL_ON_SITE(dynamic_graph ${source})
-ENDFOREACH(source)
+foreach(source ${PYTHON_SOURCES})
+  python_install_on_site(dynamic_graph ${source})
+endforeach(source)
 
 # --- ADD the wrap on the dg modules
-LINK_DIRECTORIES(${DYNAMIC_GRAPH_PLUGINDIR})
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer" dynamic-graph::tracer tracer-wrap
-  SOURCE_PYTHON_MODULE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/tracer/wrap.cc)
-DYNAMIC_GRAPH_PYTHON_MODULE("tracer_real_time" dynamic-graph::tracer-real-time tracer_real_time-wrap
-  SOURCE_PYTHON_MODULE ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/tracer_real_time/wrap.cc)
+link_directories(${DYNAMIC_GRAPH_PLUGINDIR})
+dynamic_graph_python_module(
+  "tracer" dynamic-graph::tracer tracer-wrap SOURCE_PYTHON_MODULE
+  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/tracer/wrap.cc)
+dynamic_graph_python_module(
+  "tracer_real_time" dynamic-graph::tracer-real-time tracer_real_time-wrap
+  SOURCE_PYTHON_MODULE
+  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/tracer_real_time/wrap.cc)
