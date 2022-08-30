@@ -71,7 +71,7 @@ modernize_target_link_libraries(
   ${PYTHON_LIBRARIES}
   INCLUDE_DIRS
   ${PYTHON_INCLUDE_DIRS})
-target_link_boost_python(${PROJECT_NAME} PRIVATE)
+target_link_boost_python(${PROJECT_NAME} PUBLIC)
 
 if(SUFFIX_SO_VERSION)
   set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})

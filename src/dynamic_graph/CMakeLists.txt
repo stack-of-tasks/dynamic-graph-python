@@ -8,7 +8,6 @@ add_library(
                           pool-py.cc signal-base-py.cc signal-wrapper.cc)
 
 target_link_libraries(${PYTHON_MODULE} PUBLIC ${PROJECT_NAME} eigenpy::eigenpy)
-target_link_boost_python(${PYTHON_MODULE} PRIVATE)
 
 # Remove prefix lib
 set_target_properties(${PYTHON_MODULE} PROPERTIES PREFIX "")
