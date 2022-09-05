@@ -44,9 +44,6 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 target_link_libraries(${PYTHON_MODULE} PRIVATE ${LIBRARY_NAME} ${PROJECT_NAME})
-target_link_boost_python(${PYTHON_MODULE} PRIVATE)
-target_include_directories(${PYTHON_MODULE} SYSTEM
-                           PRIVATE ${PYTHON_INCLUDE_DIRS})
 
 # Test it
 add_python_unit_test("test-custom-entity" "tests/test_custom_entity.py" src
