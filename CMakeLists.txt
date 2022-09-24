@@ -29,9 +29,11 @@ check_minimal_cxx_standard(14 ENFORCE)
 
 # Project dependencies
 set(PYTHON_COMPONENTS Interpreter Development NumPy)
-set(PYTHON_EXPORT_DEPENDENCY ON)
 add_project_dependency(dynamic-graph 4.4.0 REQUIRED)
 add_project_dependency(eigenpy 2.7.10 REQUIRED)
+set(PYTHON_EXPORT_DEPENDENCY_MACROS
+    "list(APPEND PYTHON_COMPONENTS ${PYTHON_COMPONENTS})\n${PYTHON_EXPORT_DEPENDENCY_MACROS}"
+)
 if(BUILD_TESTING)
   find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 endif(BUILD_TESTING)
