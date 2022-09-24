@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>dynamic-graph-python</name>
-  <version>4.0.9</version>
+  <version>4.0.10</version>
   <description>Dynamic graph library Python bindings</description>
   <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
   <author>Nicolas Mansard</author>
