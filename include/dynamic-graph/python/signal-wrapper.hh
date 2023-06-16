@@ -22,7 +22,7 @@ class PythonSignalContainer : public Entity {
  public:
   using Entity::Entity;
 
-  void signalRegistration(const SignalArray<int>& signals);
+  void signalRegistration(const SignalArray<sigtime_t>& signals);
 
   void rmSignal(const std::string& name);
 };

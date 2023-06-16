@@ -9,7 +9,7 @@
 namespace dynamicgraph {
 namespace python {
 void PythonSignalContainer::signalRegistration(
-    const SignalArray<int>& signals) {
+    const SignalArray<sigtime_t>& signals) {
   Entity::signalRegistration(signals);
 }
 
@@ -30,10 +30,13 @@ bool SignalWrapper<T, Time>::checkCallable(pyobject c, std::string& error) {
   return true;
 }
 
-template class SignalWrapper<bool, int>;
-template class SignalWrapper<int, int>;
-template class SignalWrapper<float, int>;
-template class SignalWrapper<double, int>;
-template class SignalWrapper<Vector, int>;
+template class SignalWrapper<bool, sigtime_t>;
+template class SignalWrapper<int32_t, sigtime_t>;
+template class SignalWrapper<int64_t, sigtime_t>;
+template class SignalWrapper<uint32_t, sigtime_t>;
+template class SignalWrapper<uint64_t, sigtime_t>;
+template class SignalWrapper<float, sigtime_t>;
+template class SignalWrapper<double, sigtime_t>;
+template class SignalWrapper<Vector, sigtime_t>;
 }  // namespace python
 }  // namespace dynamicgraph

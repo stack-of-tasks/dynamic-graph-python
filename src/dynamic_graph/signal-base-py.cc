@@ -22,8 +22,6 @@ namespace bp = boost::python;
 namespace dynamicgraph {
 namespace python {
 
-typedef int time_type;
-
 typedef Eigen::AngleAxis<double> VectorUTheta;
 typedef Eigen::Quaternion<double> Quaternion;
 
@@ -79,7 +77,7 @@ void exposeSignalBase(const char* name) {
           })
       .def(
           "displayDependencies",
-          +[](const S_t& s, int time) -> std::string {
+          +[](const S_t& s, sigtime_t time) -> std::string {
             std::ostringstream oss;
             s.displayDependencies(oss, time);
             return oss.str();
@@ -88,9 +86,9 @@ void exposeSignalBase(const char* name) {
 }
 
 template <>
-auto exposeSignal<MatrixHomogeneous, time_type>(const std::string& name) {
-  typedef Signal<MatrixHomogeneous, time_type> S_t;
-  bp::class_<S_t, bp::bases<SignalBase<time_type> >, boost::noncopyable> obj(
+auto exposeSignal<MatrixHomogeneous, sigtime_t>(const std::string& name) {
+  typedef Signal<MatrixHomogeneous, sigtime_t> S_t;
+  bp::class_<S_t, bp::bases<SignalBase<sigtime_t> >, boost::noncopyable> obj(
       name.c_str(), bp::init<std::string>());
   obj.add_property(
       "value",
@@ -107,31 +105,31 @@ auto exposeSignal<MatrixHomogeneous, time_type>(const std::string& name) {
 }
 
 void exposeSignals() {
-  exposeSignalBase<time_type>("SignalBase");
+  exposeSignalBase<sigtime_t>("SignalBase");
 
-  exposeSignalsOfType<bool, time_type>("Bool");
-  exposeSignalsOfType<int, time_type>("Int");
-  exposeSignalsOfType<double, time_type>("Double");
+  exposeSignalsOfType<bool, sigtime_t>("Bool");
+  exposeSignalsOfType<int, sigtime_t>("Int");
+  exposeSignalsOfType<double, sigtime_t>("Double");
 
-  exposeSignalsOfType<Vector, time_type>("Vector");
-  exposeSignalsOfType<Vector3, time_type>("Vector3");
-  exposeSignalsOfType<Vector7, time_type>("Vector7");
+  exposeSignalsOfType<Vector, sigtime_t>("Vector");
+  exposeSignalsOfType<Vector3, sigtime_t>("Vector3");
+  exposeSignalsOfType<Vector7, sigtime_t>("Vector7");
 
-  exposeSignalsOfType<Matrix, time_type>("Matrix");
-  exposeSignalsOfType<MatrixRotation, time_type>("MatrixRotation");
-  exposeSignalsOfType<MatrixHomogeneous, time_type>("MatrixHomogeneous");
-  exposeSignalsOfType<MatrixTwist, time_type>("MatrixTwist");
+  exposeSignalsOfType<Matrix, sigtime_t>("Matrix");
+  exposeSignalsOfType<MatrixRotation, sigtime_t>("MatrixRotation");
+  exposeSignalsOfType<MatrixHomogeneous, sigtime_t>("MatrixHomogeneous");
+  exposeSignalsOfType<MatrixTwist, sigtime_t>("MatrixTwist");
 
-  exposeSignalsOfType<Quaternion, time_type>("Quaternion");
-  exposeSignalsOfType<VectorUTheta, time_type>("VectorUTheta");
+  exposeSignalsOfType<Quaternion, sigtime_t>("Quaternion");
+  exposeSignalsOfType<VectorUTheta, sigtime_t>("VectorUTheta");
 }
 
 namespace signalBase {
 
 template <class T>
-SignalWrapper<T, int>* createSignalWrapperTpl(const char* name, bp::object o,
+SignalWrapper<T, sigtime_t>* createSignalWrapperTpl(const char* name, bp::object o,
                                               std::string& error) {
-  typedef SignalWrapper<T, int> SignalWrapper_t;
+  typedef SignalWrapper<T, sigtime_t> SignalWrapper_t;
   if (!SignalWrapper_t::checkCallable(o, error)) {
     return NULL;
   }
@@ -153,12 +151,12 @@ PythonSignalContainer* getPythonSignalContainer() {
 /**
    \brief Create an instance of SignalWrapper
 */
-SignalBase<int>* createSignalWrapper(const char* name, const char* type,
+SignalBase<sigtime_t>* createSignalWrapper(const char* name, const char* type,
                                      bp::object object) {
   PythonSignalContainer* psc = getPythonSignalContainer();
   if (psc == NULL) return NULL;
 
-  SignalBase<int>* obj = NULL;
+  SignalBase<sigtime_t>* obj = NULL;
   std::string error;
   SIGNAL_WRAPPER_TYPE(if, BOOL, bool)
   // SIGNAL_WRAPPER_TYPE(else if, UNSIGNED ,bool)

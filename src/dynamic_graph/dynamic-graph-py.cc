@@ -32,7 +32,7 @@ namespace python {
 /**
    \brief plug a signal into another one.
 */
-void plug(SignalBase<int>* signalOut, SignalBase<int>* signalIn) {
+void plug(SignalBase<sigtime_t>* signalOut, SignalBase<sigtime_t>* signalIn) {
   signalIn->plug(signalOut);
 }
 
@@ -66,7 +66,8 @@ MapOfEntities* getEntityMap() {
       &dg::PoolStorage::getInstance()->getEntityMap());
 }
 
-dg::SignalBase<int>* getSignal(dg::Entity& e, const std::string& name) {
+dg::SignalBase<dg::sigtime_t>* getSignal(dg::Entity& e, const std::string& name)
+{
   return &e.getSignal(name);
 }
 
@@ -76,7 +77,7 @@ class PythonEntity : public dg::Entity {
  public:
   using dg::Entity::Entity;
 
-  void signalRegistration(dg::SignalBase<int>& signal) {
+  void signalRegistration(dg::SignalBase<dg::sigtime_t>& signal) {
     dg::Entity::signalRegistration(signal);
   }
   void signalDeregistration(const std::string& name) {

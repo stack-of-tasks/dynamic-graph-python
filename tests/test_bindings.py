@@ -8,8 +8,8 @@ ERR = (
     dynamic_graph.wrap.plug(%s, %s)
 did not match C++ signature:
     plug("""
-    "dynamicgraph::SignalBase<int>* signalOut, "
-    "dynamicgraph::SignalBase<int>* signalIn)"
+    "dynamicgraph::SignalBase<long>* signalOut, "
+    "dynamicgraph::SignalBase<long>* signalIn)"
 )
 
 
