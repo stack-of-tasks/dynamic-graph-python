@@ -14,8 +14,8 @@
 namespace dynamicgraph {
 class CustomEntity : public Entity {
  public:
-  dynamicgraph::SignalPtr<double, int> m_sigdSIN;
-  dynamicgraph::SignalTimeDependent<double, int> m_sigdTimeDepSOUT;
+  dynamicgraph::SignalPtr<double, sigtime_t> m_sigdSIN;
+  dynamicgraph::SignalTimeDependent<double, sigtime_t> m_sigdTimeDepSOUT;
 
   DYNAMIC_GRAPH_ENTITY_DECL();
   CustomEntity(const std::string n);
@@ -24,7 +24,7 @@ class CustomEntity : public Entity {
 
   void rmValidSignal();
 
-  double &update(double &res, const int &inTime);
+  double &update(double &res, const sigtime_t &inTime);
 
   void act();
 };

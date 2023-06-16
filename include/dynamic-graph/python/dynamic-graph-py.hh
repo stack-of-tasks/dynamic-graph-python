@@ -40,7 +40,7 @@ void exposeSignals();
 
 // Declare functions defined in other source files
 namespace signalBase {
-SignalBase<int>* createSignalWrapper(const char* name, const char* type,
+SignalBase<sigtime_t>* createSignalWrapper(const char* name, const char* type,
                                      bp::object object);
 }  // namespace signalBase
 namespace entity {
