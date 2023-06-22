@@ -77,9 +77,9 @@ void exposeSignalBase(const char* name) {
           })
       .def(
           "displayDependencies",
-          +[](const S_t& s, sigtime_t time) -> std::string {
+          +[](const S_t& s, int depth) -> std::string {
             std::ostringstream oss;
-            s.displayDependencies(oss, time);
+            s.displayDependencies(oss, depth);
             return oss.str();
           },
           "Print the signal dependencies in a string");
@@ -108,7 +108,10 @@ void exposeSignals() {
   exposeSignalBase<sigtime_t>("SignalBase");
 
   exposeSignalsOfType<bool, sigtime_t>("Bool");
+  exposeSignalsOfType<unsigned int, sigtime_t>("UInt");
   exposeSignalsOfType<int, sigtime_t>("Int");
+  exposeSignalsOfType<uint64_t, sigtime_t>("UInt64");
+  exposeSignalsOfType<int64_t, sigtime_t>("Int64");
   exposeSignalsOfType<double, sigtime_t>("Double");
 
   exposeSignalsOfType<Vector, sigtime_t>("Vector");
@@ -158,15 +161,32 @@ SignalBase<sigtime_t>* createSignalWrapper(const char* name, const char* type,
 
   SignalBase<sigtime_t>* obj = NULL;
   std::string error;
-  SIGNAL_WRAPPER_TYPE(if, BOOL, bool)
-  // SIGNAL_WRAPPER_TYPE(else if, UNSIGNED ,bool)
-  SIGNAL_WRAPPER_TYPE(else if, INT, int)
-  SIGNAL_WRAPPER_TYPE(else if, FLOAT, float)
-  SIGNAL_WRAPPER_TYPE(else if, DOUBLE, double)
-  // SIGNAL_WRAPPER_TYPE(else if, STRING   ,bool)
-  SIGNAL_WRAPPER_TYPE(else if, VECTOR, Vector)
-  // SIGNAL_WRAPPER_TYPE(else if, MATRIX   ,bool)
-  // SIGNAL_WRAPPER_TYPE(else if, MATRIX4D ,bool)
+  if(command::Value::typeName(command::Value::BOOL).compare(type) == 0) {
+    obj = createSignalWrapperTpl<bool>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::UNSIGNED).compare(type) ==
+          0) {
+    obj = createSignalWrapperTpl<unsigned int>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::INT).compare(type) == 0) {
+    obj = createSignalWrapperTpl<int>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::UNSIGNEDLONGINT).
+          compare(type) == 0){
+    obj = createSignalWrapperTpl<uint64_t>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::LONGINT).compare(type) == 0){
+    obj = createSignalWrapperTpl<int64_t>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::FLOAT).compare(type) == 0){
+    obj = createSignalWrapperTpl<float>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::DOUBLE).compare(type) == 0){
+    obj = createSignalWrapperTpl<double>(name, object, error);
+  }
+  else if(command::Value::typeName(command::Value::VECTOR).compare(type) == 0){
+    obj = createSignalWrapperTpl<Vector>(name, object, error);
+  }
   else {
     error = "Type not understood";
   }

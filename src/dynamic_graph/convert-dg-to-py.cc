@@ -29,8 +29,12 @@ command::Value toValue(bp::object o, const command::Value::Type& valueType) {
       return Value(bp::extract<bool>(o));
     case (Value::UNSIGNED):
       return Value(bp::extract<unsigned>(o));
+    case (Value::UNSIGNEDLONGINT):
+      return Value(bp::extract<unsigned long int>(o));
     case (Value::INT):
       return Value(bp::extract<int>(o));
+    case (Value::LONGINT):
+      return Value(bp::extract<long int>(o));
     case (Value::FLOAT):
       return Value(bp::extract<float>(o));
     case (Value::DOUBLE):
@@ -67,8 +71,12 @@ bp::object fromValue(const command::Value& value) {
       return bp::object(value.boolValue());
     case (Value::UNSIGNED):
       return bp::object(value.unsignedValue());
+    case (Value::UNSIGNEDLONGINT):
+      return bp::object(value.unsignedlongintValue());
     case (Value::INT):
       return bp::object(value.intValue());
+    case (Value::LONGINT):
+      return bp::object(value.longintValue());
     case (Value::FLOAT):
       return bp::object(value.floatValue());
     case (Value::DOUBLE):
