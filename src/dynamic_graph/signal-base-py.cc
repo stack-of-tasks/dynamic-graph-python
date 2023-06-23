@@ -130,8 +130,9 @@ void exposeSignals() {
 namespace signalBase {
 
 template <class T>
-SignalWrapper<T, sigtime_t>* createSignalWrapperTpl(const char* name, bp::object o,
-                                              std::string& error) {
+SignalWrapper<T, sigtime_t>* createSignalWrapperTpl(const char* name,
+                                                    bp::object o,
+                                                    std::string& error) {
   typedef SignalWrapper<T, sigtime_t> SignalWrapper_t;
   if (!SignalWrapper_t::checkCallable(o, error)) {
     return NULL;
@@ -155,39 +156,35 @@ PythonSignalContainer* getPythonSignalContainer() {
    \brief Create an instance of SignalWrapper
 */
 SignalBase<sigtime_t>* createSignalWrapper(const char* name, const char* type,
-                                     bp::object object) {
+                                           bp::object object) {
   PythonSignalContainer* psc = getPythonSignalContainer();
   if (psc == NULL) return NULL;
 
   SignalBase<sigtime_t>* obj = NULL;
   std::string error;
-  if(command::Value::typeName(command::Value::BOOL).compare(type) == 0) {
+  if (command::Value::typeName(command::Value::BOOL).compare(type) == 0) {
     obj = createSignalWrapperTpl<bool>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::UNSIGNED).compare(type) ==
-          0) {
+  } else if (command::Value::typeName(command::Value::UNSIGNED).compare(type) ==
+             0) {
     obj = createSignalWrapperTpl<unsigned int>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::INT).compare(type) == 0) {
+  } else if (command::Value::typeName(command::Value::INT).compare(type) == 0) {
     obj = createSignalWrapperTpl<int>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::UNSIGNEDLONGINT).
-          compare(type) == 0){
+  } else if (command::Value::typeName(command::Value::UNSIGNEDLONGINT)
+                 .compare(type) == 0) {
     obj = createSignalWrapperTpl<uint64_t>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::LONGINT).compare(type) == 0){
+  } else if (command::Value::typeName(command::Value::LONGINT).compare(type) ==
+             0) {
     obj = createSignalWrapperTpl<int64_t>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::FLOAT).compare(type) == 0){
+  } else if (command::Value::typeName(command::Value::FLOAT).compare(type) ==
+             0) {
     obj = createSignalWrapperTpl<float>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::DOUBLE).compare(type) == 0){
+  } else if (command::Value::typeName(command::Value::DOUBLE).compare(type) ==
+             0) {
     obj = createSignalWrapperTpl<double>(name, object, error);
-  }
-  else if(command::Value::typeName(command::Value::VECTOR).compare(type) == 0){
+  } else if (command::Value::typeName(command::Value::VECTOR).compare(type) ==
+             0) {
     obj = createSignalWrapperTpl<Vector>(name, object, error);
-  }
-  else {
+  } else {
     error = "Type not understood";
   }
 
