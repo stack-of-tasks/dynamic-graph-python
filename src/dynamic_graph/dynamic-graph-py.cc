@@ -66,8 +66,8 @@ MapOfEntities* getEntityMap() {
       &dg::PoolStorage::getInstance()->getEntityMap());
 }
 
-dg::SignalBase<dg::sigtime_t>* getSignal(dg::Entity& e, const std::string& name)
-{
+dg::SignalBase<dg::sigtime_t>* getSignal(dg::Entity& e,
+                                         const std::string& name) {
   return &e.getSignal(name);
 }
 
