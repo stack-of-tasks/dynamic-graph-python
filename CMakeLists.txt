@@ -1,7 +1,7 @@
 # Copyright 2010-2020, Florent Lamiraux, Thomas Moulard, Olivier Stasse, Guilhem
 # Saurel, JRL, CNRS/AIST, LAAS-CNRS
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.10)
 
 # Project properties
 set(PROJECT_ORG stack-of-tasks)
@@ -21,6 +21,7 @@ set(DOXYGEN_USE_MATHJAX YES)
 # JRL-cmakemodule setup
 include(cmake/base.cmake)
 include(cmake/boost.cmake)
+include(cmake/python.cmake)
 
 # Project definition
 compute_project_args(PROJECT_ARGS LANGUAGES CXX)
