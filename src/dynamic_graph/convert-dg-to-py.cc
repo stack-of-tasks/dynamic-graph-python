@@ -8,6 +8,7 @@
 
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 

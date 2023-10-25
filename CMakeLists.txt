@@ -21,7 +21,6 @@ set(DOXYGEN_USE_MATHJAX YES)
 # JRL-cmakemodule setup
 include(cmake/base.cmake)
 include(cmake/boost.cmake)
-include(cmake/python.cmake)
 
 # Project definition
 compute_project_args(PROJECT_ARGS LANGUAGES CXX)
