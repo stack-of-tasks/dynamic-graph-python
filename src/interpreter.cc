@@ -247,9 +247,9 @@ void Interpreter::runMain(void) {
 
 std::string Interpreter::processStream(std::istream& stream, std::ostream& os) {
   char line[10000];
-  sprintf(line, "%s", "\n");
-  std::string command;
   std::streamsize maxSize = 10000;
+  snprintf(line, static_cast<size_t>(maxSize), "%s", "\n");
+  std::string command;
 #if 0
   while (line != std::string("")) {
     stream.getline(line, maxSize, '\n');

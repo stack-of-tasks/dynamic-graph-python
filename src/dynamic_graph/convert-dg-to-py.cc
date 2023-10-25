@@ -8,6 +8,7 @@
 
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 
@@ -30,11 +31,11 @@ command::Value toValue(bp::object o, const command::Value::Type& valueType) {
     case (Value::UNSIGNED):
       return Value(bp::extract<unsigned>(o));
     case (Value::UNSIGNEDLONGINT):
-      return Value(bp::extract<unsigned long int>(o));
+      return Value(bp::extract<std::uint64_t>(o));
     case (Value::INT):
       return Value(bp::extract<int>(o));
     case (Value::LONGINT):
-      return Value(bp::extract<long int>(o));
+      return Value(bp::extract<std::int64_t>(o));
     case (Value::FLOAT):
       return Value(bp::extract<float>(o));
     case (Value::DOUBLE):

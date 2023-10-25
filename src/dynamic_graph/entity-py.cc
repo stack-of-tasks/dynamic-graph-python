@@ -83,8 +83,11 @@ bp::object executeCmd(bp::tuple args, bp::dict) {
     throw std::out_of_range("Wrong number of arguments");
   std::vector<Value> values;
   values.reserve(command.valueTypes().size());
-  for (int i = 1; i < bp::len(args); ++i)
-    values.push_back(convert::toValue(args[i], command.valueTypes()[i - 1]));
+  for (bp::ssize_t i = 1; i < bp::len(args); ++i)
+    values.push_back(convert::toValue(
+        args[i],
+        command
+            .valueTypes()[static_cast<std::vector<Value>::size_type>(i - 1)]));
   command.setParameterValues(values);
   return convert::fromValue(command.execute());
 }

@@ -51,8 +51,6 @@ class DYNAMIC_GRAPH_PYTHON_DLLAPI Interpreter {
   PyThreadState* _pyState;
   /// Pointer to the dictionary of global variables
   PyObject* globals_;
-  /// Pointer to the dictionary of local variables
-  PyObject* locals_;
   PyObject* mainmod_;
 };
 }  // namespace python
