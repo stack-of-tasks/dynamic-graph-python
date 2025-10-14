@@ -46,8 +46,8 @@ void CustomEntity::rmValidSignal() {
   signalDeregistration("out_double");
 }
 
-double &CustomEntity::update(double &res, const sigtime_t &inTime) {
-  const double &aDouble = m_sigdSIN(inTime);
+double& CustomEntity::update(double& res, const sigtime_t& inTime) {
+  const double& aDouble = m_sigdSIN(inTime);
   res = aDouble;
   logger().stream(MSG_TYPE_ERROR) << "start update " << res << '\n';
   DYNAMIC_GRAPH_ENTITY_DEBUG(*this)

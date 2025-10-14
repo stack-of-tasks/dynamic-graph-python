@@ -24,7 +24,7 @@ class CustomEntity : public Entity {
 
   void rmValidSignal();
 
-  double &update(double &res, const sigtime_t &inTime);
+  double& update(double& res, const sigtime_t& inTime);
 
   void act();
 };
